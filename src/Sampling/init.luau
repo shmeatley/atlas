@@ -95,8 +95,8 @@ function Sampling.poissonDisc(
 	local radiusSq = radius * radius
 
 	-- store points directly (no xs/ys split)
-	local points: { Vector3 } = table.create(64)
-	local active: { number } = table.create(64)
+	local points: { Vector3 } = table.create(64) :: { Vector3 }
+	local active: { number } = table.create(64) :: { number }
 
 	-- first point
 	state = nextState(state)

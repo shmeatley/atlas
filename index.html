@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
 <title data-rh="true">Atlas</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://shmeatley.github.io/atlas/"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="Atlas"><meta data-rh="true" name="description" content="CI"><meta data-rh="true" property="og:description" content="CI"><link data-rh="true" rel="canonical" href="https://shmeatley.github.io/atlas/"><link data-rh="true" rel="alternate" href="https://shmeatley.github.io/atlas/" hreflang="en"><link data-rh="true" rel="alternate" href="https://shmeatley.github.io/atlas/" hreflang="x-default"><script data-rh="true">function insertBanner(){var n=document.createElement("div");n.id="__docusaurus-base-url-issue-banner-container";n.innerHTML='\n<div id="__docusaurus-base-url-issue-banner" style="border: thick solid red; background-color: rgb(255, 230, 179); margin: 20px; padding: 20px; font-size: 20px;">\n   <p style="font-weight: bold; font-size: 30px;">Your Docusaurus site did not load properly.</p>\n   <p>A very common reason is a wrong site <a href="https://docusaurus.io/docs/docusaurus.config.js/#baseUrl" style="font-weight: bold;">baseUrl configuration</a>.</p>\n   <p>Current configured baseUrl = <span style="font-weight: bold; color: red;">/atlas/</span> </p>\n   <p>We suggest trying baseUrl = <span id="__docusaurus-base-url-issue-banner-suggestion-container" style="font-weight: bold; color: green;"></span></p>\n</div>\n',document.body.prepend(n);var e=document.getElementById("__docusaurus-base-url-issue-banner-suggestion-container"),s=window.location.pathname,o="/"===s.substr(-1)?s:s+"/";e.innerHTML=o}document.addEventListener("DOMContentLoaded",(function(){void 0===window.docusaurus&&insertBanner()}))</script><link rel="stylesheet" href="/atlas/assets/css/styles.e8e96400.css">
-<script src="/atlas/assets/js/runtime~main.18569c3d.js" defer="defer"></script>
-<script src="/atlas/assets/js/main.817a2b58.js" defer="defer"></script>
+<script src="/atlas/assets/js/runtime~main.130dd279.js" defer="defer"></script>
+<script src="/atlas/assets/js/main.d6774b3a.js" defer="defer"></script>
 </head>
 <body>
 <svg style="display: none;"><defs>
@@ -30,13 +30,7 @@ remapping noise (or any value) without overshoot.</li>
 through pixel buffers, with built-in presets for noise, curves, and point
 sets.</li>
 </ul>
-<blockquote>
-<p><strong>Status: pre-release.</strong> Not yet published to Wally; the API may still
-change before the first release.</p>
-</blockquote>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="installation">Installation<a href="#installation" class="hash-link" aria-label="Direct link to Installation" title="Direct link to Installation" translate="no">​</a></h2>
-<p>Atlas will be published to the public Wally registry as <code>shmeatley/atlas</code>.
-Once available, add it to your project&#x27;s <code>wally.toml</code>:</p>
 <div class="language-toml codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-toml codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#bfc7d5"><span class="token punctuation" style="color:rgb(199, 146, 234)">[</span><span class="token table class-name" style="color:rgb(255, 203, 107)">dependencies</span><span class="token punctuation" style="color:rgb(199, 146, 234)">]</span><span class="token plain"></span><br></div><div class="token-line" style="color:#bfc7d5"><span class="token plain"></span><span class="token key property">Atlas</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(199, 146, 234)">=</span><span class="token plain"> </span><span class="token string" style="color:rgb(195, 232, 141)">&quot;shmeatley/atlas@0.1.0&quot;</span><br></div></code></pre></div></div>
 <p>Then run:</p>
 <div class="language-sh codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#bfc7d5;--prism-background-color:#292d3e"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-sh codeBlock_bY9V thin-scrollbar" style="color:#bfc7d5;background-color:#292d3e"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#bfc7d5"><span class="token plain">wally </span><span class="token function" style="color:rgb(130, 170, 255)">install</span><br></div></code></pre></div></div>

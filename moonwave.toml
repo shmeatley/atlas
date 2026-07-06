@@ -1,0 +1,12 @@
+title = "Atlas"
+gitRepoUrl = "https://github.com/shmeatley/atlas"
+gitSourceBranch = "main"
+
+[docusaurus]
+onBrokenLinks = "warn"
+
+organizationName = "shmeatley"
+projectName = "atlas"
+url = "https://shmeatley.github.io"
+baseUrl = "/atlas"
+tagline = "A procedural generation toolkit for Roblox"

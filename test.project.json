@@ -1,0 +1,25 @@
+{
+  "name": "AtlasTest",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Atlas": {
+        "$path": "src"
+      }
+    },
+    "ServerScriptService": {
+      "AtlasTest": {
+        "$path": "test/server"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "AtlasDemo": {
+          "$path": "test/client"
+        }
+      }
+    }
+  }
+}

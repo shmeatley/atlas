@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint (selene)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.2.1
+
+      - name: Run selene
+        run: selene src
+
+  format:
+    name: Format check (stylua)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.2.1
+
+      - name: Run stylua --check
+        run: stylua --check src
+
+  package-check:
+    name: Validate wally.toml packaging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@v0.2.1
+
+      - name: List files wally would package (no publish, no auth needed)
+        run: wally package --list
+
+  # No automated test job yet — no test framework is configured (see
+  # README roadmap). Add a `test` job here once TestEZ/jest-lua/other
+  # is chosen for this project.

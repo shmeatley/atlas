@@ -1,0 +1,20 @@
+# Rojo
+sourcemap.json
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+
+# Wally
+Packages/
+DevPackages/
+
+# Moonwave
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/

@@ -18,8 +18,8 @@ Brownian motion.
 local simplex = Atlas.Noise.Simplex.new(42)
 local height = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)
 ```"><link data-rh="true" rel="canonical" href="https://shmeatley.github.io/atlas/api/Noise"><link data-rh="true" rel="alternate" href="https://shmeatley.github.io/atlas/api/Noise" hreflang="en"><link data-rh="true" rel="alternate" href="https://shmeatley.github.io/atlas/api/Noise" hreflang="x-default"><link rel="stylesheet" href="/atlas/assets/css/styles.e8e96400.css">
-<script src="/atlas/assets/js/runtime~main.9504d8a0.js" defer="defer"></script>
-<script src="/atlas/assets/js/main.906bbc3e.js" defer="defer"></script>
+<script src="/atlas/assets/js/runtime~main.6e7552e8.js" defer="defer"></script>
+<script src="/atlas/assets/js/main.ff52527c.js" defer="defer"></script>
 </head>
 <body>
 <svg style="display: none;"><defs>
@@ -41,7 +41,14 @@ local height = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)
 </p>
 </div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="NoiseSampler3D"><code style="text-decoration:none">NoiseSampler3D</code><a href="#NoiseSampler3D" class="hash-link" aria-label="Direct link to NoiseSampler3D" title="Direct link to NoiseSampler3D" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L32"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>NoiseSampler3D<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>sample3D<!-- -->: </code><code class="purple_ieR2">(</code><div class="inset_uKQm"><code>self<!-- -->: </code><code class="blue_P4bS">any</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>z<!-- -->: </code><code class="blue_P4bS">number</code></div><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="blue_P4bS">number</code></div></div><code>}</code></div><div>
 <p>Anything with a <code>sample3D</code> method.</p>
-</div><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="functions">Functions<a href="#functions" class="hash-link" aria-label="Direct link to Functions" title="Direct link to Functions" translate="no">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="fbm2D"><code style="text-decoration:none">fbm2D</code><a href="#fbm2D" class="hash-link" aria-label="Direct link to fbm2D" title="Direct link to fbm2D" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L69"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Noise<!-- -->.</code><code class="green_DgR4">fbm2D</code><code>(</code><div class="inset_uKQm"><div><code>sampler<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/atlas/api/Noise#NoiseSampler2D">NoiseSampler2D</a></code><code>,</code></div><div><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>octaves<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>lacunarity<!-- -->: </code><code class="blue_P4bS">number?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="NoiseSampler2DWithDerivative"><code style="text-decoration:none">NoiseSampler2DWithDerivative</code><a href="#NoiseSampler2DWithDerivative" class="hash-link" aria-label="Direct link to NoiseSampler2DWithDerivative" title="Direct link to NoiseSampler2DWithDerivative" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L44"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>NoiseSampler2DWithDerivative<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>sample2DWithDerivative<!-- -->: </code><code class="purple_ieR2">(</code><div class="inset_uKQm"><code>self<!-- -->: </code><code class="blue_P4bS">any</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>y<!-- -->: </code><code class="blue_P4bS">number</code></div><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="purple_ieR2">(</code><div class="inset_uKQm"><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code class="blue_P4bS">number</code></div><code class="purple_ieR2">)</code></div></div><code>}</code></div><div>
+<p>
+  Anything with a <code>sample2DWithDerivative</code> method — every Atlas noise
+  sampler qualifies.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="NoiseSampler3DWithDerivative"><code style="text-decoration:none">NoiseSampler3DWithDerivative</code><a href="#NoiseSampler3DWithDerivative" class="hash-link" aria-label="Direct link to NoiseSampler3DWithDerivative" title="Direct link to NoiseSampler3DWithDerivative" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L55"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code class="purple_ieR2">interface</code> <code>NoiseSampler3DWithDerivative<!-- --> <!-- -->{</code><div class="inset_uKQm"><div><code>sample3DWithDerivative<!-- -->: </code><code class="purple_ieR2">(</code><div class="inset_uKQm"><code>self<!-- -->: </code><code class="blue_P4bS">any</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code>z<!-- -->: </code><code class="blue_P4bS">number</code></div><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="purple_ieR2">(</code><div class="inset_uKQm"><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code class="blue_P4bS">number</code><code class="purple_ieR2">,</code></div><div class="inset_uKQm"><code class="blue_P4bS">number</code></div><code class="purple_ieR2">)</code></div></div><code>}</code></div><div>
+<p>Anything with a <code>sample3DWithDerivative</code> method.</p>
+</div><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="functions">Functions<a href="#functions" class="hash-link" aria-label="Direct link to Functions" title="Direct link to Functions" translate="no">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="fbm2D"><code style="text-decoration:none">fbm2D</code><a href="#fbm2D" class="hash-link" aria-label="Direct link to fbm2D" title="Direct link to fbm2D" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L92"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Noise<!-- -->.</code><code class="green_DgR4">fbm2D</code><code>(</code><div class="inset_uKQm"><div><code>sampler<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/atlas/api/Noise#NoiseSampler2D">NoiseSampler2D</a></code><code>,</code></div><div><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>octaves<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>lacunarity<!-- -->: </code><code class="blue_P4bS">number?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
 <p>Frequency multiplier per octave. Defaults to 2.</p>
 </span></span></div><div><code>gain<!-- -->: </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
 <p>Amplitude multiplier per octave. Defaults to 0.5.</p>
@@ -51,12 +58,48 @@ local height = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)
   renormalized by total amplitude, so a sampler emitting [-1, 1] stays in
   [-1, 1] regardless of octave count.
 </p>
-</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="fbm3D"><code style="text-decoration:none">fbm3D</code><a href="#fbm3D" class="hash-link" aria-label="Direct link to fbm3D" title="Direct link to fbm3D" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L109"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Noise<!-- -->.</code><code class="green_DgR4">fbm3D</code><code>(</code><div class="inset_uKQm"><div><code>sampler<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/atlas/api/Noise#NoiseSampler3D">NoiseSampler3D</a></code><code>,</code></div><div><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>z<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>octaves<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>lacunarity<!-- -->: </code><code class="blue_P4bS">number?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="fbm2DWithDerivative"><code style="text-decoration:none">fbm2DWithDerivative</code><a href="#fbm2DWithDerivative" class="hash-link" aria-label="Direct link to fbm2DWithDerivative" title="Direct link to fbm2DWithDerivative" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L137"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Noise<!-- -->.</code><code class="green_DgR4">fbm2DWithDerivative</code><code>(</code><div class="inset_uKQm"><div><code>sampler<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/atlas/api/Noise#NoiseSampler2DWithDerivative">NoiseSampler2DWithDerivative</a></code><code>,</code></div><div><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>octaves<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>lacunarity<!-- -->: </code><code class="blue_P4bS">number?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Frequency multiplier per octave. Defaults to 2.</p>
+</span></span></div><div><code>gain<!-- -->: </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
+<p>Amplitude multiplier per octave. Defaults to 0.5.</p>
+</span></span></div></div><code>) → </code><code>(</code><div class="inset_uKQm"><div><code class="blue_P4bS">number</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Noise value.</p>
+</span></span></div><div><code class="blue_P4bS">number</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>d/dx.</p>
+</span></span></div><div><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
+<p>d/dy.</p>
+</span></span></div></div><code>)</code></div><div>
+<p>
+  Layers 2D noise octaves into fBm together with the analytical derivative
+  of the sum. Differentiation is linear, so each octave's derivative scales
+  by the same amplitude and chain-rules by the same frequency used for its
+  value, and can be accumulated in the very same loop — no extra noise
+  samples needed, unlike a finite-difference slope estimate.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="fbm3D"><code style="text-decoration:none">fbm3D</code><a href="#fbm3D" class="hash-link" aria-label="Direct link to fbm3D" title="Direct link to fbm3D" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L183"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Noise<!-- -->.</code><code class="green_DgR4">fbm3D</code><code>(</code><div class="inset_uKQm"><div><code>sampler<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/atlas/api/Noise#NoiseSampler3D">NoiseSampler3D</a></code><code>,</code></div><div><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>z<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>octaves<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>lacunarity<!-- -->: </code><code class="blue_P4bS">number?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
 <p>Frequency multiplier per octave. Defaults to 2.</p>
 </span></span></div><div><code>gain<!-- -->: </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
 <p>Amplitude multiplier per octave. Defaults to 0.5.</p>
 </span></span></div></div><code>) → </code><code class="blue_P4bS">number</code></div><div>
 <p>Layers 3D noise octaves into fractional Brownian motion.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="fbm3DWithDerivative"><code style="text-decoration:none">fbm3DWithDerivative</code><a href="#fbm3DWithDerivative" class="hash-link" aria-label="Direct link to fbm3DWithDerivative" title="Direct link to fbm3DWithDerivative" translate="no">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/shmeatley/atlas/blob/main/src/Noise/init.luau#L229"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Noise<!-- -->.</code><code class="green_DgR4">fbm3DWithDerivative</code><code>(</code><div class="inset_uKQm"><div><code>sampler<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/atlas/api/Noise#NoiseSampler3DWithDerivative">NoiseSampler3DWithDerivative</a></code><code>,</code></div><div><code>x<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>y<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>z<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>octaves<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>lacunarity<!-- -->: </code><code class="blue_P4bS">number?</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Frequency multiplier per octave. Defaults to 2.</p>
+</span></span></div><div><code>gain<!-- -->: </code><code class="blue_P4bS">number?</code><span class="inlineDescription_G7Er">-- <span>
+<p>Amplitude multiplier per octave. Defaults to 0.5.</p>
+</span></span></div></div><code>) → </code><code>(</code><div class="inset_uKQm"><div><code class="blue_P4bS">number</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Noise value.</p>
+</span></span></div><div><code class="blue_P4bS">number</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>d/dx.</p>
+</span></span></div><div><code class="blue_P4bS">number</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>d/dy.</p>
+</span></span></div><div><code class="blue_P4bS">number</code><span class="inlineDescription_G7Er">-- <span>
+<p>d/dz.</p>
+</span></span></div></div><code>)</code></div><div>
+<p>
+  Layers 3D noise octaves into fBm together with the analytical derivative
+  of the sum, accumulated in the same pass as [fbm3D] instead of resampling
+  the field via finite differences.
+</p>
 </div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
     &quot;functions&quot;: [
         {
@@ -102,7 +145,62 @@ local height = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)
             ],
             &quot;function_type&quot;: &quot;static&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 69,
+                &quot;line&quot;: 92,
+                &quot;path&quot;: &quot;src/Noise/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;fbm2DWithDerivative&quot;,
+            &quot;desc&quot;: &quot;Layers 2D noise octaves into fBm together with the analytical derivative\nof the sum. Differentiation is linear, so each octave&#x27;s derivative scales\nby the same amplitude and chain-rules by the same frequency used for its\nvalue, and can be accumulated in the very same loop — no extra noise\nsamples needed, unlike a finite-difference slope estimate.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;sampler&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;NoiseSampler2DWithDerivative&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;x&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;y&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;octaves&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;lacunarity&quot;,
+                    &quot;desc&quot;: &quot;Frequency multiplier per octave. Defaults to 2.&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;gain&quot;,
+                    &quot;desc&quot;: &quot;Amplitude multiplier per octave. Defaults to 0.5.&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;Noise value.&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;d/dx.&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;d/dy.&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 137,
                 &quot;path&quot;: &quot;src/Noise/init.luau&quot;
             }
         },
@@ -154,7 +252,71 @@ local height = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)
             ],
             &quot;function_type&quot;: &quot;static&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 109,
+                &quot;line&quot;: 183,
+                &quot;path&quot;: &quot;src/Noise/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;fbm3DWithDerivative&quot;,
+            &quot;desc&quot;: &quot;Layers 3D noise octaves into fBm together with the analytical derivative\nof the sum, accumulated in the same pass as [fbm3D] instead of resampling\nthe field via finite differences.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;sampler&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;NoiseSampler3DWithDerivative&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;x&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;y&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;z&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;octaves&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;lacunarity&quot;,
+                    &quot;desc&quot;: &quot;Frequency multiplier per octave. Defaults to 2.&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;gain&quot;,
+                    &quot;desc&quot;: &quot;Amplitude multiplier per octave. Defaults to 0.5.&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;Noise value.&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;d/dx.&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;d/dy.&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;d/dz.&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 229,
                 &quot;path&quot;: &quot;src/Noise/init.luau&quot;
             }
         }
@@ -190,14 +352,44 @@ local height = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)
                 &quot;line&quot;: 32,
                 &quot;path&quot;: &quot;src/Noise/init.luau&quot;
             }
+        },
+        {
+            &quot;name&quot;: &quot;NoiseSampler2DWithDerivative&quot;,
+            &quot;desc&quot;: &quot;Anything with a `sample2DWithDerivative` method — every Atlas noise\nsampler qualifies.&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;name&quot;: &quot;sample2DWithDerivative&quot;,
+                    &quot;lua_type&quot;: &quot;(self: any, x: number, y: number) -&gt; (number, number, number)&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                }
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 44,
+                &quot;path&quot;: &quot;src/Noise/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;NoiseSampler3DWithDerivative&quot;,
+            &quot;desc&quot;: &quot;Anything with a `sample3DWithDerivative` method.&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;name&quot;: &quot;sample3DWithDerivative&quot;,
+                    &quot;lua_type&quot;: &quot;(self: any, x: number, y: number, z: number) -&gt; (number, number, number, number)&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                }
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 55,
+                &quot;path&quot;: &quot;src/Noise/init.luau&quot;
+            }
         }
     ],
     &quot;name&quot;: &quot;Noise&quot;,
     &quot;desc&quot;: &quot;Noise generation. Houses the [Perlin], [Simplex], and [Voronoi] sampler\nclasses plus fractal helpers that layer any sampler into fractional\nBrownian motion.\n\n```lua\nlocal simplex = Atlas.Noise.Simplex.new(42)\nlocal height = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)\n```&quot;,
     &quot;source&quot;: {
-        &quot;line&quot;: 48,
+        &quot;line&quot;: 71,
         &quot;path&quot;: &quot;src/Noise/init.luau&quot;
     }
-}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#NoiseSampler2D" class="table-of-contents__link toc-highlight">NoiseSampler2D</a></li><li><a href="#NoiseSampler3D" class="table-of-contents__link toc-highlight">NoiseSampler3D</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#fbm2D" class="table-of-contents__link toc-highlight">.fbm2D</a></li><li><a href="#fbm3D" class="table-of-contents__link toc-highlight">.fbm3D</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 shmeatley. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#NoiseSampler2D" class="table-of-contents__link toc-highlight">NoiseSampler2D</a></li><li><a href="#NoiseSampler2DWithDerivative" class="table-of-contents__link toc-highlight">NoiseSampler2DWithDerivative</a></li><li><a href="#NoiseSampler3D" class="table-of-contents__link toc-highlight">NoiseSampler3D</a></li><li><a href="#NoiseSampler3DWithDerivative" class="table-of-contents__link toc-highlight">NoiseSampler3DWithDerivative</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#fbm2D" class="table-of-contents__link toc-highlight">.fbm2D</a></li><li><a href="#fbm2DWithDerivative" class="table-of-contents__link toc-highlight">.fbm2DWithDerivative</a></li><li><a href="#fbm3D" class="table-of-contents__link toc-highlight">.fbm3D</a></li><li><a href="#fbm3DWithDerivative" class="table-of-contents__link toc-highlight">.fbm3DWithDerivative</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 shmeatley. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
 </body>
 </html>

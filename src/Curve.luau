@@ -2,9 +2,6 @@
 --!native
 --!optimize 2
 
-local sort = table.sort
-local sqrt = math.sqrt
-
 --[=[
 	@class Curve
 
@@ -54,12 +51,12 @@ function Curve.new(points: { Vector2 }): Curve
 	end
 
 	local sorted = table.clone(points)
-	sort(sorted, function(a, b)
+	table.sort(sorted, function(a: Vector2, b: Vector2)
 		return a.X < b.X
 	end)
 
-	local xs = table.create(count)
-	local ys = table.create(count)
+	local xs: { number } = table.create(count) :: { number }
+	local ys: { number } = table.create(count) :: { number }
 	for i = 1, count do
 		local point = sorted[i]
 		xs[i] = point.X
@@ -69,17 +66,17 @@ function Curve.new(points: { Vector2 }): Curve
 		end
 	end
 
-	local secants = table.create(count - 1)
+	local secants: { number } = table.create(count - 1) :: { number }
 	for i = 1, count - 1 do
 		secants[i] = (ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i])
 	end
 
-	local tangents = table.create(count)
+	local tangents: { number } = table.create(count) :: { number }
 	tangents[1] = secants[1]
 	tangents[count] = secants[count - 1]
 	for i = 2, count - 1 do
-		local left = secants[i - 1]
-		local right = secants[i]
+		local left: number = secants[i - 1]
+		local right: number = secants[i]
 		tangents[i] = if left * right <= 0 then 0 else (left + right) * 0.5
 	end
 
@@ -95,7 +92,7 @@ function Curve.new(points: { Vector2 }): Curve
 			local b = tangents[i + 1] / secant
 			local lengthSq = a * a + b * b
 			if lengthSq > 9 then
-				local scale = 3 / sqrt(lengthSq)
+				local scale = 3 / math.sqrt(lengthSq)
 				tangents[i] = scale * a * secant
 				tangents[i + 1] = scale * b * secant
 			end
@@ -113,14 +110,14 @@ function Curve.new(points: { Vector2 }): Curve
 		end
 	end
 
-	return setmetatable({
+	return setmetatable(({
 		_xs = xs,
 		_ys = ys,
 		_tangents = tangents,
 		_count = count,
 		_minY = minY,
 		_maxY = maxY,
-	}, Curve)
+	} :: CurveProps), Curve)
 end
 
 --[=[
@@ -170,6 +167,66 @@ function Curve.evaluate(self: Curve, x: number): number
 end
 
 --[=[
+	Evaluates the curve at `x` along with its derivative `dy/dx` — the local
+	slope of the spline, with no extra evaluations. Useful for chain-ruling
+	slope through a curve-shaped value (e.g. terrain steepened by a response
+	curve) without resampling the underlying field. Outside the control point
+	domain the curve is constant, so the derivative is 0 there.
+
+	@method evaluateWithDerivative
+	@within Curve
+	@param x number
+	@return number -- y
+	@return number -- dy/dx
+]=]
+function Curve.evaluateWithDerivative(self: Curve, x: number): (number, number)
+	local xs = self._xs
+	local count = self._count
+
+	if x <= xs[1] or x >= xs[count] then
+		return self:evaluate(x), 0
+	end
+
+	local low = 1
+	local high = count
+	while high - low > 1 do
+		local mid = (low + high) // 2
+		if xs[mid] <= x then
+			low = mid
+		else
+			high = mid
+		end
+	end
+
+	local ys = self._ys
+	local tangents = self._tangents
+	local x0 = xs[low]
+	local width = xs[low + 1] - x0
+	local t = (x - x0) / width
+	local t2 = t * t
+	local t3 = t2 * t
+
+	local h00 = 2 * t3 - 3 * t2 + 1
+	local h10 = t3 - 2 * t2 + t
+	local h01 = 1 - h00
+	local h11 = t3 - t2
+
+	local dh00 = 6 * t2 - 6 * t
+	local dh10 = 3 * t2 - 4 * t + 1
+	local dh11 = 3 * t2 - 2 * t
+
+	local y0 = ys[low]
+	local y1 = ys[low + 1]
+	local m0 = tangents[low]
+	local m1 = tangents[low + 1]
+
+	local value = h00 * y0 + h10 * width * m0 + h01 * y1 + h11 * width * m1
+	local derivative = (dh00 * (y0 - y1) + dh10 * width * m0 + dh11 * width * m1) / width
+
+	return value, derivative
+end
+
+--[=[
 	Evaluates the curve over a whole array in one call.
 
 	@method map
@@ -183,7 +240,7 @@ function Curve.map(self: Curve, values: { number }): { number }
 	for i, value in values do
 		mapped[i] = evaluate(self, value)
 	end
-	return mapped
+	return mapped :: { number }
 end
 
 --[=[

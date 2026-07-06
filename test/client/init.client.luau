@@ -4,81 +4,75 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Atlas = require(ReplicatedStorage.Atlas)
 
 local Noise = Atlas.Noise
-local Presets = Atlas.Visualizer.Presets
 
 local simplex = Noise.Simplex.new(1337)
-local voronoi = Noise.Voronoi.new(1337)
 
-local falloff = Atlas.Curve.new({
-	Vector2.new(0, 0),
-	Vector2.new(0.35, 0.08),
-	Vector2.new(0.6, 0.75),
-	Vector2.new(1, 1),
-})
 
 -- Any table with a sample2D method works as a sampler, so fBm composes in.
-local fbmSampler = {
-	sample2D = function(_, x: number, y: number): number
-		return Noise.fbm2D(simplex, x, y, 4)
-	end,
-}
-
-local noiseWindow = Atlas.Visualizer.new({ title = "fBm simplex × falloff curve" })
-noiseWindow:render(Presets.noise(fbmSampler, { scale = 0.015, curve = falloff }))
-
-local voronoiWindow = Atlas.Visualizer.new({ title = "Voronoi F1" })
-voronoiWindow:render(Presets.noise(voronoi, { scale = 0.04, rangeMin = 0, rangeMax = 1 }))
-
-local curveWindow = Atlas.Visualizer.new({ title = "Falloff curve" })
-curveWindow:draw(Presets.curve(falloff))
-
-local points = Atlas.Sampling.poissonDisc(100, 100, 4, 2026)
-local pointsWindow = Atlas.Visualizer.new({ title = `Poisson disc ({#points} points)` })
-pointsWindow:draw(Presets.points(points, { width = 100, height = 100 }))
-
-local uniformPoints = Atlas.Sampling.uniform(100, 100, 500, 42)
-local uniformWindow = Atlas.Visualizer.new({ title = `Uniform ({#uniformPoints} points)` })
-uniformWindow:draw(Presets.points(uniformPoints, { width = 100, height = 100 }))
-
-local blueNoisePoints = Atlas.Sampling.blueNoiseGrid(100, 100, 5, 42, 1)
-local blueNoiseWindow = Atlas.Visualizer.new({ title = `Blue noise grid ({#blueNoisePoints} points)` })
-blueNoiseWindow:draw(Presets.points(blueNoisePoints, { width = 100, height = 100 }))
 
 local terrainWindow = Atlas.Visualizer.new({ title = "Terrain demo" })
 
-local function getHeight(x: number, y: number): number
-	-- large continent shape (low frequency)
-	local continent = Noise.fbm2D(simplex, x * 0.004, y * 0.004, 4)
+-- Response curves reshape the normalized fBm before it's summed into the
+-- height field. Continent carves flat ocean shelves and inland plains with a
+-- steep coastline between them, instead of a linear gradient. Hills flattens
+-- valleys and sharpens peaks so the mid-frequency detail reads as rolling
+-- hills rather than uniform noise.
+local continentCurve = Atlas.Curve.new({
+	Vector2.new(0, 0),
+	Vector2.new(0.3, 0.05),
+	Vector2.new(0.45, 0.15),
+	Vector2.new(0.55, 0.55),
+	Vector2.new(0.75, 0.68),
+	Vector2.new(1, 1),
+})
 
-	-- medium detail
-	local hills = Noise.fbm2D(simplex, x * 0.01, y * 0.01, 3) * 0.35
+local hillsCurve = Atlas.Curve.new({
+	Vector2.new(0, 0),
+	Vector2.new(0.5, 0.3),
+	Vector2.new(0.8, 0.75),
+	Vector2.new(1, 1),
+})
+
+-- fbm2DWithDerivative gives us the slope of each noise layer for free (fBm's
+-- derivative is just the same amplitude/frequency-weighted sum used for the
+-- value), so getHeight returns dx/dy alongside h instead of getSlope
+-- resampling the whole field four times via finite differences.
+local function getHeight(x: number, y: number): (number, number, number)
+	-- large continent shape (low frequency), normalized to [0, 1] and shaped
+	-- through the continent curve
+	local continentRaw, continentRawDx, continentRawDy = Noise.fbm2DWithDerivative(simplex, x * 0.004, y * 0.004, 4)
+	local continent, continentSlope = continentCurve:evaluateWithDerivative(continentRaw * 0.5 + 0.5)
+
+	-- medium detail, normalized to [0, 1] and shaped through the hills curve
+	local hillsRaw, hillsRawDx, hillsRawDy = Noise.fbm2DWithDerivative(simplex, x * 0.01, y * 0.01, 3)
+	local hillsShaped, hillsSlope = hillsCurve:evaluateWithDerivative(hillsRaw * 0.5 + 0.5)
+	local hills = hillsShaped * 0.35
 
 	-- small detail (very subtle, optional)
-	local detail = Noise.fbm2D(simplex, x * 0.02, y * 0.02, 2) * 0.15
+	local detailRaw, detailRawDx, detailRawDy = Noise.fbm2DWithDerivative(simplex, x * 0.02, y * 0.02, 2)
+	local detail = detailRaw * 0.15
 
-	-- normalize from roughly [-1, 1] → [0, 1]
-	local h = (continent + 1) * 0.5 + hills + detail
+	local h = continent + hills + detail
 
-	return h
+	-- chain rule through each layer's coordinate scale and curve, then sum --
+	-- same additive structure as fBm itself
+	local dx = continentSlope * (continentRawDx * 0.004) * 0.5
+		+ hillsSlope * (hillsRawDx * 0.01) * 0.5 * 0.35
+		+ (detailRawDx * 0.02) * 0.15
+	local dy = continentSlope * (continentRawDy * 0.004) * 0.5
+		+ hillsSlope * (hillsRawDy * 0.01) * 0.5 * 0.35
+		+ (detailRawDy * 0.02) * 0.15
+
+	return h, dx, dy
 end
 
-local function getSlope(x: number, y: number): number
-	local e = 0.002
-
-	local hL = getHeight(x - e, y)
-	local hR = getHeight(x + e, y)
-	local hD = getHeight(x, y - e)
-	local hU = getHeight(x, y + e)
-
-	local dx = hR - hL
-	local dy = hU - hD
-
+local function getSlope(dx: number, dy: number): number
 	return math.sqrt(dx * dx + dy * dy)
 end
 
 local function terrainShader(x: number, y: number): (number, number, number)
-	local h = getHeight(x, y)
-	local s = getSlope(x, y)
+	local h, dx, dy = getHeight(x, y)
+	local s = getSlope(dx, dy)
 
 	-- water (now actually meaningful range)
 	if h < 0.45 then

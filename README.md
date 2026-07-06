@@ -19,13 +19,7 @@ Luau. The math-dense modules compile with `--!native --!optimize 2`.
   through pixel buffers, with built-in presets for noise, curves, and point
   sets.
 
-> **Status: pre-release.** Not yet published to Wally; the API may still
-> change before the first release.
-
 ## Installation
-
-Atlas will be published to the public Wally registry as `shmeatley/atlas`.
-Once available, add it to your project's `wally.toml`:
 
 ```toml
 [dependencies]

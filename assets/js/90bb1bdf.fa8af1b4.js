@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[667],{4410:s=>{s.exports=JSON.parse('{"sourceUrl":"https://github.com/shmeatley/atlas/blob/main","baseUrl":"/atlas/","classOrder":[],"apiCategories":[]}')}}]);

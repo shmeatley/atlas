@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 Atlas is a procedural generation toolkit for Roblox, written in fully-typed
-Luau. The math-dense modules compile with `--!native --!optimize 2`.
+Luau.
 
 - **Noise** — seeded Perlin, simplex, and Voronoi (Worley) samplers in 2D and
   3D, with analytical derivatives for slope-aware generation, plus fBm helpers
@@ -79,6 +79,8 @@ The test place ships with benchmarks: build it with
 Play — smoke tests plus per-call timings print to the output, and demo
 
 Here is my benchmarks output from my machine:
+
+Yes, it is faster than roblox when sampling pure 2d noise(seeded). It also supports derivatives which are extremely useful.
 
 ```
 ROBLOX-PERLIN-2d                               4.036 ms      0.040 us/op  [n=100000, checksum=2.5069]

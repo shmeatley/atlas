@@ -21,8 +21,7 @@ export type DrawCallback = Visualizer.DrawCallback
 
 	A procedural generation toolkit for Roblox: seeded noise with analytical
 	derivatives ([Noise]), point scattering ([Sampling]), response curves
-	([Curve]), and on-screen debugging ([Visualizer]). The math-dense modules
-	compile with `--!native --!optimize 2`.
+	([Curve]), and on-screen debugging ([Visualizer]).
 
 	```lua
 	local Atlas = require(path.to.Atlas)

@@ -1,7 +1,7 @@
 [package]
 name = "shmeatley/atlas"
 description = "A procedural generation toolkit for Roblox."
-version = "0.1.1"
+version = "0.1.3"
 license = "MIT"
 authors = ["shmeatley"]
 realm = "shared"

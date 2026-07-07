@@ -5,10 +5,12 @@
 local Perlin = require(script.Perlin)
 local Simplex = require(script.Simplex)
 local Voronoi = require(script.Voronoi)
+local Island = require(script.Island)
 
 export type Perlin = Perlin.Perlin
 export type Simplex = Simplex.Simplex
 export type Voronoi = Voronoi.Voronoi
+export type Island = Island.Island
 
 --[=[
 	@interface NoiseSampler2D
@@ -72,6 +74,7 @@ local Noise = {
 	Perlin = Perlin,
 	Simplex = Simplex,
 	Voronoi = Voronoi,
+	Island = Island,
 }
 
 --[=[

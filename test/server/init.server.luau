@@ -30,6 +30,22 @@ do
 	local v1 = Atlas.Noise.Voronoi.new(7)
 	local v2 = Atlas.Noise.Voronoi.new(7)
 	check("Voronoi: same seed matches", v1:sample2D(1.5, 2.5) == v2:sample2D(1.5, 2.5))
+
+	local i1 = Atlas.Noise.Island.new({ seed = 7 })
+	local i2 = Atlas.Noise.Island.new({ seed = 7 })
+	check("Island: same seed matches", i1:sample2D(0.85, 0.15) == i2:sample2D(0.85, 0.15))
+
+	local i3 = Atlas.Noise.Island.new({ seed = 8 })
+	local islandSeedDiffers = false
+	for sample = 1, 80 do
+		local x = -1.2 + (sample % 16) * 0.15
+		local y = -0.6 + math.floor(sample / 16) * 0.2
+		if i1:sample2D(x, y) ~= i3:sample2D(x, y) then
+			islandSeedDiffers = true
+			break
+		end
+	end
+	check("Island: different seed differs", islandSeedDiffers)
 end
 
 -- Output ranges
@@ -37,8 +53,10 @@ do
 	local perlin = Atlas.Noise.Perlin.new(1)
 	local simplex = Atlas.Noise.Simplex.new(1)
 	local voronoi = Atlas.Noise.Voronoi.new(1)
+	local island = Atlas.Noise.Island.new({ seed = 1 })
 
 	local maxPerlin, maxSimplex2, maxSimplex3, minVoronoi = 0, 0, 0, math.huge
+	local islandBinary = true
 	for i = 1, 10000 do
 		local x = i * 0.1237
 		local y = i * 0.0719
@@ -47,13 +65,48 @@ do
 		maxSimplex2 = math.max(maxSimplex2, math.abs(simplex:sample2D(x, y)))
 		maxSimplex3 = math.max(maxSimplex3, math.abs(simplex:sample3D(x, y, z)))
 		minVoronoi = math.min(minVoronoi, voronoi:sample2D(x, y))
+
+		local islandValue = island:sample2D((i % 200 - 100) * 0.0125, (math.floor(i / 200) - 25) * 0.05)
+		if islandValue ~= 0 and islandValue ~= 1 then
+			islandBinary = false
+		end
 	end
 
 	check("Perlin: output within [-1, 1]", maxPerlin <= 1 + 1e-6, `max |value| = {maxPerlin}`)
 	check("Simplex 2D: output within [-1, 1]", maxSimplex2 <= 1.05, `max |value| = {maxSimplex2}`)
 	check("Simplex 3D: output approximately [-1, 1]", maxSimplex3 <= 1.1, `max |value| = {maxSimplex3}`)
 	check("Voronoi: distances non-negative", minVoronoi >= 0)
+	check("Island: output is binary", islandBinary)
+	check("Island: default center is land", island:sample2D(0, 0) == 1)
+	check("Island: far outside radius is water", island:sample2D(2, 2) == 0)
 	print(`  observed maxima — perlin {maxPerlin}, simplex2D {maxSimplex2}, simplex3D {maxSimplex3}`)
+end
+
+-- Island controls
+do
+	local smooth = Atlas.Noise.Island.new({ seed = 123, breakage = 0, detail = 0 })
+	local broken = Atlas.Noise.Island.new({ seed = 123, breakage = 1, detail = 0 })
+	local simple = Atlas.Noise.Island.new({ seed = 123, breakage = 0.35, detail = 0 })
+	local detailed = Atlas.Noise.Island.new({ seed = 123, breakage = 0.35, detail = 1 })
+
+	local breakageChangesMask = false
+	local detailChangesMask = false
+	for i = 1, 96 do
+		local angle = i * 0.39269908169872414
+		local radius = 0.78 + (i % 8) * 0.055
+		local x = math.cos(angle) * radius
+		local y = math.sin(angle) * radius
+
+		if smooth:sample2D(x, y) ~= broken:sample2D(x, y) then
+			breakageChangesMask = true
+		end
+		if simple:sample2D(x, y) ~= detailed:sample2D(x, y) then
+			detailChangesMask = true
+		end
+	end
+
+	check("Island: breakage changes shoreline", breakageChangesMask)
+	check("Island: detail changes shoreline", detailChangesMask)
 end
 
 -- Analytical derivatives vs central finite differences
@@ -194,7 +247,6 @@ if failed == 0 then
 	print("")
 	Benchmarks.run()
 end
-
 
 task.wait(1)
 

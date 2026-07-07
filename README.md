@@ -9,8 +9,8 @@ Atlas is a procedural generation toolkit for Roblox, written in fully-typed
 Luau.
 
 - **Noise** — seeded Perlin, simplex, and Voronoi (Worley) samplers in 2D and
-  3D, with analytical derivatives for slope-aware generation, plus fBm helpers
-  for layering octaves.
+  3D, with analytical derivatives for slope-aware generation, binary island
+  masks, plus fBm helpers for layering octaves.
 - **Sampling** — uniform random and Poisson disc (blue noise) point
   scattering, deterministic per seed.
 - **Curves** — monotone cubic response curves built from control points, for
@@ -51,6 +51,12 @@ local falloff = Atlas.Curve.new({
 local function terrainHeight(x: number, z: number): number
 	local noise = Atlas.Noise.fbm2D(simplex, x * 0.01, z * 0.01, 4)
 	return falloff:evaluate(noise * 0.5 + 0.5) * 100
+end
+
+-- Binary island mask: 1 for land, 0 for water.
+local island = Atlas.Noise.Island.new({ seed = 42, breakage = 0.5, detail = 0.75 })
+local function isIslandLand(x: number, z: number): boolean
+	return island:sample2D(x * 0.002, z * 0.002) == 1
 end
 
 -- Slope-aware placement using analytical derivatives (no extra samples).

@@ -43,6 +43,7 @@ function Benchmarks.run()
 	local perlin = Atlas.Noise.Perlin.new(42)
 	local simplex = Atlas.Noise.Simplex.new(42)
 	local voronoi = Atlas.Noise.Voronoi.new(42)
+	local island = Atlas.Noise.Island.new({ seed = 42 })
 	local fbm2D = Atlas.Noise.fbm2D
 	local curve = Atlas.Curve.new({
 		Vector2.new(0, 0),
@@ -66,6 +67,7 @@ function Benchmarks.run()
 	local voronoiSample2D = voronoi.sample2D
 	local voronoiSample3D = voronoi.sample3D
 	local voronoiCell2D = voronoi.cell2D
+	local islandSample2D = island.sample2D
 	local evaluate = curve.evaluate
 	local uniform = Atlas.Sampling.uniform
 	local poissonDisc = Atlas.Sampling.poissonDisc
@@ -75,7 +77,7 @@ function Benchmarks.run()
 	bench("ROBLOX-PERLIN-2d", 100000, function(i)
 		return math.noise(i * 0.137, i * 0.291)
 	end)
-	
+
 	bench("ROBLOX-PERLIN-2d-cached", 100000, function(i)
 		return mnoise(i * 0.137, i * 0.291)
 	end)
@@ -96,7 +98,7 @@ function Benchmarks.run()
 	bench("Perlin.sample3D", 100000, function(i)
 		return perlinSample3D(perlin, i * 0.137, i * 0.291, i * 0.173)
 	end)
-	
+
 	bench("Perlin.sample3DWithDerivative", 100000, function(i)
 		local value, dx, dy, dz = perlinDerivative3D(perlin, i * 0.137, i * 0.291, i * 0.173)
 		return value + dx + dy + dz
@@ -126,6 +128,10 @@ function Benchmarks.run()
 	bench("Voronoi.cell2D", 1000, function(i)
 		local f1, f2 = voronoiCell2D(voronoi, i * 0.137, i * 0.291)
 		return f1 + f2
+	end)
+
+	bench("Island.sample2D", 1000, function(i)
+		return islandSample2D(island, (i % 128 - 64) * 0.02, (floor(i / 128) - 4) * 0.08)
 	end)
 
 	bench("Noise.fbm2D (4 octaves, simplex)", 1000, function(i)

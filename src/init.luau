@@ -8,6 +8,7 @@ local Visualizer = require(script.Visualizer)
 export type Perlin = Noise.Perlin
 export type Simplex = Noise.Simplex
 export type Voronoi = Noise.Voronoi
+export type Island = Noise.Island
 export type NoiseSampler2D = Noise.NoiseSampler2D
 export type NoiseSampler3D = Noise.NoiseSampler3D
 export type NoiseSampler2DWithDerivative = Noise.NoiseSampler2DWithDerivative

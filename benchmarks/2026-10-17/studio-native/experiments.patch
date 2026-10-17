@@ -1,0 +1,3639 @@
+--- v0.2.0/Perlin.luau
++++ padded/Perlin.luau
+@@ -17,7 +17,7 @@
+ local NORM3 = 1.1547005383792515
+ 
+ local GRAD2 = buffer.create(128)
+-local GRAD3 = buffer.create(288)
++local GRAD3 = buffer.create(384)
+ 
+ do
+ 	local s = 0.7071067811865476
+@@ -34,9 +34,9 @@
+ 		0, s, s, 0, -s, s, 0, s, -s, 0, -s, -s,
+ 	}
+ 	for i = 0, 11 do
+-		writef64(GRAD3, i * 24, grad3[i * 3 + 1])
+-		writef64(GRAD3, i * 24 + 8, grad3[i * 3 + 2])
+-		writef64(GRAD3, i * 24 + 16, grad3[i * 3 + 3])
++		writef64(GRAD3, i * 32, grad3[i * 3 + 1])
++		writef64(GRAD3, i * 32 + 8, grad3[i * 3 + 2])
++		writef64(GRAD3, i * 32 + 16, grad3[i * 3 + 3])
+ 	end
+ end
+ 
+@@ -78,7 +78,7 @@
+ 		seed = resolved,
+ 		_perm = perm,
+ 		_grad2 = Permutation.gradients(perm, GRAD2, 16, 8),
+-		_grad3 = Permutation.gradients(perm, GRAD3, 24, 12),
++		_grad3 = Permutation.gradients(perm, GRAD3, 32, 12),
+ 	}, Perlin)
+ end
+ 
+@@ -221,27 +221,27 @@
+ 	local bb = readu8(perm, b + 1) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+-	local i000 = aa * 24
++	local i000 = aa * 32
+ 	local n000 = readf64(gradients, i000) * xf + readf64(gradients, i000 + 8) * yf + readf64(gradients, i000 + 16) * zf
+-	local i100 = ba * 24
++	local i100 = ba * 32
+ 	local n100 = readf64(gradients, i100) * xf1 + readf64(gradients, i100 + 8) * yf + readf64(gradients, i100 + 16) * zf
+-	local i010 = ab * 24
++	local i010 = ab * 32
+ 	local n010 = readf64(gradients, i010) * xf + readf64(gradients, i010 + 8) * yf1 + readf64(gradients, i010 + 16) * zf
+-	local i110 = bb * 24
++	local i110 = bb * 32
+ 	local n110 = readf64(gradients, i110) * xf1
+ 		+ readf64(gradients, i110 + 8) * yf1
+ 		+ readf64(gradients, i110 + 16) * zf
+-	local i001 = (aa + 1) * 24
++	local i001 = (aa + 1) * 32
+ 	local n001 = readf64(gradients, i001) * xf + readf64(gradients, i001 + 8) * yf + readf64(gradients, i001 + 16) * zf1
+-	local i101 = (ba + 1) * 24
++	local i101 = (ba + 1) * 32
+ 	local n101 = readf64(gradients, i101) * xf1
+ 		+ readf64(gradients, i101 + 8) * yf
+ 		+ readf64(gradients, i101 + 16) * zf1
+-	local i011 = (ab + 1) * 24
++	local i011 = (ab + 1) * 32
+ 	local n011 = readf64(gradients, i011) * xf
+ 		+ readf64(gradients, i011 + 8) * yf1
+ 		+ readf64(gradients, i011 + 16) * zf1
+-	local i111 = (bb + 1) * 24
++	local i111 = (bb + 1) * 32
+ 	local n111 = readf64(gradients, i111) * xf1
+ 		+ readf64(gradients, i111 + 8) * yf1
+ 		+ readf64(gradients, i111 + 16) * zf1
+@@ -297,14 +297,14 @@
+ 	local ba = readu8(perm, b) + Z
+ 	local bb = readu8(perm, b + 1) + Z
+ 
+-	local i000 = aa * 24
+-	local i100 = ba * 24
+-	local i010 = ab * 24
+-	local i110 = bb * 24
+-	local i001 = (aa + 1) * 24
+-	local i101 = (ba + 1) * 24
+-	local i011 = (ab + 1) * 24
+-	local i111 = (bb + 1) * 24
++	local i000 = aa * 32
++	local i100 = ba * 32
++	local i010 = ab * 32
++	local i110 = bb * 32
++	local i001 = (aa + 1) * 32
++	local i101 = (ba + 1) * 32
++	local i011 = (ab + 1) * 32
++	local i111 = (bb + 1) * 32
+ 
+ 	local g000x, g000y, g000z = readf64(gradients, i000), readf64(gradients, i000 + 8), readf64(gradients, i000 + 16)
+ 	local g100x, g100y, g100z = readf64(gradients, i100), readf64(gradients, i100 + 8), readf64(gradients, i100 + 16)
+@@ -619,35 +619,35 @@
+ 				local bb = readu8(perm, b + 1) + Z
+ 
+ 				-- Consume each corner immediately to keep native register pressure low.
+-				local i000 = aa * 24
++				local i000 = aa * 32
+ 				local n000 = readf64(gradients, i000) * xf
+ 					+ readf64(gradients, i000 + 8) * yf
+ 					+ readf64(gradients, i000 + 16) * zf
+-				local i100 = ba * 24
++				local i100 = ba * 32
+ 				local n100 = readf64(gradients, i100) * xf1
+ 					+ readf64(gradients, i100 + 8) * yf
+ 					+ readf64(gradients, i100 + 16) * zf
+-				local i010 = ab * 24
++				local i010 = ab * 32
+ 				local n010 = readf64(gradients, i010) * xf
+ 					+ readf64(gradients, i010 + 8) * yf1
+ 					+ readf64(gradients, i010 + 16) * zf
+-				local i110 = bb * 24
++				local i110 = bb * 32
+ 				local n110 = readf64(gradients, i110) * xf1
+ 					+ readf64(gradients, i110 + 8) * yf1
+ 					+ readf64(gradients, i110 + 16) * zf
+-				local i001 = (aa + 1) * 24
++				local i001 = (aa + 1) * 32
+ 				local n001 = readf64(gradients, i001) * xf
+ 					+ readf64(gradients, i001 + 8) * yf
+ 					+ readf64(gradients, i001 + 16) * zf1
+-				local i101 = (ba + 1) * 24
++				local i101 = (ba + 1) * 32
+ 				local n101 = readf64(gradients, i101) * xf1
+ 					+ readf64(gradients, i101 + 8) * yf
+ 					+ readf64(gradients, i101 + 16) * zf1
+-				local i011 = (ab + 1) * 24
++				local i011 = (ab + 1) * 32
+ 				local n011 = readf64(gradients, i011) * xf
+ 					+ readf64(gradients, i011 + 8) * yf1
+ 					+ readf64(gradients, i011 + 16) * zf1
+-				local i111 = (bb + 1) * 24
++				local i111 = (bb + 1) * 32
+ 				local n111 = readf64(gradients, i111) * xf1
+ 					+ readf64(gradients, i111 + 8) * yf1
+ 					+ readf64(gradients, i111 + 16) * zf1
+--- v0.2.0/Simplex.luau
++++ padded/Simplex.luau
+@@ -25,7 +25,7 @@
+ local SCALE3 = 100
+ 
+ local GRAD2 = buffer.create(128)
+-local GRAD3 = buffer.create(288)
++local GRAD3 = buffer.create(384)
+ 
+ do
+ 	local s = 0.7071067811865476
+@@ -42,9 +42,9 @@
+ 		0, s, s, 0, -s, s, 0, s, -s, 0, -s, -s,
+ 	}
+ 	for i = 0, 11 do
+-		writef64(GRAD3, i * 24, grad3[i * 3 + 1])
+-		writef64(GRAD3, i * 24 + 8, grad3[i * 3 + 2])
+-		writef64(GRAD3, i * 24 + 16, grad3[i * 3 + 3])
++		writef64(GRAD3, i * 32, grad3[i * 3 + 1])
++		writef64(GRAD3, i * 32 + 8, grad3[i * 3 + 2])
++		writef64(GRAD3, i * 32 + 16, grad3[i * 3 + 3])
+ 	end
+ end
+ 
+@@ -89,7 +89,7 @@
+ 		seed = resolved,
+ 		_perm = perm,
+ 		_grad2 = Permutation.gradients(perm, GRAD2, 16, 8),
+-		_grad3 = Permutation.gradients(perm, GRAD3, 24, 12),
++		_grad3 = Permutation.gradients(perm, GRAD3, 32, 12),
+ 	}, Simplex)
+ end
+ 
+@@ -284,10 +284,10 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 32
++	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 32
++	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 32
++	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 32
+ 
+ 	local n = 0
+ 
+@@ -381,10 +381,10 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 32
++	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 32
++	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 32
++	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 32
+ 
+ 	local n, dx, dy, dz = 0, 0, 0, 0
+ 
+@@ -616,10 +616,10 @@
+ 				local ii = band(i, 255)
+ 				local jj = band(j, 255)
+ 				local kk = band(k, 255)
+-				local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-				local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-				local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-				local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++				local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 32
++				local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 32
++				local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 32
++				local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 32
+ 
+ 				local n = 0
+ 
+--- v0.2.0/Simplex.luau
++++ deferred/Simplex.luau
+@@ -127,26 +127,26 @@
+ 
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+-	local gi0 = (ii + readu8(perm, jj)) * 16
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+-	local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ 
+ 	local n = 0
+ 
+ 	local t0 = 0.5 - x0 * x0 - y0 * y0
+ 	if t0 > 0 then
++		local gi0 = (ii + readu8(perm, jj)) * 16
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+ 	end
+ 
+ 	local t1 = 0.5 - x1 * x1 - y1 * y1
+ 	if t1 > 0 then
++		local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+ 	end
+ 
+ 	local t2 = 0.5 - x2 * x2 - y2 * y2
+ 	if t2 > 0 then
++		local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+ 	end
+@@ -190,14 +190,12 @@
+ 
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+-	local gi0 = (ii + readu8(perm, jj)) * 16
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+-	local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ 
+ 	local n, dx, dy = 0, 0, 0
+ 
+ 	local t0 = 0.5 - x0 * x0 - y0 * y0
+ 	if t0 > 0 then
++		local gi0 = (ii + readu8(perm, jj)) * 16
+ 		local gx, gy = readf64(gradients, gi0), readf64(gradients, gi0 + 8)
+ 		local dot = gx * x0 + gy * y0
+ 		local t03 = t0 * t0 * t0
+@@ -208,6 +206,7 @@
+ 
+ 	local t1 = 0.5 - x1 * x1 - y1 * y1
+ 	if t1 > 0 then
++		local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+ 		local gx, gy = readf64(gradients, gi1), readf64(gradients, gi1 + 8)
+ 		local dot = gx * x1 + gy * y1
+ 		local t13 = t1 * t1 * t1
+@@ -218,6 +217,7 @@
+ 
+ 	local t2 = 0.5 - x2 * x2 - y2 * y2
+ 	if t2 > 0 then
++		local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ 		local gx, gy = readf64(gradients, gi2), readf64(gradients, gi2 + 8)
+ 		local dot = gx * x2 + gy * y2
+ 		local t23 = t2 * t2 * t2
+@@ -284,33 +284,33 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ 
+ 	local n = 0
+ 
+ 	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+ 	if t0 > 0 then
++		local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
+ 	end
+ 
+ 	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+ 	if t1 > 0 then
++		local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
+ 	end
+ 
+ 	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+ 	if t2 > 0 then
++		local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
+ 	end
+ 
+ 	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+ 	if t3 > 0 then
++		local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ 		local t32 = t3 * t3
+ 		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
+ 	end
+@@ -381,15 +381,12 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ 
+ 	local n, dx, dy, dz = 0, 0, 0, 0
+ 
+ 	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+ 	if t0 > 0 then
++		local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+ 		local gx, gy, gz = readf64(gradients, gi0), readf64(gradients, gi0 + 8), readf64(gradients, gi0 + 16)
+ 		local dot = gx * x0 + gy * y0 + gz * z0
+ 		local t03 = t0 * t0 * t0
+@@ -401,6 +398,7 @@
+ 
+ 	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+ 	if t1 > 0 then
++		local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+ 		local gx, gy, gz = readf64(gradients, gi1), readf64(gradients, gi1 + 8), readf64(gradients, gi1 + 16)
+ 		local dot = gx * x1 + gy * y1 + gz * z1
+ 		local t13 = t1 * t1 * t1
+@@ -412,6 +410,7 @@
+ 
+ 	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+ 	if t2 > 0 then
++		local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+ 		local gx, gy, gz = readf64(gradients, gi2), readf64(gradients, gi2 + 8), readf64(gradients, gi2 + 16)
+ 		local dot = gx * x2 + gy * y2 + gz * z2
+ 		local t23 = t2 * t2 * t2
+@@ -423,6 +422,7 @@
+ 
+ 	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+ 	if t3 > 0 then
++		local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ 		local gx, gy, gz = readf64(gradients, gi3), readf64(gradients, gi3 + 8), readf64(gradients, gi3 + 16)
+ 		local dot = gx * x3 + gy * y3 + gz * z3
+ 		local t33 = t3 * t3 * t3
+@@ -496,26 +496,26 @@
+ 
+ 			local ii = band(i, 255)
+ 			local jj = band(j, 255)
+-			local gi0 = (ii + readu8(perm, jj)) * 16
+-			local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+-			local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ 
+ 			local n = 0
+ 
+ 			local t0 = 0.5 - x0 * x0 - y0 * y0
+ 			if t0 > 0 then
++				local gi0 = (ii + readu8(perm, jj)) * 16
+ 				local t02 = t0 * t0
+ 				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+ 			end
+ 
+ 			local t1 = 0.5 - x1 * x1 - y1 * y1
+ 			if t1 > 0 then
++				local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+ 				local t12 = t1 * t1
+ 				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+ 			end
+ 
+ 			local t2 = 0.5 - x2 * x2 - y2 * y2
+ 			if t2 > 0 then
++				local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ 				local t22 = t2 * t2
+ 				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+ 			end
+@@ -616,15 +616,12 @@
+ 				local ii = band(i, 255)
+ 				local jj = band(j, 255)
+ 				local kk = band(k, 255)
+-				local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-				local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-				local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-				local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ 
+ 				local n = 0
+ 
+ 				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+ 				if t0 > 0 then
++					local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+ 					local t02 = t0 * t0
+ 					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
+ 						gradients,
+@@ -634,6 +631,7 @@
+ 
+ 				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+ 				if t1 > 0 then
++					local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+ 					local t12 = t1 * t1
+ 					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
+ 						gradients,
+@@ -643,6 +641,7 @@
+ 
+ 				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+ 				if t2 > 0 then
++					local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+ 					local t22 = t2 * t2
+ 					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
+ 						gradients,
+@@ -652,6 +651,7 @@
+ 
+ 				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+ 				if t3 > 0 then
++					local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ 					local t32 = t3 * t3
+ 					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
+ 						gradients,
+--- v0.2.0/Perlin.luau
++++ lerp/Perlin.luau
+@@ -220,23 +220,29 @@
+ 	local ba = readu8(perm, b) + Z
+ 	local bb = readu8(perm, b + 1) + Z
+ 
++	local u = xf * xf * xf * (xf * (xf * 6 - 15) + 10)
++	local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
++	local w = zf * zf * zf * (zf * (zf * 6 - 15) + 10)
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+ 	local n000 = readf64(gradients, i000) * xf + readf64(gradients, i000 + 8) * yf + readf64(gradients, i000 + 16) * zf
+ 	local i100 = ba * 24
+ 	local n100 = readf64(gradients, i100) * xf1 + readf64(gradients, i100 + 8) * yf + readf64(gradients, i100 + 16) * zf
++	local nx00 = n000 + u * (n100 - n000)
+ 	local i010 = ab * 24
+ 	local n010 = readf64(gradients, i010) * xf + readf64(gradients, i010 + 8) * yf1 + readf64(gradients, i010 + 16) * zf
+ 	local i110 = bb * 24
+ 	local n110 = readf64(gradients, i110) * xf1
+ 		+ readf64(gradients, i110 + 8) * yf1
+ 		+ readf64(gradients, i110 + 16) * zf
++	local nx10 = n010 + u * (n110 - n010)
+ 	local i001 = (aa + 1) * 24
+ 	local n001 = readf64(gradients, i001) * xf + readf64(gradients, i001 + 8) * yf + readf64(gradients, i001 + 16) * zf1
+ 	local i101 = (ba + 1) * 24
+ 	local n101 = readf64(gradients, i101) * xf1
+ 		+ readf64(gradients, i101 + 8) * yf
+ 		+ readf64(gradients, i101 + 16) * zf1
++	local nx01 = n001 + u * (n101 - n001)
+ 	local i011 = (ab + 1) * 24
+ 	local n011 = readf64(gradients, i011) * xf
+ 		+ readf64(gradients, i011 + 8) * yf1
+@@ -245,15 +251,9 @@
+ 	local n111 = readf64(gradients, i111) * xf1
+ 		+ readf64(gradients, i111 + 8) * yf1
+ 		+ readf64(gradients, i111 + 16) * zf1
+-
+-	local u = xf * xf * xf * (xf * (xf * 6 - 15) + 10)
+-	local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
+-	local w = zf * zf * zf * (zf * (zf * 6 - 15) + 10)
+-
+-	local nx00 = n000 + u * (n100 - n000)
+-	local nx10 = n010 + u * (n110 - n010)
+-	local nx01 = n001 + u * (n101 - n001)
+ 	local nx11 = n011 + u * (n111 - n011)
++
++
+ 	local nxy0 = nx00 + v * (nx10 - nx00)
+ 	local nxy1 = nx01 + v * (nx11 - nx01)
+ 	return (nxy0 + w * (nxy1 - nxy0)) * NORM3
+--- v0.2.0/Perlin.luau
++++ pairedhash/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -104,8 +106,9 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+@@ -213,12 +216,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+@@ -290,12 +296,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	local i000 = aa * 24
+ 	local i100 = ba * 24
+--- v0.2.0/Simplex.luau
++++ sharedhash/Simplex.luau
+@@ -284,10 +284,13 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local pk0 = readu8(perm, kk)
++	local pk1 = readu8(perm, kk + 1)
++	local delta = pk1 - pk0
++	local gi0 = (ii + readu8(perm, jj + pk0)) * 24
++	local gi1 = (ii + i1 + readu8(perm, jj + j1 + (pk0 + k1 * delta))) * 24
++	local gi2 = (ii + i2 + readu8(perm, jj + j2 + (pk0 + k2 * delta))) * 24
++	local gi3 = (ii + 1 + readu8(perm, jj + 1 + pk1)) * 24
+ 
+ 	local n = 0
+ 
+@@ -381,10 +384,13 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local pk0 = readu8(perm, kk)
++	local pk1 = readu8(perm, kk + 1)
++	local delta = pk1 - pk0
++	local gi0 = (ii + readu8(perm, jj + pk0)) * 24
++	local gi1 = (ii + i1 + readu8(perm, jj + j1 + (pk0 + k1 * delta))) * 24
++	local gi2 = (ii + i2 + readu8(perm, jj + j2 + (pk0 + k2 * delta))) * 24
++	local gi3 = (ii + 1 + readu8(perm, jj + 1 + pk1)) * 24
+ 
+ 	local n, dx, dy, dz = 0, 0, 0, 0
+ 
+@@ -616,10 +622,13 @@
+ 				local ii = band(i, 255)
+ 				local jj = band(j, 255)
+ 				local kk = band(k, 255)
+-				local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-				local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-				local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-				local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local pk0 = readu8(perm, kk)
++	local pk1 = readu8(perm, kk + 1)
++	local delta = pk1 - pk0
++				local gi0 = (ii + readu8(perm, jj + pk0)) * 24
++				local gi1 = (ii + i1 + readu8(perm, jj + j1 + (pk0 + k1 * delta))) * 24
++				local gi2 = (ii + i2 + readu8(perm, jj + j2 + (pk0 + k2 * delta))) * 24
++				local gi3 = (ii + 1 + readu8(perm, jj + 1 + pk1)) * 24
+ 
+ 				local n = 0
+ 
+--- v0.2.0/Simplex.luau
++++ rank/Simplex.luau
+@@ -252,24 +252,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = x0 >= y0
++	local xz = x0 >= z0
++	local yz = y0 >= z0
++	local i1 = if xy and xz then 1 else 0
++	local j1 = if not xy and yz then 1 else 0
++	local k1 = 1 - i1 - j1
++	local i2 = if xy or xz then 1 else 0
++	local j2 = if not xy or yz then 1 else 0
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -349,24 +340,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = x0 >= y0
++	local xz = x0 >= z0
++	local yz = y0 >= z0
++	local i1 = if xy and xz then 1 else 0
++	local j1 = if not xy and yz then 1 else 0
++	local k1 = 1 - i1 - j1
++	local i2 = if xy or xz then 1 else 0
++	local j2 = if not xy or yz then 1 else 0
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -584,24 +566,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = x0 >= y0
++				local xz = x0 >= z0
++				local yz = y0 >= z0
++				local i1 = if xy and xz then 1 else 0
++				local j1 = if not xy and yz then 1 else 0
++				local k1 = 1 - i1 - j1
++				local i2 = if xy or xz then 1 else 0
++				local j2 = if not xy or yz then 1 else 0
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+--- v0.2.0/Perlin.luau
++++ numericrank/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -104,8 +106,9 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+@@ -213,12 +216,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+@@ -290,12 +296,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	local i000 = aa * 24
+ 	local i100 = ba * 24
+--- v0.2.0/Simplex.luau
++++ numericrank/Simplex.luau
+@@ -113,12 +113,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -176,12 +172,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -252,24 +244,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -349,24 +332,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -482,12 +456,8 @@
+ 			local x0 = x - (i - unskew)
+ 			local y0 = y - (j - unskew)
+ 
+-			local i1, j1
+-			if x0 > y0 then
+-				i1, j1 = 1, 0
+-			else
+-				i1, j1 = 0, 1
+-			end
++			local i1 = if x0 > y0 then 1 else 0
++			local j1 = 1 - i1
+ 
+ 			local x1 = x0 - i1 + G2
+ 			local y1 = y0 - j1 + G2
+@@ -584,24 +554,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = if x0 >= y0 then 1 else 0
++				local xz = if x0 >= z0 then 1 else 0
++				local yz = if y0 >= z0 then 1 else 0
++				local i1 = xy * xz
++				local j1 = (1 - xy) * yz
++				local k1 = 1 - i1 - j1
++				local i2 = xy + xz - i1
++				local j2 = 1 - xy + yz - j1
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+--- v0.2.0/Perlin.luau
++++ clamped/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -104,8 +106,9 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+@@ -213,12 +216,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+@@ -290,12 +296,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	local i000 = aa * 24
+ 	local i100 = ba * 24
+--- v0.2.0/Simplex.luau
++++ clamped/Simplex.luau
+@@ -113,12 +113,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -133,23 +129,17 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-	end
+ 
+ 	return n * SCALE2
+ end
+@@ -176,12 +166,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -252,24 +238,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -291,29 +268,21 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
+-	end
+-
+-	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-	if t3 > 0 then
++
++	local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 		local t32 = t3 * t3
+ 		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
+-	end
+ 
+ 	return n * SCALE3
+ end
+@@ -349,24 +318,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -482,12 +442,8 @@
+ 			local x0 = x - (i - unskew)
+ 			local y0 = y - (j - unskew)
+ 
+-			local i1, j1
+-			if x0 > y0 then
+-				i1, j1 = 1, 0
+-			else
+-				i1, j1 = 0, 1
+-			end
++			local i1 = if x0 > y0 then 1 else 0
++			local j1 = 1 - i1
+ 
+ 			local x1 = x0 - i1 + G2
+ 			local y1 = y0 - j1 + G2
+@@ -502,23 +458,17 @@
+ 
+ 			local n = 0
+ 
+-			local t0 = 0.5 - x0 * x0 - y0 * y0
+-			if t0 > 0 then
++			local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 				local t02 = t0 * t0
+ 				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-			end
+-
+-			local t1 = 0.5 - x1 * x1 - y1 * y1
+-			if t1 > 0 then
++
++			local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 				local t12 = t1 * t1
+ 				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-			end
+-
+-			local t2 = 0.5 - x2 * x2 - y2 * y2
+-			if t2 > 0 then
++
++			local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 				local t22 = t2 * t2
+ 				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-			end
+ 
+ 			values[index] = n * SCALE2
+ 		end
+@@ -584,24 +534,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = if x0 >= y0 then 1 else 0
++				local xz = if x0 >= z0 then 1 else 0
++				local yz = if y0 >= z0 then 1 else 0
++				local i1 = xy * xz
++				local j1 = (1 - xy) * yz
++				local k1 = 1 - i1 - j1
++				local i2 = xy + xz - i1
++				local j2 = 1 - xy + yz - j1
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+@@ -623,41 +564,33 @@
+ 
+ 				local n = 0
+ 
+-				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-				if t0 > 0 then
++				local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 					local t02 = t0 * t0
+ 					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
+ 						gradients,
+ 						gi0 + 16
+ 					) * z0)
+-				end
+-
+-				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-				if t1 > 0 then
++
++				local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 					local t12 = t1 * t1
+ 					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
+ 						gradients,
+ 						gi1 + 16
+ 					) * z1)
+-				end
+-
+-				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-				if t2 > 0 then
++
++				local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 					local t22 = t2 * t2
+ 					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
+ 						gradients,
+ 						gi2 + 16
+ 					) * z2)
+-				end
+-
+-				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-				if t3 > 0 then
++
++				local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 					local t32 = t3 * t3
+ 					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
+ 						gradients,
+ 						gi3 + 16
+ 					) * z3)
+-				end
+ 
+ 				values[index] = n * SCALE3
+ 			end
+--- v0.2.0/Perlin.luau
++++ combined/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -104,8 +106,9 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+@@ -213,12 +216,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+@@ -290,12 +296,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	local i000 = aa * 24
+ 	local i100 = ba * 24
+@@ -613,10 +622,12 @@
+ 
+ 				local a = readu8(columns, offset + 16) + Y
+ 				local b = readu8(columns, offset + 17) + Y
+-				local aa = readu8(perm, a) + Z
+-				local ab = readu8(perm, a + 1) + Z
+-				local ba = readu8(perm, b) + Z
+-				local bb = readu8(perm, b + 1) + Z
++				local apair = readu16(perm, a)
++				local bpair = readu16(perm, b)
++				local aa = band(apair, 255) + Z
++				local ab = rshift(apair, 8) + Z
++				local ba = band(bpair, 255) + Z
++				local bb = rshift(bpair, 8) + Z
+ 
+ 				-- Consume each corner immediately to keep native register pressure low.
+ 				local i000 = aa * 24
+--- v0.2.0/Simplex.luau
++++ combined/Simplex.luau
+@@ -113,12 +113,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -176,12 +172,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -252,24 +244,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -349,24 +332,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -482,12 +456,8 @@
+ 			local x0 = x - (i - unskew)
+ 			local y0 = y - (j - unskew)
+ 
+-			local i1, j1
+-			if x0 > y0 then
+-				i1, j1 = 1, 0
+-			else
+-				i1, j1 = 0, 1
+-			end
++			local i1 = if x0 > y0 then 1 else 0
++			local j1 = 1 - i1
+ 
+ 			local x1 = x0 - i1 + G2
+ 			local y1 = y0 - j1 + G2
+@@ -584,24 +554,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = if x0 >= y0 then 1 else 0
++				local xz = if x0 >= z0 then 1 else 0
++				local yz = if y0 >= z0 then 1 else 0
++				local i1 = xy * xz
++				local j1 = (1 - xy) * yz
++				local k1 = 1 - i1 - j1
++				local i2 = xy + xz - i1
++				local j2 = 1 - xy + yz - j1
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+--- v0.2.0/Permutation.luau
++++ unified/Permutation.luau
+@@ -43,11 +43,12 @@
+ -- Fold the final permutation lookup and gradient selection into seeded data.
+ -- Copy doubles verbatim so sampling retains exactly the original gradients.
+ function Permutation.gradients(perm: buffer, source: buffer, stride: number, count: number): buffer
+-	local expanded = buffer.create(512 * stride)
++	local expanded = buffer.create(512 + 512 * stride)
+ 	for i = 0, 255 do
+-		buffer.copy(expanded, i * stride, source, (readu8(perm, i) % count) * stride, stride)
++		buffer.copy(expanded, 512 + i * stride, source, (readu8(perm, i) % count) * stride, stride)
+ 	end
+-	buffer.copy(expanded, 256 * stride, expanded, 0, 256 * stride)
++	buffer.copy(expanded, 512 + 256 * stride, expanded, 512, 256 * stride)
++	buffer.copy(expanded, 0, perm, 0, 512)
+ 	return expanded
+ end
+ 
+--- v0.2.0/Perlin.luau
++++ unified/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -92,8 +94,8 @@
+ 	@return number -- Noise value in [-1, 1].
+ ]=]
+ function Perlin.sample2D(self: Perlin, x: number, y: number): number
+-	local perm = self._perm
+ 	local gradients = self._grad2
++	local perm = gradients
+ 
+ 	local fx = floor(x)
+ 	local fy = floor(y)
+@@ -104,18 +106,19 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+ 	local i10 = b * 16
+ 	local i11 = (b + 1) * 16
+ 
+-	local n00 = readf64(gradients, i00) * xf + readf64(gradients, i00 + 8) * yf
+-	local n10 = readf64(gradients, i10) * xf1 + readf64(gradients, i10 + 8) * yf
+-	local n01 = readf64(gradients, i01) * xf + readf64(gradients, i01 + 8) * yf1
+-	local n11 = readf64(gradients, i11) * xf1 + readf64(gradients, i11 + 8) * yf1
++	local n00 = readf64(gradients, 512 + i00) * xf + readf64(gradients, 512 + i00 + 8) * yf
++	local n10 = readf64(gradients, 512 + i10) * xf1 + readf64(gradients, 512 + i10 + 8) * yf
++	local n01 = readf64(gradients, 512 + i01) * xf + readf64(gradients, 512 + i01 + 8) * yf1
++	local n11 = readf64(gradients, 512 + i11) * xf1 + readf64(gradients, 512 + i11 + 8) * yf1
+ 
+ 	local u = xf * xf * xf * (xf * (xf * 6 - 15) + 10)
+ 	local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
+@@ -138,8 +141,8 @@
+ 	@return number -- d/dy.
+ ]=]
+ function Perlin.sample2DWithDerivative(self: Perlin, x: number, y: number): (number, number, number)
+-	local perm = self._perm
+ 	local gradients = self._grad2
++	local perm = gradients
+ 
+ 	local fx = floor(x)
+ 	local fy = floor(y)
+@@ -156,10 +159,10 @@
+ 	local i10 = b * 16
+ 	local i11 = (b + 1) * 16
+ 
+-	local g00x, g00y = readf64(gradients, i00), readf64(gradients, i00 + 8)
+-	local g10x, g10y = readf64(gradients, i10), readf64(gradients, i10 + 8)
+-	local g01x, g01y = readf64(gradients, i01), readf64(gradients, i01 + 8)
+-	local g11x, g11y = readf64(gradients, i11), readf64(gradients, i11 + 8)
++	local g00x, g00y = readf64(gradients, 512 + i00), readf64(gradients, 512 + i00 + 8)
++	local g10x, g10y = readf64(gradients, 512 + i10), readf64(gradients, 512 + i10 + 8)
++	local g01x, g01y = readf64(gradients, 512 + i01), readf64(gradients, 512 + i01 + 8)
++	local g11x, g11y = readf64(gradients, 512 + i11), readf64(gradients, 512 + i11 + 8)
+ 
+ 	local n00 = g00x * xf + g00y * yf
+ 	local n10 = g10x * xf1 + g10y * yf
+@@ -196,8 +199,8 @@
+ 	@return number -- Noise value in [-1, 1].
+ ]=]
+ function Perlin.sample3D(self: Perlin, x: number, y: number, z: number): number
+-	local perm = self._perm
+ 	local gradients = self._grad3
++	local perm = gradients
+ 
+ 	local fx = floor(x)
+ 	local fy = floor(y)
+@@ -213,38 +216,41 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+-	local n000 = readf64(gradients, i000) * xf + readf64(gradients, i000 + 8) * yf + readf64(gradients, i000 + 16) * zf
++	local n000 = readf64(gradients, 512 + i000) * xf + readf64(gradients, 512 + i000 + 8) * yf + readf64(gradients, 512 + i000 + 16) * zf
+ 	local i100 = ba * 24
+-	local n100 = readf64(gradients, i100) * xf1 + readf64(gradients, i100 + 8) * yf + readf64(gradients, i100 + 16) * zf
++	local n100 = readf64(gradients, 512 + i100) * xf1 + readf64(gradients, 512 + i100 + 8) * yf + readf64(gradients, 512 + i100 + 16) * zf
+ 	local i010 = ab * 24
+-	local n010 = readf64(gradients, i010) * xf + readf64(gradients, i010 + 8) * yf1 + readf64(gradients, i010 + 16) * zf
++	local n010 = readf64(gradients, 512 + i010) * xf + readf64(gradients, 512 + i010 + 8) * yf1 + readf64(gradients, 512 + i010 + 16) * zf
+ 	local i110 = bb * 24
+-	local n110 = readf64(gradients, i110) * xf1
+-		+ readf64(gradients, i110 + 8) * yf1
+-		+ readf64(gradients, i110 + 16) * zf
++	local n110 = readf64(gradients, 512 + i110) * xf1
++		+ readf64(gradients, 512 + i110 + 8) * yf1
++		+ readf64(gradients, 512 + i110 + 16) * zf
+ 	local i001 = (aa + 1) * 24
+-	local n001 = readf64(gradients, i001) * xf + readf64(gradients, i001 + 8) * yf + readf64(gradients, i001 + 16) * zf1
++	local n001 = readf64(gradients, 512 + i001) * xf + readf64(gradients, 512 + i001 + 8) * yf + readf64(gradients, 512 + i001 + 16) * zf1
+ 	local i101 = (ba + 1) * 24
+-	local n101 = readf64(gradients, i101) * xf1
+-		+ readf64(gradients, i101 + 8) * yf
+-		+ readf64(gradients, i101 + 16) * zf1
++	local n101 = readf64(gradients, 512 + i101) * xf1
++		+ readf64(gradients, 512 + i101 + 8) * yf
++		+ readf64(gradients, 512 + i101 + 16) * zf1
+ 	local i011 = (ab + 1) * 24
+-	local n011 = readf64(gradients, i011) * xf
+-		+ readf64(gradients, i011 + 8) * yf1
+-		+ readf64(gradients, i011 + 16) * zf1
++	local n011 = readf64(gradients, 512 + i011) * xf
++		+ readf64(gradients, 512 + i011 + 8) * yf1
++		+ readf64(gradients, 512 + i011 + 16) * zf1
+ 	local i111 = (bb + 1) * 24
+-	local n111 = readf64(gradients, i111) * xf1
+-		+ readf64(gradients, i111 + 8) * yf1
+-		+ readf64(gradients, i111 + 16) * zf1
++	local n111 = readf64(gradients, 512 + i111) * xf1
++		+ readf64(gradients, 512 + i111 + 8) * yf1
++		+ readf64(gradients, 512 + i111 + 16) * zf1
+ 
+ 	local u = xf * xf * xf * (xf * (xf * 6 - 15) + 10)
+ 	local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
+@@ -273,8 +279,8 @@
+ 	@return number -- d/dz.
+ ]=]
+ function Perlin.sample3DWithDerivative(self: Perlin, x: number, y: number, z: number): (number, number, number, number)
+-	local perm = self._perm
+ 	local gradients = self._grad3
++	local perm = gradients
+ 
+ 	local fx = floor(x)
+ 	local fy = floor(y)
+@@ -290,12 +296,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	local i000 = aa * 24
+ 	local i100 = ba * 24
+@@ -306,14 +315,14 @@
+ 	local i011 = (ab + 1) * 24
+ 	local i111 = (bb + 1) * 24
+ 
+-	local g000x, g000y, g000z = readf64(gradients, i000), readf64(gradients, i000 + 8), readf64(gradients, i000 + 16)
+-	local g100x, g100y, g100z = readf64(gradients, i100), readf64(gradients, i100 + 8), readf64(gradients, i100 + 16)
+-	local g010x, g010y, g010z = readf64(gradients, i010), readf64(gradients, i010 + 8), readf64(gradients, i010 + 16)
+-	local g110x, g110y, g110z = readf64(gradients, i110), readf64(gradients, i110 + 8), readf64(gradients, i110 + 16)
+-	local g001x, g001y, g001z = readf64(gradients, i001), readf64(gradients, i001 + 8), readf64(gradients, i001 + 16)
+-	local g101x, g101y, g101z = readf64(gradients, i101), readf64(gradients, i101 + 8), readf64(gradients, i101 + 16)
+-	local g011x, g011y, g011z = readf64(gradients, i011), readf64(gradients, i011 + 8), readf64(gradients, i011 + 16)
+-	local g111x, g111y, g111z = readf64(gradients, i111), readf64(gradients, i111 + 8), readf64(gradients, i111 + 16)
++	local g000x, g000y, g000z = readf64(gradients, 512 + i000), readf64(gradients, 512 + i000 + 8), readf64(gradients, 512 + i000 + 16)
++	local g100x, g100y, g100z = readf64(gradients, 512 + i100), readf64(gradients, 512 + i100 + 8), readf64(gradients, 512 + i100 + 16)
++	local g010x, g010y, g010z = readf64(gradients, 512 + i010), readf64(gradients, 512 + i010 + 8), readf64(gradients, 512 + i010 + 16)
++	local g110x, g110y, g110z = readf64(gradients, 512 + i110), readf64(gradients, 512 + i110 + 8), readf64(gradients, 512 + i110 + 16)
++	local g001x, g001y, g001z = readf64(gradients, 512 + i001), readf64(gradients, 512 + i001 + 8), readf64(gradients, 512 + i001 + 16)
++	local g101x, g101y, g101z = readf64(gradients, 512 + i101), readf64(gradients, 512 + i101 + 8), readf64(gradients, 512 + i101 + 16)
++	local g011x, g011y, g011z = readf64(gradients, 512 + i011), readf64(gradients, 512 + i011 + 8), readf64(gradients, 512 + i011 + 16)
++	local g111x, g111y, g111z = readf64(gradients, 512 + i111), readf64(gradients, 512 + i111 + 8), readf64(gradients, 512 + i111 + 16)
+ 
+ 	local n000 = g000x * xf + g000y * yf + g000z * zf
+ 	local n100 = g100x * xf1 + g100y * yf + g100z * zf
+@@ -392,8 +401,8 @@
+ 	if width == 0 or height == 0 then
+ 		return values
+ 	end
+-	local perm = self._perm
+ 	local gradients = self._grad2
++	local perm = gradients
+ 	local columns = buffer.create(width * 24)
+ 	for column = 0, width - 1 do
+ 		local x = startX + column * stepX
+@@ -425,10 +434,10 @@
+ 			local i01 = (a + 1) * 16
+ 			local i10 = b * 16
+ 			local i11 = (b + 1) * 16
+-			local n00 = readf64(gradients, i00) * xf + readf64(gradients, i00 + 8) * yf
+-			local n10 = readf64(gradients, i10) * xf1 + readf64(gradients, i10 + 8) * yf
+-			local n01 = readf64(gradients, i01) * xf + readf64(gradients, i01 + 8) * yf1
+-			local n11 = readf64(gradients, i11) * xf1 + readf64(gradients, i11 + 8) * yf1
++			local n00 = readf64(gradients, 512 + i00) * xf + readf64(gradients, 512 + i00 + 8) * yf
++			local n10 = readf64(gradients, 512 + i10) * xf1 + readf64(gradients, 512 + i10 + 8) * yf
++			local n01 = readf64(gradients, 512 + i01) * xf + readf64(gradients, 512 + i01 + 8) * yf1
++			local n11 = readf64(gradients, 512 + i11) * xf1 + readf64(gradients, 512 + i11 + 8) * yf1
+ 			local nx0 = n00 + u * (n10 - n00)
+ 			local nx1 = n01 + u * (n11 - n01)
+ 			index += 1
+@@ -476,8 +485,8 @@
+ 	if width == 0 or height == 0 then
+ 		return values
+ 	end
+-	local perm = self._perm
+ 	local gradients = self._grad2
++	local perm = gradients
+ 	local columns = buffer.create(width * 24)
+ 	for column = 0, width - 1 do
+ 		local x = startX + column * stepX
+@@ -514,14 +523,14 @@
+ 				local i01 = (a + 1) * 16
+ 				local i10 = b * 16
+ 				local i11 = (b + 1) * 16
+-				g00x = readf64(gradients, i00)
+-				g10x = readf64(gradients, i10)
+-				g01x = readf64(gradients, i01)
+-				g11x = readf64(gradients, i11)
+-				ny00 = readf64(gradients, i00 + 8) * yf
+-				ny10 = readf64(gradients, i10 + 8) * yf
+-				ny01 = readf64(gradients, i01 + 8) * yf1
+-				ny11 = readf64(gradients, i11 + 8) * yf1
++				g00x = readf64(gradients, 512 + i00)
++				g10x = readf64(gradients, 512 + i10)
++				g01x = readf64(gradients, 512 + i01)
++				g11x = readf64(gradients, 512 + i11)
++				ny00 = readf64(gradients, 512 + i00 + 8) * yf
++				ny10 = readf64(gradients, 512 + i10 + 8) * yf
++				ny01 = readf64(gradients, 512 + i01 + 8) * yf1
++				ny11 = readf64(gradients, 512 + i11 + 8) * yf1
+ 			end
+ 			local n00 = g00x * xf + ny00
+ 			local n10 = g10x * xf1 + ny10
+@@ -575,8 +584,8 @@
+ 	if width * height * depth == 0 then
+ 		return values
+ 	end
+-	local perm = self._perm
+ 	local gradients = self._grad3
++	local perm = gradients
+ 	local columns = buffer.create(width * 24)
+ 	for column = 0, width - 1 do
+ 		local x = startX + column * stepX
+@@ -613,44 +622,46 @@
+ 
+ 				local a = readu8(columns, offset + 16) + Y
+ 				local b = readu8(columns, offset + 17) + Y
+-				local aa = readu8(perm, a) + Z
+-				local ab = readu8(perm, a + 1) + Z
+-				local ba = readu8(perm, b) + Z
+-				local bb = readu8(perm, b + 1) + Z
++				local apair = readu16(perm, a)
++				local bpair = readu16(perm, b)
++				local aa = band(apair, 255) + Z
++				local ab = rshift(apair, 8) + Z
++				local ba = band(bpair, 255) + Z
++				local bb = rshift(bpair, 8) + Z
+ 
+ 				-- Consume each corner immediately to keep native register pressure low.
+ 				local i000 = aa * 24
+-				local n000 = readf64(gradients, i000) * xf
+-					+ readf64(gradients, i000 + 8) * yf
+-					+ readf64(gradients, i000 + 16) * zf
++				local n000 = readf64(gradients, 512 + i000) * xf
++					+ readf64(gradients, 512 + i000 + 8) * yf
++					+ readf64(gradients, 512 + i000 + 16) * zf
+ 				local i100 = ba * 24
+-				local n100 = readf64(gradients, i100) * xf1
+-					+ readf64(gradients, i100 + 8) * yf
+-					+ readf64(gradients, i100 + 16) * zf
++				local n100 = readf64(gradients, 512 + i100) * xf1
++					+ readf64(gradients, 512 + i100 + 8) * yf
++					+ readf64(gradients, 512 + i100 + 16) * zf
+ 				local i010 = ab * 24
+-				local n010 = readf64(gradients, i010) * xf
+-					+ readf64(gradients, i010 + 8) * yf1
+-					+ readf64(gradients, i010 + 16) * zf
++				local n010 = readf64(gradients, 512 + i010) * xf
++					+ readf64(gradients, 512 + i010 + 8) * yf1
++					+ readf64(gradients, 512 + i010 + 16) * zf
+ 				local i110 = bb * 24
+-				local n110 = readf64(gradients, i110) * xf1
+-					+ readf64(gradients, i110 + 8) * yf1
+-					+ readf64(gradients, i110 + 16) * zf
++				local n110 = readf64(gradients, 512 + i110) * xf1
++					+ readf64(gradients, 512 + i110 + 8) * yf1
++					+ readf64(gradients, 512 + i110 + 16) * zf
+ 				local i001 = (aa + 1) * 24
+-				local n001 = readf64(gradients, i001) * xf
+-					+ readf64(gradients, i001 + 8) * yf
+-					+ readf64(gradients, i001 + 16) * zf1
++				local n001 = readf64(gradients, 512 + i001) * xf
++					+ readf64(gradients, 512 + i001 + 8) * yf
++					+ readf64(gradients, 512 + i001 + 16) * zf1
+ 				local i101 = (ba + 1) * 24
+-				local n101 = readf64(gradients, i101) * xf1
+-					+ readf64(gradients, i101 + 8) * yf
+-					+ readf64(gradients, i101 + 16) * zf1
++				local n101 = readf64(gradients, 512 + i101) * xf1
++					+ readf64(gradients, 512 + i101 + 8) * yf
++					+ readf64(gradients, 512 + i101 + 16) * zf1
+ 				local i011 = (ab + 1) * 24
+-				local n011 = readf64(gradients, i011) * xf
+-					+ readf64(gradients, i011 + 8) * yf1
+-					+ readf64(gradients, i011 + 16) * zf1
++				local n011 = readf64(gradients, 512 + i011) * xf
++					+ readf64(gradients, 512 + i011 + 8) * yf1
++					+ readf64(gradients, 512 + i011 + 16) * zf1
+ 				local i111 = (bb + 1) * 24
+-				local n111 = readf64(gradients, i111) * xf1
+-					+ readf64(gradients, i111 + 8) * yf1
+-					+ readf64(gradients, i111 + 16) * zf1
++				local n111 = readf64(gradients, 512 + i111) * xf1
++					+ readf64(gradients, 512 + i111 + 8) * yf1
++					+ readf64(gradients, 512 + i111 + 16) * zf1
+ 
+ 				local nx00 = n000 + u * (n100 - n000)
+ 				local nx10 = n010 + u * (n110 - n010)
+--- v0.2.0/Simplex.luau
++++ unified/Simplex.luau
+@@ -103,8 +103,8 @@
+ 	@return number -- Noise value in approximately [-1, 1].
+ ]=]
+ function Simplex.sample2D(self: Simplex, x: number, y: number): number
+-	local perm = self._perm
+ 	local gradients = self._grad2
++	local perm = gradients
+ 
+ 	local skew = (x + y) * F2
+ 	local i = floor(x + skew)
+@@ -113,12 +113,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -133,25 +129,19 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 		local t02 = t0 * t0
+-		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1
+-	if t1 > 0 then
++		n += t02 * t02 * (readf64(gradients, 512 + gi0) * x0 + readf64(gradients, 512 + gi0 + 8) * y0)
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 		local t12 = t1 * t1
+-		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2
+-	if t2 > 0 then
++		n += t12 * t12 * (readf64(gradients, 512 + gi1) * x1 + readf64(gradients, 512 + gi1 + 8) * y1)
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 		local t22 = t2 * t2
+-		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-	end
+-
+-	return n * SCALE2
++		n += t22 * t22 * (readf64(gradients, 512 + gi2) * x2 + readf64(gradients, 512 + gi2 + 8) * y2)
++
++	return if n == n then n * SCALE2 else 0
+ end
+ 
+ --[=[
+@@ -166,8 +156,8 @@
+ 	@return number -- d/dy.
+ ]=]
+ function Simplex.sample2DWithDerivative(self: Simplex, x: number, y: number): (number, number, number)
+-	local perm = self._perm
+ 	local gradients = self._grad2
++	local perm = gradients
+ 
+ 	local skew = (x + y) * F2
+ 	local i = floor(x + skew)
+@@ -176,12 +166,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -198,7 +184,7 @@
+ 
+ 	local t0 = 0.5 - x0 * x0 - y0 * y0
+ 	if t0 > 0 then
+-		local gx, gy = readf64(gradients, gi0), readf64(gradients, gi0 + 8)
++		local gx, gy = readf64(gradients, 512 + gi0), readf64(gradients, 512 + gi0 + 8)
+ 		local dot = gx * x0 + gy * y0
+ 		local t03 = t0 * t0 * t0
+ 		n += t03 * t0 * dot
+@@ -208,7 +194,7 @@
+ 
+ 	local t1 = 0.5 - x1 * x1 - y1 * y1
+ 	if t1 > 0 then
+-		local gx, gy = readf64(gradients, gi1), readf64(gradients, gi1 + 8)
++		local gx, gy = readf64(gradients, 512 + gi1), readf64(gradients, 512 + gi1 + 8)
+ 		local dot = gx * x1 + gy * y1
+ 		local t13 = t1 * t1 * t1
+ 		n += t13 * t1 * dot
+@@ -218,7 +204,7 @@
+ 
+ 	local t2 = 0.5 - x2 * x2 - y2 * y2
+ 	if t2 > 0 then
+-		local gx, gy = readf64(gradients, gi2), readf64(gradients, gi2 + 8)
++		local gx, gy = readf64(gradients, 512 + gi2), readf64(gradients, 512 + gi2 + 8)
+ 		local dot = gx * x2 + gy * y2
+ 		local t23 = t2 * t2 * t2
+ 		n += t23 * t2 * dot
+@@ -226,7 +212,7 @@
+ 		dy += t23 * (t2 * gy - 8 * y2 * dot)
+ 	end
+ 
+-	return n * SCALE2, dx * SCALE2, dy * SCALE2
++	return if n == n then n * SCALE2 else 0, dx * SCALE2, dy * SCALE2
+ end
+ 
+ --[=[
+@@ -240,8 +226,8 @@
+ 	@return number -- Noise value in approximately [-1, 1].
+ ]=]
+ function Simplex.sample3D(self: Simplex, x: number, y: number, z: number): number
+-	local perm = self._perm
+ 	local gradients = self._grad3
++	local perm = gradients
+ 
+ 	local skew = (x + y + z) * F3
+ 	local i = floor(x + skew)
+@@ -252,24 +238,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -291,31 +268,23 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 		local t02 = t0 * t0
+-		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-	if t1 > 0 then
++		n += t02 * t02 * (readf64(gradients, 512 + gi0) * x0 + readf64(gradients, 512 + gi0 + 8) * y0 + readf64(gradients, 512 + gi0 + 16) * z0)
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 		local t12 = t1 * t1
+-		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-	if t2 > 0 then
++		n += t12 * t12 * (readf64(gradients, 512 + gi1) * x1 + readf64(gradients, 512 + gi1 + 8) * y1 + readf64(gradients, 512 + gi1 + 16) * z1)
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 		local t22 = t2 * t2
+-		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
+-	end
+-
+-	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-	if t3 > 0 then
++		n += t22 * t22 * (readf64(gradients, 512 + gi2) * x2 + readf64(gradients, 512 + gi2 + 8) * y2 + readf64(gradients, 512 + gi2 + 16) * z2)
++
++	local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 		local t32 = t3 * t3
+-		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
+-	end
+-
+-	return n * SCALE3
++		n += t32 * t32 * (readf64(gradients, 512 + gi3) * x3 + readf64(gradients, 512 + gi3 + 8) * y3 + readf64(gradients, 512 + gi3 + 16) * z3)
++
++	return if n == n then n * SCALE3 else 0
+ end
+ 
+ --[=[
+@@ -337,8 +306,8 @@
+ 	y: number,
+ 	z: number
+ ): (number, number, number, number)
+-	local perm = self._perm
+ 	local gradients = self._grad3
++	local perm = gradients
+ 
+ 	local skew = (x + y + z) * F3
+ 	local i = floor(x + skew)
+@@ -349,24 +318,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -390,7 +350,7 @@
+ 
+ 	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+ 	if t0 > 0 then
+-		local gx, gy, gz = readf64(gradients, gi0), readf64(gradients, gi0 + 8), readf64(gradients, gi0 + 16)
++		local gx, gy, gz = readf64(gradients, 512 + gi0), readf64(gradients, 512 + gi0 + 8), readf64(gradients, 512 + gi0 + 16)
+ 		local dot = gx * x0 + gy * y0 + gz * z0
+ 		local t03 = t0 * t0 * t0
+ 		n += t03 * t0 * dot
+@@ -401,7 +361,7 @@
+ 
+ 	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+ 	if t1 > 0 then
+-		local gx, gy, gz = readf64(gradients, gi1), readf64(gradients, gi1 + 8), readf64(gradients, gi1 + 16)
++		local gx, gy, gz = readf64(gradients, 512 + gi1), readf64(gradients, 512 + gi1 + 8), readf64(gradients, 512 + gi1 + 16)
+ 		local dot = gx * x1 + gy * y1 + gz * z1
+ 		local t13 = t1 * t1 * t1
+ 		n += t13 * t1 * dot
+@@ -412,7 +372,7 @@
+ 
+ 	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+ 	if t2 > 0 then
+-		local gx, gy, gz = readf64(gradients, gi2), readf64(gradients, gi2 + 8), readf64(gradients, gi2 + 16)
++		local gx, gy, gz = readf64(gradients, 512 + gi2), readf64(gradients, 512 + gi2 + 8), readf64(gradients, 512 + gi2 + 16)
+ 		local dot = gx * x2 + gy * y2 + gz * z2
+ 		local t23 = t2 * t2 * t2
+ 		n += t23 * t2 * dot
+@@ -423,7 +383,7 @@
+ 
+ 	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+ 	if t3 > 0 then
+-		local gx, gy, gz = readf64(gradients, gi3), readf64(gradients, gi3 + 8), readf64(gradients, gi3 + 16)
++		local gx, gy, gz = readf64(gradients, 512 + gi3), readf64(gradients, 512 + gi3 + 8), readf64(gradients, 512 + gi3 + 16)
+ 		local dot = gx * x3 + gy * y3 + gz * z3
+ 		local t33 = t3 * t3 * t3
+ 		n += t33 * t3 * dot
+@@ -432,7 +392,7 @@
+ 		dz += t33 * (t3 * gz - 8 * z3 * dot)
+ 	end
+ 
+-	return n * SCALE3, dx * SCALE3, dy * SCALE3, dz * SCALE3
++	return if n == n then n * SCALE3 else 0, dx * SCALE3, dy * SCALE3, dz * SCALE3
+ end
+ 
+ --[=[
+@@ -467,8 +427,8 @@
+ 	if width * height == 0 then
+ 		return values
+ 	end
+-	local perm = self._perm
+ 	local gradients = self._grad2
++	local perm = gradients
+ 	local index = 0
+ 	for row = 0, height - 1 do
+ 		local y = startY + row * stepY
+@@ -482,12 +442,8 @@
+ 			local x0 = x - (i - unskew)
+ 			local y0 = y - (j - unskew)
+ 
+-			local i1, j1
+-			if x0 > y0 then
+-				i1, j1 = 1, 0
+-			else
+-				i1, j1 = 0, 1
+-			end
++			local i1 = if x0 > y0 then 1 else 0
++			local j1 = 1 - i1
+ 
+ 			local x1 = x0 - i1 + G2
+ 			local y1 = y0 - j1 + G2
+@@ -502,25 +458,19 @@
+ 
+ 			local n = 0
+ 
+-			local t0 = 0.5 - x0 * x0 - y0 * y0
+-			if t0 > 0 then
++			local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 				local t02 = t0 * t0
+-				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-			end
+-
+-			local t1 = 0.5 - x1 * x1 - y1 * y1
+-			if t1 > 0 then
++				n += t02 * t02 * (readf64(gradients, 512 + gi0) * x0 + readf64(gradients, 512 + gi0 + 8) * y0)
++
++			local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 				local t12 = t1 * t1
+-				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-			end
+-
+-			local t2 = 0.5 - x2 * x2 - y2 * y2
+-			if t2 > 0 then
++				n += t12 * t12 * (readf64(gradients, 512 + gi1) * x1 + readf64(gradients, 512 + gi1 + 8) * y1)
++
++			local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 				local t22 = t2 * t2
+-				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-			end
+-
+-			values[index] = n * SCALE2
++				n += t22 * t22 * (readf64(gradients, 512 + gi2) * x2 + readf64(gradients, 512 + gi2 + 8) * y2)
++
++			values[index] = if n == n then n * SCALE2 else 0
+ 		end
+ 	end
+ 	return values
+@@ -565,8 +515,8 @@
+ 	if width * height * depth == 0 then
+ 		return values
+ 	end
+-	local perm = self._perm
+ 	local gradients = self._grad3
++	local perm = gradients
+ 	local index = 0
+ 	for slice = 0, depth - 1 do
+ 		local z = startZ + slice * stepZ
+@@ -584,24 +534,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = if x0 >= y0 then 1 else 0
++				local xz = if x0 >= z0 then 1 else 0
++				local yz = if y0 >= z0 then 1 else 0
++				local i1 = xy * xz
++				local j1 = (1 - xy) * yz
++				local k1 = 1 - i1 - j1
++				local i2 = xy + xz - i1
++				local j2 = 1 - xy + yz - j1
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+@@ -623,43 +564,35 @@
+ 
+ 				local n = 0
+ 
+-				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-				if t0 > 0 then
++				local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 					local t02 = t0 * t0
+-					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
++					n += t02 * t02 * (readf64(gradients, 512 + gi0) * x0 + readf64(gradients, 512 + gi0 + 8) * y0 + readf64(
+ 						gradients,
+ 						gi0 + 16
+ 					) * z0)
+-				end
+-
+-				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-				if t1 > 0 then
++
++				local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 					local t12 = t1 * t1
+-					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
++					n += t12 * t12 * (readf64(gradients, 512 + gi1) * x1 + readf64(gradients, 512 + gi1 + 8) * y1 + readf64(
+ 						gradients,
+ 						gi1 + 16
+ 					) * z1)
+-				end
+-
+-				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-				if t2 > 0 then
++
++				local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 					local t22 = t2 * t2
+-					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
++					n += t22 * t22 * (readf64(gradients, 512 + gi2) * x2 + readf64(gradients, 512 + gi2 + 8) * y2 + readf64(
+ 						gradients,
+ 						gi2 + 16
+ 					) * z2)
+-				end
+-
+-				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-				if t3 > 0 then
++
++				local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 					local t32 = t3 * t3
+-					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
++					n += t32 * t32 * (readf64(gradients, 512 + gi3) * x3 + readf64(gradients, 512 + gi3 + 8) * y3 + readf64(
+ 						gradients,
+ 						gi3 + 16
+ 					) * z3)
+-				end
+-
+-				values[index] = n * SCALE3
++
++				values[index] = if n == n then n * SCALE3 else 0
+ 			end
+ 		end
+ 	end
+--- v0.2.0/Perlin.luau
++++ guarded/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -104,8 +106,9 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+@@ -213,12 +216,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+@@ -290,12 +296,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	local i000 = aa * 24
+ 	local i100 = ba * 24
+@@ -613,10 +622,12 @@
+ 
+ 				local a = readu8(columns, offset + 16) + Y
+ 				local b = readu8(columns, offset + 17) + Y
+-				local aa = readu8(perm, a) + Z
+-				local ab = readu8(perm, a + 1) + Z
+-				local ba = readu8(perm, b) + Z
+-				local bb = readu8(perm, b + 1) + Z
++				local apair = readu16(perm, a)
++				local bpair = readu16(perm, b)
++				local aa = band(apair, 255) + Z
++				local ab = rshift(apair, 8) + Z
++				local ba = band(bpair, 255) + Z
++				local bb = rshift(bpair, 8) + Z
+ 
+ 				-- Consume each corner immediately to keep native register pressure low.
+ 				local i000 = aa * 24
+--- v0.2.0/Simplex.luau
++++ guarded/Simplex.luau
+@@ -113,12 +113,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -133,25 +129,19 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-	end
+-
+-	return n * SCALE2
++
++	return if n == n then n * SCALE2 else 0
+ end
+ 
+ --[=[
+@@ -176,12 +166,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -226,7 +212,7 @@
+ 		dy += t23 * (t2 * gy - 8 * y2 * dot)
+ 	end
+ 
+-	return n * SCALE2, dx * SCALE2, dy * SCALE2
++	return if n == n then n * SCALE2 else 0, dx * SCALE2, dy * SCALE2
+ end
+ 
+ --[=[
+@@ -252,24 +238,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -291,31 +268,23 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
+-	end
+-
+-	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-	if t3 > 0 then
++
++	local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 		local t32 = t3 * t3
+ 		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
+-	end
+-
+-	return n * SCALE3
++
++	return if n == n then n * SCALE3 else 0
+ end
+ 
+ --[=[
+@@ -349,24 +318,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -432,7 +392,7 @@
+ 		dz += t33 * (t3 * gz - 8 * z3 * dot)
+ 	end
+ 
+-	return n * SCALE3, dx * SCALE3, dy * SCALE3, dz * SCALE3
++	return if n == n then n * SCALE3 else 0, dx * SCALE3, dy * SCALE3, dz * SCALE3
+ end
+ 
+ --[=[
+@@ -482,12 +442,8 @@
+ 			local x0 = x - (i - unskew)
+ 			local y0 = y - (j - unskew)
+ 
+-			local i1, j1
+-			if x0 > y0 then
+-				i1, j1 = 1, 0
+-			else
+-				i1, j1 = 0, 1
+-			end
++			local i1 = if x0 > y0 then 1 else 0
++			local j1 = 1 - i1
+ 
+ 			local x1 = x0 - i1 + G2
+ 			local y1 = y0 - j1 + G2
+@@ -502,25 +458,19 @@
+ 
+ 			local n = 0
+ 
+-			local t0 = 0.5 - x0 * x0 - y0 * y0
+-			if t0 > 0 then
++			local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 				local t02 = t0 * t0
+ 				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-			end
+-
+-			local t1 = 0.5 - x1 * x1 - y1 * y1
+-			if t1 > 0 then
++
++			local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 				local t12 = t1 * t1
+ 				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-			end
+-
+-			local t2 = 0.5 - x2 * x2 - y2 * y2
+-			if t2 > 0 then
++
++			local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 				local t22 = t2 * t2
+ 				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-			end
+-
+-			values[index] = n * SCALE2
++
++			values[index] = if n == n then n * SCALE2 else 0
+ 		end
+ 	end
+ 	return values
+@@ -584,24 +534,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = if x0 >= y0 then 1 else 0
++				local xz = if x0 >= z0 then 1 else 0
++				local yz = if y0 >= z0 then 1 else 0
++				local i1 = xy * xz
++				local j1 = (1 - xy) * yz
++				local k1 = 1 - i1 - j1
++				local i2 = xy + xz - i1
++				local j2 = 1 - xy + yz - j1
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+@@ -623,43 +564,35 @@
+ 
+ 				local n = 0
+ 
+-				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-				if t0 > 0 then
++				local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 					local t02 = t0 * t0
+ 					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
+ 						gradients,
+ 						gi0 + 16
+ 					) * z0)
+-				end
+-
+-				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-				if t1 > 0 then
++
++				local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 					local t12 = t1 * t1
+ 					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
+ 						gradients,
+ 						gi1 + 16
+ 					) * z1)
+-				end
+-
+-				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-				if t2 > 0 then
++
++				local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 					local t22 = t2 * t2
+ 					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
+ 						gradients,
+ 						gi2 + 16
+ 					) * z2)
+-				end
+-
+-				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-				if t3 > 0 then
++
++				local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 					local t32 = t3 * t3
+ 					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
+ 						gradients,
+ 						gi3 + 16
+ 					) * z3)
+-				end
+-
+-				values[index] = n * SCALE3
++
++				values[index] = if n == n then n * SCALE3 else 0
+ 			end
+ 		end
+ 	end
+--- v0.2.0/Perlin.luau
++++ prehash/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -74,9 +76,16 @@
+ function Perlin.new(seed: number?): Perlin
+ 	local resolved = seed or random(1, 2147483646)
+ 	local perm = Permutation.build(resolved)
++	local hash = buffer.create(257 * 257)
++	for outer = 0, 256 do
++		for inner = 0, 256 do
++			buffer.writeu8(hash, outer * 257 + inner, readu8(perm, readu8(perm, outer) + inner))
++		end
++	end
+ 	return setmetatable({
+ 		seed = resolved,
+ 		_perm = perm,
++		_hash = hash,
+ 		_grad2 = Permutation.gradients(perm, GRAD2, 16, 8),
+ 		_grad3 = Permutation.gradients(perm, GRAD3, 24, 12),
+ 	}, Perlin)
+@@ -104,8 +113,9 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+@@ -197,6 +207,7 @@
+ ]=]
+ function Perlin.sample3D(self: Perlin, x: number, y: number, z: number): number
+ 	local perm = self._perm
++	local hash = self._hash
+ 	local gradients = self._grad3
+ 
+ 	local fx = floor(x)
+@@ -213,12 +224,13 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local address = X * 257 + Y
++	local apair = readu16(hash, address)
++	local bpair = readu16(hash, address + 257)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+@@ -274,6 +286,7 @@
+ ]=]
+ function Perlin.sample3DWithDerivative(self: Perlin, x: number, y: number, z: number): (number, number, number, number)
+ 	local perm = self._perm
++	local hash = self._hash
+ 	local gradients = self._grad3
+ 
+ 	local fx = floor(x)
+@@ -290,12 +303,13 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local address = X * 257 + Y
++	local apair = readu16(hash, address)
++	local bpair = readu16(hash, address + 257)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	local i000 = aa * 24
+ 	local i100 = ba * 24
+@@ -393,6 +407,7 @@
+ 		return values
+ 	end
+ 	local perm = self._perm
++	local hash = self._hash
+ 	local gradients = self._grad2
+ 	local columns = buffer.create(width * 24)
+ 	for column = 0, width - 1 do
+@@ -576,6 +591,7 @@
+ 		return values
+ 	end
+ 	local perm = self._perm
++	local hash = self._hash
+ 	local gradients = self._grad3
+ 	local columns = buffer.create(width * 24)
+ 	for column = 0, width - 1 do
+@@ -613,10 +629,12 @@
+ 
+ 				local a = readu8(columns, offset + 16) + Y
+ 				local b = readu8(columns, offset + 17) + Y
+-				local aa = readu8(perm, a) + Z
+-				local ab = readu8(perm, a + 1) + Z
+-				local ba = readu8(perm, b) + Z
+-				local bb = readu8(perm, b + 1) + Z
++				local apair = readu16(perm, a)
++				local bpair = readu16(perm, b)
++				local aa = band(apair, 255) + Z
++				local ab = rshift(apair, 8) + Z
++				local ba = band(bpair, 255) + Z
++				local bb = rshift(bpair, 8) + Z
+ 
+ 				-- Consume each corner immediately to keep native register pressure low.
+ 				local i000 = aa * 24
+--- v0.2.0/Simplex.luau
++++ prehash/Simplex.luau
+@@ -85,9 +85,16 @@
+ function Simplex.new(seed: number?): Simplex
+ 	local resolved = seed or random(1, 2147483646)
+ 	local perm = Permutation.build(resolved)
++	local hash = buffer.create(257 * 257)
++	for outer = 0, 256 do
++		for inner = 0, 256 do
++			buffer.writeu8(hash, outer * 257 + inner, readu8(perm, readu8(perm, outer) + inner))
++		end
++	end
+ 	return setmetatable({
+ 		seed = resolved,
+ 		_perm = perm,
++		_hash = hash,
+ 		_grad2 = Permutation.gradients(perm, GRAD2, 16, 8),
+ 		_grad3 = Permutation.gradients(perm, GRAD3, 24, 12),
+ 	}, Simplex)
+@@ -113,12 +120,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -133,25 +136,19 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-	end
+-
+-	return n * SCALE2
++
++	return if n == n then n * SCALE2 else 0
+ end
+ 
+ --[=[
+@@ -176,12 +173,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -226,7 +219,7 @@
+ 		dy += t23 * (t2 * gy - 8 * y2 * dot)
+ 	end
+ 
+-	return n * SCALE2, dx * SCALE2, dy * SCALE2
++	return if n == n then n * SCALE2 else 0, dx * SCALE2, dy * SCALE2
+ end
+ 
+ --[=[
+@@ -252,24 +245,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -284,38 +268,32 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local hash = self._hash
++	local address = kk * 257 + jj
++	local gi0 = (ii + readu8(hash, address)) * 24
++	local gi1 = (ii + i1 + readu8(hash, address + j1 + k1 * 257)) * 24
++	local gi2 = (ii + i2 + readu8(hash, address + j2 + k2 * 257)) * 24
++	local gi3 = (ii + 1 + readu8(hash, address + 258)) * 24
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
+-	end
+-
+-	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-	if t3 > 0 then
++
++	local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 		local t32 = t3 * t3
+ 		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
+-	end
+-
+-	return n * SCALE3
++
++	return if n == n then n * SCALE3 else 0
+ end
+ 
+ --[=[
+@@ -349,24 +327,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = xy * xz
++	local j1 = (1 - xy) * yz
++	local k1 = 1 - i1 - j1
++	local i2 = xy + xz - i1
++	local j2 = 1 - xy + yz - j1
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -381,10 +350,12 @@
+ 	local ii = band(i, 255)
+ 	local jj = band(j, 255)
+ 	local kk = band(k, 255)
+-	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local hash = self._hash
++	local address = kk * 257 + jj
++	local gi0 = (ii + readu8(hash, address)) * 24
++	local gi1 = (ii + i1 + readu8(hash, address + j1 + k1 * 257)) * 24
++	local gi2 = (ii + i2 + readu8(hash, address + j2 + k2 * 257)) * 24
++	local gi3 = (ii + 1 + readu8(hash, address + 258)) * 24
+ 
+ 	local n, dx, dy, dz = 0, 0, 0, 0
+ 
+@@ -432,7 +403,7 @@
+ 		dz += t33 * (t3 * gz - 8 * z3 * dot)
+ 	end
+ 
+-	return n * SCALE3, dx * SCALE3, dy * SCALE3, dz * SCALE3
++	return if n == n then n * SCALE3 else 0, dx * SCALE3, dy * SCALE3, dz * SCALE3
+ end
+ 
+ --[=[
+@@ -482,12 +453,8 @@
+ 			local x0 = x - (i - unskew)
+ 			local y0 = y - (j - unskew)
+ 
+-			local i1, j1
+-			if x0 > y0 then
+-				i1, j1 = 1, 0
+-			else
+-				i1, j1 = 0, 1
+-			end
++			local i1 = if x0 > y0 then 1 else 0
++			local j1 = 1 - i1
+ 
+ 			local x1 = x0 - i1 + G2
+ 			local y1 = y0 - j1 + G2
+@@ -502,25 +469,19 @@
+ 
+ 			local n = 0
+ 
+-			local t0 = 0.5 - x0 * x0 - y0 * y0
+-			if t0 > 0 then
++			local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 				local t02 = t0 * t0
+ 				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-			end
+-
+-			local t1 = 0.5 - x1 * x1 - y1 * y1
+-			if t1 > 0 then
++
++			local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 				local t12 = t1 * t1
+ 				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-			end
+-
+-			local t2 = 0.5 - x2 * x2 - y2 * y2
+-			if t2 > 0 then
++
++			local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 				local t22 = t2 * t2
+ 				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-			end
+-
+-			values[index] = n * SCALE2
++
++			values[index] = if n == n then n * SCALE2 else 0
+ 		end
+ 	end
+ 	return values
+@@ -584,24 +545,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = if x0 >= y0 then 1 else 0
++				local xz = if x0 >= z0 then 1 else 0
++				local yz = if y0 >= z0 then 1 else 0
++				local i1 = xy * xz
++				local j1 = (1 - xy) * yz
++				local k1 = 1 - i1 - j1
++				local i2 = xy + xz - i1
++				local j2 = 1 - xy + yz - j1
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+@@ -616,50 +568,44 @@
+ 				local ii = band(i, 255)
+ 				local jj = band(j, 255)
+ 				local kk = band(k, 255)
+-				local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+-				local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+-				local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+-				local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
++	local hash = self._hash
++	local address = kk * 257 + jj
++				local gi0 = (ii + readu8(hash, address)) * 24
++				local gi1 = (ii + i1 + readu8(hash, address + j1 + k1 * 257)) * 24
++				local gi2 = (ii + i2 + readu8(hash, address + j2 + k2 * 257)) * 24
++				local gi3 = (ii + 1 + readu8(hash, address + 258)) * 24
+ 
+ 				local n = 0
+ 
+-				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-				if t0 > 0 then
++				local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 					local t02 = t0 * t0
+ 					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
+ 						gradients,
+ 						gi0 + 16
+ 					) * z0)
+-				end
+-
+-				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-				if t1 > 0 then
++
++				local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 					local t12 = t1 * t1
+ 					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
+ 						gradients,
+ 						gi1 + 16
+ 					) * z1)
+-				end
+-
+-				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-				if t2 > 0 then
++
++				local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 					local t22 = t2 * t2
+ 					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
+ 						gradients,
+ 						gi2 + 16
+ 					) * z2)
+-				end
+-
+-				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-				if t3 > 0 then
++
++				local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 					local t32 = t3 * t3
+ 					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
+ 						gradients,
+ 						gi3 + 16
+ 					) * z3)
+-				end
+-
+-				values[index] = n * SCALE3
++
++				values[index] = if n == n then n * SCALE3 else 0
+ 			end
+ 		end
+ 	end
+--- v0.2.0/Perlin.luau
++++ minrank/Perlin.luau
+@@ -8,6 +8,8 @@
+ local floor = math.floor
+ local random = math.random
+ local readu8 = buffer.readu8
++local readu16 = buffer.readu16
++local rshift = bit32.rshift
+ local readf64 = buffer.readf64
+ local writef64 = buffer.writef64
+ 
+@@ -104,8 +106,9 @@
+ 
+ 	local X = band(fx, 255)
+ 	local Y = band(fy, 255)
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
+ 
+ 	local i00 = a * 16
+ 	local i01 = (a + 1) * 16
+@@ -213,12 +216,15 @@
+ 	local Y = band(fy, 255)
+ 	local Z = band(fz, 255)
+ 
+-	local a = readu8(perm, X) + Y
+-	local b = readu8(perm, X + 1) + Y
+-	local aa = readu8(perm, a) + Z
+-	local ab = readu8(perm, a + 1) + Z
+-	local ba = readu8(perm, b) + Z
+-	local bb = readu8(perm, b + 1) + Z
++	local pair = readu16(perm, X)
++	local a = band(pair, 255) + Y
++	local b = rshift(pair, 8) + Y
++	local apair = readu16(perm, a)
++	local bpair = readu16(perm, b)
++	local aa = band(apair, 255) + Z
++	local ab = rshift(apair, 8) + Z
++	local ba = band(bpair, 255) + Z
++	local bb = rshift(bpair, 8) + Z
+ 
+ 	-- Consume each corner immediately to keep native register pressure low.
+ 	local i000 = aa * 24
+--- v0.2.0/Simplex.luau
++++ minrank/Simplex.luau
+@@ -113,12 +113,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -133,25 +129,19 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-	end
+-
+-	return n * SCALE2
++
++	return if n == n then n * SCALE2 else 0
+ end
+ 
+ --[=[
+@@ -176,12 +166,8 @@
+ 	local x0 = x - (i - unskew)
+ 	local y0 = y - (j - unskew)
+ 
+-	local i1, j1
+-	if x0 > y0 then
+-		i1, j1 = 1, 0
+-	else
+-		i1, j1 = 0, 1
+-	end
++	local i1 = if x0 > y0 then 1 else 0
++	local j1 = 1 - i1
+ 
+ 	local x1 = x0 - i1 + G2
+ 	local y1 = y0 - j1 + G2
+@@ -226,7 +212,7 @@
+ 		dy += t23 * (t2 * gy - 8 * y2 * dot)
+ 	end
+ 
+-	return n * SCALE2, dx * SCALE2, dy * SCALE2
++	return if n == n then n * SCALE2 else 0, dx * SCALE2, dy * SCALE2
+ end
+ 
+ --[=[
+@@ -252,24 +238,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = math.min(xy, xz)
++	local j1 = math.min(1 - xy, yz)
++	local k1 = 1 - i1 - j1
++	local i2 = math.max(xy, xz)
++	local j2 = math.max(1 - xy, yz)
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -291,31 +268,23 @@
+ 
+ 	local n = 0
+ 
+-	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-	if t0 > 0 then
++	local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 		local t02 = t0 * t0
+ 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
+-	end
+-
+-	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-	if t1 > 0 then
++
++	local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 		local t12 = t1 * t1
+ 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
+-	end
+-
+-	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-	if t2 > 0 then
++
++	local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 		local t22 = t2 * t2
+ 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
+-	end
+-
+-	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-	if t3 > 0 then
++
++	local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 		local t32 = t3 * t3
+ 		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
+-	end
+-
+-	return n * SCALE3
++
++	return if n == n then n * SCALE3 else 0
+ end
+ 
+ --[=[
+@@ -349,24 +318,15 @@
+ 	local y0 = y - (j - unskew)
+ 	local z0 = z - (k - unskew)
+ 
+-	local i1, j1, k1, i2, j2, k2
+-	if x0 >= y0 then
+-		if y0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-		elseif x0 >= z0 then
+-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-		end
+-	else
+-		if y0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-		elseif x0 < z0 then
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-		else
+-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-		end
+-	end
++	local xy = if x0 >= y0 then 1 else 0
++	local xz = if x0 >= z0 then 1 else 0
++	local yz = if y0 >= z0 then 1 else 0
++	local i1 = math.min(xy, xz)
++	local j1 = math.min(1 - xy, yz)
++	local k1 = 1 - i1 - j1
++	local i2 = math.max(xy, xz)
++	local j2 = math.max(1 - xy, yz)
++	local k2 = 2 - i2 - j2
+ 
+ 	local x1 = x0 - i1 + G3
+ 	local y1 = y0 - j1 + G3
+@@ -432,7 +392,7 @@
+ 		dz += t33 * (t3 * gz - 8 * z3 * dot)
+ 	end
+ 
+-	return n * SCALE3, dx * SCALE3, dy * SCALE3, dz * SCALE3
++	return if n == n then n * SCALE3 else 0, dx * SCALE3, dy * SCALE3, dz * SCALE3
+ end
+ 
+ --[=[
+@@ -482,12 +442,8 @@
+ 			local x0 = x - (i - unskew)
+ 			local y0 = y - (j - unskew)
+ 
+-			local i1, j1
+-			if x0 > y0 then
+-				i1, j1 = 1, 0
+-			else
+-				i1, j1 = 0, 1
+-			end
++			local i1 = if x0 > y0 then 1 else 0
++			local j1 = 1 - i1
+ 
+ 			local x1 = x0 - i1 + G2
+ 			local y1 = y0 - j1 + G2
+@@ -502,25 +458,19 @@
+ 
+ 			local n = 0
+ 
+-			local t0 = 0.5 - x0 * x0 - y0 * y0
+-			if t0 > 0 then
++			local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+ 				local t02 = t0 * t0
+ 				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+-			end
+-
+-			local t1 = 0.5 - x1 * x1 - y1 * y1
+-			if t1 > 0 then
++
++			local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+ 				local t12 = t1 * t1
+ 				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+-			end
+-
+-			local t2 = 0.5 - x2 * x2 - y2 * y2
+-			if t2 > 0 then
++
++			local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+ 				local t22 = t2 * t2
+ 				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+-			end
+-
+-			values[index] = n * SCALE2
++
++			values[index] = if n == n then n * SCALE2 else 0
+ 		end
+ 	end
+ 	return values
+@@ -584,24 +534,15 @@
+ 				local y0 = y - (j - unskew)
+ 				local z0 = z - (k - unskew)
+ 
+-				local i1, j1, k1, i2, j2, k2
+-				if x0 >= y0 then
+-					if y0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+-					elseif x0 >= z0 then
+-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+-					end
+-				else
+-					if y0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+-					elseif x0 < z0 then
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+-					else
+-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+-					end
+-				end
++				local xy = if x0 >= y0 then 1 else 0
++				local xz = if x0 >= z0 then 1 else 0
++				local yz = if y0 >= z0 then 1 else 0
++				local i1 = math.min(xy, xz)
++				local j1 = math.min(1 - xy, yz)
++				local k1 = 1 - i1 - j1
++				local i2 = math.max(xy, xz)
++				local j2 = math.max(1 - xy, yz)
++				local k2 = 2 - i2 - j2
+ 
+ 				local x1 = x0 - i1 + G3
+ 				local y1 = y0 - j1 + G3
+@@ -623,43 +564,35 @@
+ 
+ 				local n = 0
+ 
+-				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+-				if t0 > 0 then
++				local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+ 					local t02 = t0 * t0
+ 					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
+ 						gradients,
+ 						gi0 + 16
+ 					) * z0)
+-				end
+-
+-				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+-				if t1 > 0 then
++
++				local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+ 					local t12 = t1 * t1
+ 					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
+ 						gradients,
+ 						gi1 + 16
+ 					) * z1)
+-				end
+-
+-				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+-				if t2 > 0 then
++
++				local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+ 					local t22 = t2 * t2
+ 					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
+ 						gradients,
+ 						gi2 + 16
+ 					) * z2)
+-				end
+-
+-				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+-				if t3 > 0 then
++
++				local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+ 					local t32 = t3 * t3
+ 					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
+ 						gradients,
+ 						gi3 + 16
+ 					) * z3)
+-				end
+-
+-				values[index] = n * SCALE3
++
++				values[index] = if n == n then n * SCALE3 else 0
+ 			end
+ 		end
+ 	end

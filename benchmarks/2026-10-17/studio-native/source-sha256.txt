@@ -1,0 +1,5 @@
+06fcc1f6eb7689bc83c31fe5735598eb8072d1510da8c8b931ab6d7070cf95da  src/Noise/Perlin.luau
+11b93923d36d274bdcb915a429f7b135a405ac5989d9cfd570d77720d12418c2  src/Noise/Simplex.luau
+3c50ae5f2a65b0ea40b2cf094205b8075b98d844725a784b46a383512048a0ed  src/Noise/Permutation.luau
+65cb75052d89823c7c817bf48372121fd624ec3a1d53a3c7cf811f327a9991f2  test/studio-native-performance.server.luau
+b74aff5db19afd2cc2736703959880fdd2ce7b6fbda8f292086a8c9dd4febcb2  test/studio-native-validation.server.luau

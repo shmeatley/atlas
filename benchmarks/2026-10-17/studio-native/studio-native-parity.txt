@@ -1,0 +1,3 @@
+PARITY: 503019 exact output comparisons passed
+BULK PARITY: 213752 exact comparisons passed (including signed zero)
+EXTREME PARITY: 3872 calls passed

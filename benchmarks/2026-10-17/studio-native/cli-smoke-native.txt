@@ -1,0 +1,2 @@
+  observed maxima â€” perlin 0.9269925135218019, simplex2D 0.7052342714239633, simplex3D 0.9169505762676574
+SMOKE: 42 passed

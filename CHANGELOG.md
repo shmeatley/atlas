@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1 — 2026-10-17
+
+- Paired permutation-byte reads speed up native scalar Perlin sampling.
+- Numeric simplex corner ranks and clamped value kernels improve native
+  scalar and bulk sampling while preserving exact seeded outputs, including
+  signed zero and non-finite-coordinate behavior. No extra sampler memory.
+- Actual Studio server native benchmarks, profiler evidence, raw rotating-order
+  trials and reproducible isolated-place builders. Some interpreter workloads
+  regress; see the Studio native report for the runtime tradeoff.
+
 ## 0.2.0 â€” 2026-10-17
 
 ### Added

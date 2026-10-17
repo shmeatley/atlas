@@ -1,0 +1,106 @@
+PAIRED|numericrank Simplex.sample2D|0.051800000|0.046418500|10.389%|0.050755/0.050102,0.051841/0.045610,0.050810/0.046625,0.051353/0.046335,0.052401/0.047214,0.058981/0.045533,0.051800/0.048298,0.050990/0.046166,0.052905/0.046419,0.053346/0.046135,0.051127/0.045901,0.051624/0.045722,0.051205/0.049051,0.078644/0.103270,0.061582/0.047892
+PAIRED|numericrank Simplex.sampleGrid2D|570.600002538|542.539998423|4.918%|563.385000/487.554999,815.020001/573.114998,579.284999/572.655001,578.439998/534.859998,697.250001/599.244999,628.094998/552.015001,582.059997/577.320001,569.595001/522.739999,548.684999/562.394998,570.600003/542.539998,560.290006/535.574998,564.910000/523.865002,553.885003/537.385000,582.665001/531.634997,565.445004/572.429999
+PAIRED|numericrank Simplex.sample3D|0.073785500|0.056689000|23.171%|0.072483/0.058560,0.071294/0.054441,0.074313/0.057486,0.071702/0.054297,0.073785/0.062501,0.075201/0.054491,0.072156/0.057663,0.072340/0.057382,0.072560/0.056689,0.075379/0.056431,0.090552/0.059837,0.080216/0.056175,0.081918/0.057327,0.075901/0.054881,0.072750/0.055082
+[Roblox][CorePackages.Packages._Index.UIBlox.UIBlox.Logger] [UIBlox - Warning] - FoundationProvider not found. Please ensure that the FoundationProvider is present in the component tree.
+CorePackages.Packages._Index.UIBlox.UIBlox.App.Style.AppStyleProvider:178 function AppStyleProvider
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberHooks.new:3196 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:209 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:1577 function mountIndeterminateComponent
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:3485 function beginWork
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:255
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1977
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1953
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1896
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:915
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:860
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:320
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:268
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:260 function doWork
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:296 function performWorkUntilDeadline
+
+[Roblox][CorePackages.Packages._Index.UIBlox.UIBlox.Logger] [UIBlox - Warning] - FoundationProvider not found. Please ensure that the FoundationProvider is present in the component tree.
+CorePackages.Packages._Index.UIBlox.UIBlox.App.Style.AppStyleProvider:178 function AppStyleProvider
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberHooks.new:3196 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:209 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:1577 function mountIndeterminateComponent
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:3485 function beginWork
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:255
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1977
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1953
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1896
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:915
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:860
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:320
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:268
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:260 function doWork
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:296 function performWorkUntilDeadline
+
+[Roblox][CorePackages.Packages._Index.UIBlox.UIBlox.Logger] [UIBlox - Warning] - FoundationProvider not found. Please ensure that the FoundationProvider is present in the component tree.
+CorePackages.Packages._Index.UIBlox.UIBlox.App.Style.AppStyleProvider:178 function AppStyleProvider
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberHooks.new:3196 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:209 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:1577 function mountIndeterminateComponent
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:3485 function beginWork
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:255
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1977
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1953
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1896
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:915
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:860
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:320
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:268
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:260 function doWork
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:296 function performWorkUntilDeadline
+
+Requiring asset 6738245247.
+Callstack:
+cloud_2971874773.Atmos.PluginUpdates, line 36
+cloud_2971874773.Atmos.PluginUpdates, line 35 - getLatestVersion
+cloud_2971874773.Atmos.Script, line 322
+
+[Roblox][CorePackages.Packages._Index.UIBlox.UIBlox.Logger] [UIBlox - Warning] - FoundationProvider not found. Please ensure that the FoundationProvider is present in the component tree.
+CorePackages.Packages._Index.UIBlox.UIBlox.App.Style.AppStyleProvider:178 function AppStyleProvider
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberHooks.new:3196 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:209 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:1577 function mountIndeterminateComponent
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:3485 function beginWork
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:255
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1977
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1953
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1896
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:915
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:971
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:320
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:268
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:260 function doWork
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:296 function performWorkUntilDeadline
+
+[Roblox][CorePackages.Packages._Index.UIBlox.UIBlox.Logger] [UIBlox - Warning] - FoundationProvider not found. Please ensure that the FoundationProvider is present in the component tree.
+CorePackages.Packages._Index.UIBlox.UIBlox.App.Style.AppStyleProvider:178 function AppStyleProvider
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberHooks.new:3196 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:209 function renderWithHooks
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:1577 function mountIndeterminateComponent
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberBeginWork.new:3485 function beginWork
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:255
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1977
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1953
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:1896
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:915
+CorePackages.Packages._Index.ReactReconciler.ReactReconciler.ReactFiberWorkLoop.new:860
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:320
+CorePackages.Packages._Index.Scheduler.Scheduler.Scheduler:268
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:260 function doWork
+CorePackages.Packages._Index.Scheduler.Scheduler.forks.SchedulerHostConfig.default:296 function performWorkUntilDeadline
+
+ContentId: rbxassetid://203785492 failed due to: Asset type does not match requested type
+ContentId: rbxassetid://203785492 failed due to: Asset type does not match requested type
+ContentId: rbxassetid://203785492 failed due to: Asset type does not match requested type
+PAIRED|numericrank Simplex.sampleGrid3D|1933.575002477|1521.584996954|21.307%|1926.640002/1652.504998,2292.625001/1516.344998,1929.945004/1604.919997,1980.179996/1478.670002,1957.225002/1496.259996,1909.060002/1455.924998,1893.954998/1541.855000,1913.685002/1464.904996,1918.125001/1521.584997,1958.174998/1477.660000,1941.800001/1534.160000,1933.575002/1550.634997,1904.629997/1475.249999,1935.785002/1616.329997,1991.884998/1780.854998
+PAIRED|clamped Simplex.sample2D|0.051011000|0.039926000|21.731%|0.050968/0.044159,0.057474/0.039608,0.051185/0.043707,0.051769/0.039926,0.051011/0.040519,0.052243/0.039238,0.050694/0.042449,0.051150/0.044241,0.050823/0.039354,0.050916/0.039046,0.050448/0.039686,0.050686/0.039746,0.052911/0.039930,0.053450/0.039605,0.050434/0.040414
+PAIRED|clamped Simplex.sampleGrid2D|559.720001183|390.880001942|30.165%|563.014997/409.350003,627.670001/390.880002,559.720001/408.549997,589.224999/410.620001,568.664999/416.010001,594.980002/391.569996,553.970004/406.954996,558.310002/403.374998,546.805002/374.645001,577.200000/372.525002,551.724999/369.355001,582.080003/389.810000,549.140002/374.660001,555.080001/374.464999,555.069995/378.105004
+PAIRED|clamped Simplex.sample3D|0.074542000|0.055134500|26.036%|0.072061/0.054202,0.074330/0.054193,0.074549/0.056026,0.073795/0.053775,0.072981/0.055451,0.073104/0.053519,0.074796/0.055135,0.075035/0.053894,0.074426/0.053926,0.075001/0.053954,0.074460/0.058106,0.074542/0.057819,0.079414/0.057468,0.076710/0.057707,0.095590/0.061516
+PAIRED|clamped Simplex.sampleGrid3D|1924.965000944|1318.779995199|31.491%|1897.480001/1379.654999,1915.970002/1338.615001,1896.315004/1318.779995,1972.345001/1303.974999,1917.480002/1325.184997,1925.565000/1301.115000,1994.169998/1334.150002,1988.870004/1299.074996,2047.315001/1310.909999,1946.570002/1314.444997,1924.965001/1322.660001,1935.060002/1304.150000,1916.115003/1320.024999,1900.695002/1301.425003,1902.955002/1335.264998
+PAIRED|combined Perlin.sample2D|0.034635499|0.030950000|10.641%|0.034233/0.034093,0.034735/0.031090,0.035627/0.033273,0.035354/0.031064,0.034015/0.030230,0.036123/0.030355,0.034056/0.030699,0.034635/0.030270,0.034351/0.030761,0.034886/0.032505,0.036633/0.030185,0.033913/0.030306,0.033949/0.032445,0.037303/0.030950,0.034130/0.032407
+PAIRED|combined Perlin.sampleGrid2D|280.205003219|279.629998840|0.205%|284.134998/304.505002,297.194999/295.075000,280.205003/279.150001,311.280001/267.850002,265.665003/277.425000,273.594999/272.414996,258.204999/281.919999,277.475000/293.065002,289.584999/273.494999,277.685001/271.000003,290.595001/349.819998,304.654997/284.080004,287.349999/279.629999,267.889997/271.525001,275.889999/283.870002
+PAIRED|combined Perlin.sample3D|0.043414000|0.041532500|4.334%|0.043772/0.043060,0.043056/0.040816,0.043361/0.043270,0.043243/0.040947,0.043276/0.041551,0.043972/0.040929,0.043203/0.042471,0.043851/0.040750,0.043184/0.043294,0.043831/0.040802,0.043414/0.041533,0.043880/0.041510,0.043687/0.040757,0.043235/0.041533,0.044125/0.043648
+PAIRED|combined Perlin.sampleGrid3D|828.725000611|825.149996672|0.431%|820.305001/849.514996,829.390000/818.594999,819.309999/830.509997,858.570001/810.325000,837.905001/818.434998,826.805003/810.509996,840.820000/898.740004,859.530002/807.814999,815.249997/826.595002,821.485004/810.669997,828.725001/842.849998,845.164998/802.885002,820.380001/844.700000,941.689999/825.149997,816.904998/903.210003

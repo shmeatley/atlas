@@ -1,0 +1,100 @@
+{
+  "Version": 2,
+  "SessionStartTime": 1792245116018,
+  "SessionEndTime": 1792245131326,
+  "GCFuncId": 42,
+  "Functions": [
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise",
+      "Line": 1,
+      "Flags": 0,
+      "TotalDuration": 600
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Perlin",
+      "Line": 1,
+      "Flags": 1,
+      "TotalDuration": 6455
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Permutation",
+      "Line": 1,
+      "Flags": 0,
+      "TotalDuration": 400
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Simplex",
+      "Line": 1,
+      "Flags": 1,
+      "TotalDuration": 5900
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Voronoi",
+      "Line": 1,
+      "Flags": 0,
+      "TotalDuration": 2800
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Island",
+      "Line": 1,
+      "Flags": 0,
+      "TotalDuration": 1000
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Simplex",
+      "Name": "sample3D",
+      "Line": 242,
+      "Flags": 1,
+      "TotalDuration": 27616
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Perlin",
+      "Name": "sample2D",
+      "Line": 94,
+      "Flags": 1,
+      "TotalDuration": 7323
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Simplex",
+      "Name": "sample2D",
+      "Line": 105,
+      "Flags": 1,
+      "TotalDuration": 12327
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Perlin",
+      "Name": "sample3D",
+      "Line": 198,
+      "Flags": 1,
+      "TotalDuration": 10952
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Perlin",
+      "Name": "sampleGrid2D",
+      "Line": 461,
+      "Flags": 1,
+      "TotalDuration": 8700
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Perlin",
+      "Name": "sampleGrid3D",
+      "Line": 559,
+      "Flags": 1,
+      "TotalDuration": 34509
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Simplex",
+      "Name": "sampleGrid2D",
+      "Line": 455,
+      "Flags": 1,
+      "TotalDuration": 21722
+    },
+    {
+      "Source": "ReplicatedStorage.Atlas.Noise.Simplex",
+      "Name": "sampleGrid3D",
+      "Line": 549,
+      "Flags": 1,
+      "TotalDuration": 71988
+    }
+  ]
+}

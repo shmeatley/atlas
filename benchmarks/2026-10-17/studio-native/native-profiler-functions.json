@@ -1,0 +1,100 @@
+{
+  "Version": 2,
+  "SessionStartTime": 1792245793149,
+  "SessionEndTime": 1792245824166,
+  "GCFuncId": 10,
+  "Functions": [
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Perlin",
+      "Name": "sample3DWithDerivative",
+      "Line": 283,
+      "Flags": 1,
+      "TotalDuration": 300
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Perlin",
+      "Name": "sample3D",
+      "Line": 202,
+      "Flags": 1,
+      "TotalDuration": 500
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Perlin",
+      "Name": "sample2DWithDerivative",
+      "Line": 144,
+      "Flags": 1,
+      "TotalDuration": 300
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Perlin",
+      "Name": "sample2D",
+      "Line": 96,
+      "Flags": 1,
+      "TotalDuration": 300
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Simplex",
+      "Name": "sample2DWithDerivative",
+      "Line": 159,
+      "Flags": 1,
+      "TotalDuration": 300
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Simplex",
+      "Name": "sample3DWithDerivative",
+      "Line": 306,
+      "Flags": 1,
+      "TotalDuration": 500
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Simplex",
+      "Name": "sample3D",
+      "Line": 229,
+      "Flags": 1,
+      "TotalDuration": 500
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Simplex",
+      "Name": "sample2D",
+      "Line": 105,
+      "Flags": 1,
+      "TotalDuration": 200
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Perlin",
+      "Name": "sampleGrid3D",
+      "Line": 567,
+      "Flags": 1,
+      "TotalDuration": 3800
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Simplex",
+      "Name": "sampleGrid2D",
+      "Line": 419,
+      "Flags": 1,
+      "TotalDuration": 600
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Simplex",
+      "Name": "sampleGrid3D",
+      "Line": 503,
+      "Flags": 1,
+      "TotalDuration": 4500
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Perlin",
+      "Name": "new",
+      "Line": 76,
+      "Flags": 1,
+      "TotalDuration": 100
+    },
+    {
+      "Source": "ReplicatedStorage.AtlasNativeExperiments.final.Simplex",
+      "Name": "new",
+      "Line": 85,
+      "Flags": 1,
+      "TotalDuration": 100
+    }
+  ],
+  "Note": "Atlas functions sampled by ScriptProfilerService in the actual Studio server; Flags=1 indicates native execution."
+}

@@ -8,6 +8,8 @@ local band = bit32.band
 local floor = math.floor
 local random = math.random
 local readu8 = buffer.readu8
+local readu16 = buffer.readu16
+local rshift = bit32.rshift
 local readf64 = buffer.readf64
 local writef64 = buffer.writef64
 
@@ -104,8 +106,10 @@ function Perlin.sample2D(self: Perlin, x: number, y: number): number
 
 	local X = band(fx, 255)
 	local Y = band(fy, 255)
-	local a = readu8(perm, X) + Y
-	local b = readu8(perm, X + 1) + Y
+	-- Adjacent permutation bytes share one bounds check and load.
+	local pair = readu16(perm, X)
+	local a = band(pair, 255) + Y
+	local b = rshift(pair, 8) + Y
 
 	local i00 = a * 16
 	local i01 = (a + 1) * 16
@@ -213,12 +217,16 @@ function Perlin.sample3D(self: Perlin, x: number, y: number, z: number): number
 	local Y = band(fy, 255)
 	local Z = band(fz, 255)
 
-	local a = readu8(perm, X) + Y
-	local b = readu8(perm, X + 1) + Y
-	local aa = readu8(perm, a) + Z
-	local ab = readu8(perm, a + 1) + Z
-	local ba = readu8(perm, b) + Z
-	local bb = readu8(perm, b + 1) + Z
+	-- Adjacent permutation bytes share one bounds check and load.
+	local pair = readu16(perm, X)
+	local a = band(pair, 255) + Y
+	local b = rshift(pair, 8) + Y
+	local apair = readu16(perm, a)
+	local bpair = readu16(perm, b)
+	local aa = band(apair, 255) + Z
+	local ab = rshift(apair, 8) + Z
+	local ba = band(bpair, 255) + Z
+	local bb = rshift(bpair, 8) + Z
 
 	-- Consume each corner immediately to keep native register pressure low.
 	local i000 = aa * 24

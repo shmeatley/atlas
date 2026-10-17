@@ -51,8 +51,8 @@ end
 --[=[
 	@class Simplex
 
-	Seeded simplex noise. Cheaper than Perlin in higher dimensions and free of
-	its axis-aligned artifacts. Output is approximately [-1, 1].
+	Seeded simplex noise without Perlin's axis-aligned artifacts.
+	Output is approximately [-1, 1].
 
 	```lua
 	local simplex = Atlas.Noise.Simplex.new(42)
@@ -113,12 +113,8 @@ function Simplex.sample2D(self: Simplex, x: number, y: number): number
 	local x0 = x - (i - unskew)
 	local y0 = y - (j - unskew)
 
-	local i1, j1
-	if x0 > y0 then
-		i1, j1 = 1, 0
-	else
-		i1, j1 = 0, 1
-	end
+	local i1 = if x0 > y0 then 1 else 0
+	local j1 = 1 - i1
 
 	local x1 = x0 - i1 + G2
 	local y1 = y0 - j1 + G2
@@ -133,25 +129,20 @@ function Simplex.sample2D(self: Simplex, x: number, y: number): number
 
 	local n = 0
 
-	local t0 = 0.5 - x0 * x0 - y0 * y0
-	if t0 > 0 then
-		local t02 = t0 * t0
-		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
-	end
+	local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+	local t02 = t0 * t0
+	n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
 
-	local t1 = 0.5 - x1 * x1 - y1 * y1
-	if t1 > 0 then
-		local t12 = t1 * t1
-		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
-	end
+	local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+	local t12 = t1 * t1
+	n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
 
-	local t2 = 0.5 - x2 * x2 - y2 * y2
-	if t2 > 0 then
-		local t22 = t2 * t2
-		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
-	end
+	local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+	local t22 = t2 * t2
+	n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
 
-	return n * SCALE2
+	-- Inactive kernels contribute zero, including non-finite coordinates.
+	return if n == n then n * SCALE2 else 0
 end
 
 --[=[
@@ -176,12 +167,8 @@ function Simplex.sample2DWithDerivative(self: Simplex, x: number, y: number): (n
 	local x0 = x - (i - unskew)
 	local y0 = y - (j - unskew)
 
-	local i1, j1
-	if x0 > y0 then
-		i1, j1 = 1, 0
-	else
-		i1, j1 = 0, 1
-	end
+	local i1 = if x0 > y0 then 1 else 0
+	local j1 = 1 - i1
 
 	local x1 = x0 - i1 + G2
 	local y1 = y0 - j1 + G2
@@ -252,24 +239,16 @@ function Simplex.sample3D(self: Simplex, x: number, y: number, z: number): numbe
 	local y0 = y - (j - unskew)
 	local z0 = z - (k - unskew)
 
-	local i1, j1, k1, i2, j2, k2
-	if x0 >= y0 then
-		if y0 >= z0 then
-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
-		elseif x0 >= z0 then
-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
-		else
-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
-		end
-	else
-		if y0 < z0 then
-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
-		elseif x0 < z0 then
-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
-		else
-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
-		end
-	end
+	-- Numeric ranks preserve the original X, Y, Z tie order.
+	local xy = if x0 >= y0 then 1 else 0
+	local xz = if x0 >= z0 then 1 else 0
+	local yz = if y0 >= z0 then 1 else 0
+	local i1 = xy * xz
+	local j1 = (1 - xy) * yz
+	local k1 = 1 - i1 - j1
+	local i2 = xy + xz - i1
+	local j2 = 1 - xy + yz - j1
+	local k2 = 2 - i2 - j2
 
 	local x1 = x0 - i1 + G3
 	local y1 = y0 - j1 + G3
@@ -291,31 +270,24 @@ function Simplex.sample3D(self: Simplex, x: number, y: number, z: number): numbe
 
 	local n = 0
 
-	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
-	if t0 > 0 then
-		local t02 = t0 * t0
-		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
-	end
+	local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+	local t02 = t0 * t0
+	n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
 
-	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
-	if t1 > 0 then
-		local t12 = t1 * t1
-		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
-	end
+	local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+	local t12 = t1 * t1
+	n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
 
-	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
-	if t2 > 0 then
-		local t22 = t2 * t2
-		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
-	end
+	local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+	local t22 = t2 * t2
+	n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
 
-	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
-	if t3 > 0 then
-		local t32 = t3 * t3
-		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
-	end
+	local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+	local t32 = t3 * t3
+	n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
 
-	return n * SCALE3
+	-- Inactive kernels contribute zero, including non-finite coordinates.
+	return if n == n then n * SCALE3 else 0
 end
 
 --[=[
@@ -349,24 +321,16 @@ function Simplex.sample3DWithDerivative(
 	local y0 = y - (j - unskew)
 	local z0 = z - (k - unskew)
 
-	local i1, j1, k1, i2, j2, k2
-	if x0 >= y0 then
-		if y0 >= z0 then
-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
-		elseif x0 >= z0 then
-			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
-		else
-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
-		end
-	else
-		if y0 < z0 then
-			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
-		elseif x0 < z0 then
-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
-		else
-			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
-		end
-	end
+	-- Numeric ranks preserve the original X, Y, Z tie order.
+	local xy = if x0 >= y0 then 1 else 0
+	local xz = if x0 >= z0 then 1 else 0
+	local yz = if y0 >= z0 then 1 else 0
+	local i1 = xy * xz
+	local j1 = (1 - xy) * yz
+	local k1 = 1 - i1 - j1
+	local i2 = xy + xz - i1
+	local j2 = 1 - xy + yz - j1
+	local k2 = 2 - i2 - j2
 
 	local x1 = x0 - i1 + G3
 	local y1 = y0 - j1 + G3
@@ -482,12 +446,8 @@ function Simplex.sampleGrid2D(
 			local x0 = x - (i - unskew)
 			local y0 = y - (j - unskew)
 
-			local i1, j1
-			if x0 > y0 then
-				i1, j1 = 1, 0
-			else
-				i1, j1 = 0, 1
-			end
+			local i1 = if x0 > y0 then 1 else 0
+			local j1 = 1 - i1
 
 			local x1 = x0 - i1 + G2
 			local y1 = y0 - j1 + G2
@@ -502,25 +462,19 @@ function Simplex.sampleGrid2D(
 
 			local n = 0
 
-			local t0 = 0.5 - x0 * x0 - y0 * y0
-			if t0 > 0 then
-				local t02 = t0 * t0
-				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
-			end
+			local t0 = math.max(0.5 - x0 * x0 - y0 * y0, 0)
+			local t02 = t0 * t0
+			n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
 
-			local t1 = 0.5 - x1 * x1 - y1 * y1
-			if t1 > 0 then
-				local t12 = t1 * t1
-				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
-			end
+			local t1 = math.max(0.5 - x1 * x1 - y1 * y1, 0)
+			local t12 = t1 * t1
+			n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
 
-			local t2 = 0.5 - x2 * x2 - y2 * y2
-			if t2 > 0 then
-				local t22 = t2 * t2
-				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
-			end
+			local t2 = math.max(0.5 - x2 * x2 - y2 * y2, 0)
+			local t22 = t2 * t2
+			n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
 
-			values[index] = n * SCALE2
+			values[index] = if n == n then n * SCALE2 else 0
 		end
 	end
 	return values
@@ -584,24 +538,16 @@ function Simplex.sampleGrid3D(
 				local y0 = y - (j - unskew)
 				local z0 = z - (k - unskew)
 
-				local i1, j1, k1, i2, j2, k2
-				if x0 >= y0 then
-					if y0 >= z0 then
-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
-					elseif x0 >= z0 then
-						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
-					else
-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
-					end
-				else
-					if y0 < z0 then
-						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
-					elseif x0 < z0 then
-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
-					else
-						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
-					end
-				end
+				-- Numeric ranks preserve the original X, Y, Z tie order.
+				local xy = if x0 >= y0 then 1 else 0
+				local xz = if x0 >= z0 then 1 else 0
+				local yz = if y0 >= z0 then 1 else 0
+				local i1 = xy * xz
+				local j1 = (1 - xy) * yz
+				local k1 = 1 - i1 - j1
+				local i2 = xy + xz - i1
+				local j2 = 1 - xy + yz - j1
+				local k2 = 2 - i2 - j2
 
 				local x1 = x0 - i1 + G3
 				local y1 = y0 - j1 + G3
@@ -623,43 +569,35 @@ function Simplex.sampleGrid3D(
 
 				local n = 0
 
-				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
-				if t0 > 0 then
-					local t02 = t0 * t0
-					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
-						gradients,
-						gi0 + 16
-					) * z0)
-				end
+				local t0 = math.max(0.5 - x0 * x0 - y0 * y0 - z0 * z0, 0)
+				local t02 = t0 * t0
+				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
+					gradients,
+					gi0 + 16
+				) * z0)
 
-				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
-				if t1 > 0 then
-					local t12 = t1 * t1
-					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
-						gradients,
-						gi1 + 16
-					) * z1)
-				end
+				local t1 = math.max(0.5 - x1 * x1 - y1 * y1 - z1 * z1, 0)
+				local t12 = t1 * t1
+				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
+					gradients,
+					gi1 + 16
+				) * z1)
 
-				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
-				if t2 > 0 then
-					local t22 = t2 * t2
-					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
-						gradients,
-						gi2 + 16
-					) * z2)
-				end
+				local t2 = math.max(0.5 - x2 * x2 - y2 * y2 - z2 * z2, 0)
+				local t22 = t2 * t2
+				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
+					gradients,
+					gi2 + 16
+				) * z2)
 
-				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
-				if t3 > 0 then
-					local t32 = t3 * t3
-					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
-						gradients,
-						gi3 + 16
-					) * z3)
-				end
+				local t3 = math.max(0.5 - x3 * x3 - y3 * y3 - z3 * z3, 0)
+				local t32 = t3 * t3
+				n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
+					gradients,
+					gi3 + 16
+				) * z3)
 
-				values[index] = n * SCALE3
+				values[index] = if n == n then n * SCALE3 else 0
 			end
 		end
 	end

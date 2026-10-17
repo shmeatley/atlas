@@ -23,7 +23,7 @@ Luau.
 
 ```toml
 [dependencies]
-Atlas = "shmeatley/atlas@0.2.0"
+Atlas = "shmeatley/atlas@0.2.1"
 ```
 
 Then run:
@@ -75,10 +75,45 @@ Full API reference: [shmeatley.github.io/atlas](https://shmeatley.github.io/atla
 
 ## Performance
 
+### Studio native (0.2.1)
+
+Measured in a separate Roblox Studio **server play session**, with `--!native`
+on the benchmark Script and Perlin/Simplex ModuleScripts. Studio's profiler
+recorded native execution of the sampled kernels. Medians of 31 trials,
+rotating the order of released Atlas 0.2.0, the optimized code, and
+`math.noise`. CPU: AMD Ryzen 5 7600X; Studio 0.743.0.7431133.
+
+| Workload | Optimized Atlas | math.noise | Atlas / built-in time |
+|---|---:|---:|---:|
+| Perlin scalar 2D | 0.0306 us | 0.0407 us | 0.75x |
+| Perlin scalar 3D | 0.0416 us | 0.0405 us | 1.03x |
+| Simplex scalar 2D | 0.0412 us | 0.0405 us | 1.02x |
+| Simplex scalar 3D | 0.0558 us | 0.0405 us | 1.38x |
+| Perlin grid 128x128 | 0.230 ms | 0.617 ms | 0.37x |
+| Perlin grid 32x32x32 | 0.819 ms | 1.240 ms | 0.66x |
+| Simplex grid 128x128 | 0.386 ms | 0.622 ms | 0.62x |
+| Simplex grid 32x32x32 | 1.375 ms | 1.237 ms | 1.11x |
+
+Lower ratios are better. Bulk references use specialized 2D/3D loops filling
+the same-sized arrays. Atlas preserves its own seeded outputs; these are
+different noise fields from `math.noise`. Relative to 0.2.0 in the same run,
+scalar Perlin improved 5–12%, scalar Simplex 20–22%, and Simplex grids
+29–31%. Perlin grid implementations are unchanged. Interpreter controls
+showed Simplex taking about 2–9% longer than 0.2.0, so these changes target
+native execution rather than a universal runtime improvement.
+
+[Full Studio native report, exact validation and raw trials](benchmarks/2026-10-17/studio-native/README.md).
+Reproduce with `python tools/studio_native.py`, open the generated place,
+and press Play. Add `--validate` for the exact-output suite.
+These changes are included in 0.2.1; the historical tables below describe 0.2.0.
+
+### Released 0.2.0: CLI and Studio interpreter
+
 Measured October 17, 2026 on an AMD Ryzen 5 7600X. Tables show medians of
 11 trials, including closure-call overhead. **Native CLI** uses Luau O2 with
 native code generation; **Studio interpreter** is a fresh measurement inside
-Roblox Studio Edit mode. Studio native performance has not been measured.
+Roblox Studio Edit mode. The Studio native measurements above are separate
+from these historical release measurements.
 Compare ratios within one runtime: **lower is better; 1.00x equals that
 runtime's `math.noise` cost**. These algorithms produce different fields;
 derivative, cell and fBm rows also return more information or do more work.

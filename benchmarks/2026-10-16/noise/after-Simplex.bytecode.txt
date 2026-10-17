@@ -1,0 +1,1879 @@
+Function 0 (new):
+R0: number? [argument]
+U0: any
+U1: any
+U2: any
+U3: any
+U4: any
+R1: any from 0 to 47
+R2: any from 7 to 47
+   86: 	local resolved = seed or random(1, 2147483646)
+MOVE R1 R0
+JUMPIF R1 L0
+GETUPVAL R1 U0
+LOADN R2 1
+LOADK R3 K0 [2147483646]
+CALLFB R1 2 1 [0]
+   87: 	local perm = Permutation.build(resolved)
+L0: GETUPVAL R2 U1
+GETTABLEKS R2 R2 K1 ['build']
+MOVE R3 R1
+CALLFB R2 1 1 [1]
+REMARK builtin setmetatable/2
+REMARK allocation: table template 4
+   88: 	return setmetatable({
+DUPTABLE R4 6
+   89: 		seed = resolved,
+SETTABLEKS R1 R4 K2 ['seed']
+   90: 		_perm = perm,
+SETTABLEKS R2 R4 K3 ['_perm']
+   91: 		_grad2 = Permutation.gradients(perm, GRAD2, 16, 8),
+GETUPVAL R5 U1
+GETTABLEKS R5 R5 K7 ['gradients']
+MOVE R6 R2
+GETUPVAL R7 U2
+LOADN R8 16
+LOADN R9 8
+CALLFB R5 4 1 [2]
+SETTABLEKS R5 R4 K4 ['_grad2']
+   92: 		_grad3 = Permutation.gradients(perm, GRAD3, 24, 12),
+GETUPVAL R5 U1
+GETTABLEKS R5 R5 K7 ['gradients']
+MOVE R6 R2
+GETUPVAL R7 U3
+LOADN R8 24
+LOADN R9 12
+CALLFB R5 4 1 [3]
+SETTABLEKS R5 R4 K5 ['_grad3']
+   93: 	}, Simplex)
+GETUPVAL R5 U4
+FASTCALL2 61 R4 R5 L1
+   88: 	return setmetatable({
+GETIMPORT R3 9 [setmetatable]
+CALL R3 2 1
+L1: RETURN R3 1
+
+Function 1 (sample2D):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+U0: any
+U1: any
+U2: any
+U3: any
+R5: number from 4 to 14
+R5: number from 14 to 29
+R6: number from 6 to 43
+R7: number from 10 to 50
+R11: any from 20 to 67
+R15: number from 37 to 76
+R10: any from 20 to 77
+R6: number from 43 to 84
+R6: number from 84 to 103
+R10: number from 77 to 103
+R9: number from 18 to 110
+R9: any from 110 to 129
+R16: any from 58 to 129
+R12: any from 31 to 136
+R12: number from 136 to 155
+R3: any from 0 to 157
+R4: any from 2 to 157
+R5: any from 29 to 157
+R7: number from 50 to 157
+R8: number from 16 to 157
+R10: any from 103 to 157
+R11: number from 67 to 157
+R13: number from 33 to 157
+R14: number from 35 to 157
+R16: number from 129 to 157
+R15: number from 76 to 157
+  106: 	local perm = self._perm
+GETTABLEKS R3 R0 K0 ['_perm']
+  107: 	local gradients = self._grad2
+GETTABLEKS R4 R0 K1 ['_grad2']
+  109: 	local skew = (x + y) * F2
+ADD R6 R1 R2
+MULK R5 R6 K2 [0.36602540378443865]
+REMARK builtin math.floor/1
+  110: 	local i = floor(x + skew)
+ADD R7 R1 R5
+FASTCALL1 12 R7 L0
+GETUPVAL R6 U0
+CALL R6 1 1
+REMARK builtin math.floor/1
+  111: 	local j = floor(y + skew)
+L0: ADD R8 R2 R5
+FASTCALL1 12 R8 L1
+GETUPVAL R7 U0
+CALL R7 1 1
+  112: 	local unskew = (i + j) * G2
+L1: ADD R8 R6 R7
+MULK R5 R8 K3 [0.21132486540518713]
+  113: 	local x0 = x - (i - unskew)
+SUB R9 R6 R5
+SUB R8 R1 R9
+  114: 	local y0 = y - (j - unskew)
+SUB R10 R7 R5
+SUB R9 R2 R10
+  116: 	local i1, j1
+LOADNIL R10
+LOADNIL R11
+  117: 	if x0 > y0 then
+JUMPIFNOTLT R9 R8 L2
+  118: 		i1, j1 = 1, 0
+LOADN R10 1
+LOADN R11 0
+JUMP L3
+  120: 		i1, j1 = 0, 1
+L2: LOADN R10 0
+LOADN R11 1
+  123: 	local x1 = x0 - i1 + G2
+L3: SUB R12 R8 R10
+ADDK R5 R12 K3 [0.21132486540518713]
+  124: 	local y1 = y0 - j1 + G2
+SUB R13 R9 R11
+ADDK R12 R13 K3 [0.21132486540518713]
+  125: 	local x2 = x0 - 1 + G2_2
+SUBK R14 R8 K5 [1]
+ADDK R13 R14 K4 [0.42264973081037427]
+  126: 	local y2 = y0 - 1 + G2_2
+SUBK R15 R9 K5 [1]
+ADDK R14 R15 K4 [0.42264973081037427]
+REMARK builtin bit32.band/2
+  128: 	local ii = band(i, 255)
+FASTCALL2K 29 R6 K6 L4 [255]
+MOVE R16 R6
+LOADK R17 K6 [255]
+GETUPVAL R15 U1
+CALL R15 2 1
+REMARK builtin bit32.band/2
+  129: 	local jj = band(j, 255)
+L4: FASTCALL2K 29 R7 K6 L5 [255]
+MOVE R17 R7
+LOADK R18 K6 [255]
+GETUPVAL R16 U1
+CALL R16 2 1
+L5: MOVE R6 R16
+REMARK builtin buffer.readu8/2
+  130: 	local gi0 = (ii + readu8(perm, jj)) * 16
+FASTCALL2 66 R3 R6 L6
+MOVE R18 R3
+MOVE R19 R6
+GETUPVAL R17 U2
+CALL R17 2 1
+L6: ADD R16 R15 R17
+MULK R7 R16 K7 [16]
+  131: 	local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+ADD R18 R15 R10
+REMARK builtin buffer.readu8/2
+ADD R21 R6 R11
+FASTCALL2 66 R3 R21 L7
+MOVE R20 R3
+GETUPVAL R19 U2
+CALL R19 2 1
+L7: ADD R17 R18 R19
+MULK R16 R17 K7 [16]
+  132: 	local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ADDK R18 R15 K5 [1]
+REMARK builtin buffer.readu8/2
+ADDK R21 R6 K5 [1]
+FASTCALL2 66 R3 R21 L8
+MOVE R20 R3
+GETUPVAL R19 U2
+CALL R19 2 1
+L8: ADD R17 R18 R19
+MULK R11 R17 K7 [16]
+  134: 	local n = 0
+LOADN R15 0
+  136: 	local t0 = 0.5 - x0 * x0 - y0 * y0
+MUL R18 R8 R8
+SUBRK R17 K8 [0.5] R18
+MUL R18 R9 R9
+SUB R10 R17 R18
+  137: 	if t0 > 0 then
+LOADN R17 0
+JUMPIFNOTLT R17 R10 L11
+  138: 		local t02 = t0 * t0
+MUL R6 R10 R10
+  139: 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+MUL R18 R6 R6
+REMARK builtin buffer.readf64/2
+FASTCALL2 76 R4 R7 L9
+MOVE R22 R4
+MOVE R23 R7
+GETUPVAL R21 U3
+CALL R21 2 1
+L9: MUL R20 R21 R8
+REMARK builtin buffer.readf64/2
+ADDK R24 R7 K9 [8]
+FASTCALL2 76 R4 R24 L10
+MOVE R23 R4
+GETUPVAL R22 U3
+CALL R22 2 1
+L10: MUL R21 R22 R9
+ADD R19 R20 R21
+MUL R17 R18 R19
+ADD R15 R15 R17
+  142: 	local t1 = 0.5 - x1 * x1 - y1 * y1
+L11: MUL R18 R5 R5
+SUBRK R17 K8 [0.5] R18
+MUL R18 R12 R12
+SUB R10 R17 R18
+  143: 	if t1 > 0 then
+LOADN R17 0
+JUMPIFNOTLT R17 R10 L14
+  144: 		local t12 = t1 * t1
+MUL R9 R10 R10
+  145: 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+MUL R18 R9 R9
+REMARK builtin buffer.readf64/2
+FASTCALL2 76 R4 R16 L12
+MOVE R22 R4
+MOVE R23 R16
+GETUPVAL R21 U3
+CALL R21 2 1
+L12: MUL R20 R21 R5
+REMARK builtin buffer.readf64/2
+ADDK R24 R16 K9 [8]
+FASTCALL2 76 R4 R24 L13
+MOVE R23 R4
+GETUPVAL R22 U3
+CALL R22 2 1
+L13: MUL R21 R22 R12
+ADD R19 R20 R21
+MUL R17 R18 R19
+ADD R15 R15 R17
+  148: 	local t2 = 0.5 - x2 * x2 - y2 * y2
+L14: MUL R18 R13 R13
+SUBRK R17 K8 [0.5] R18
+MUL R18 R14 R14
+SUB R16 R17 R18
+  149: 	if t2 > 0 then
+LOADN R17 0
+JUMPIFNOTLT R17 R16 L17
+  150: 		local t22 = t2 * t2
+MUL R12 R16 R16
+  151: 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+MUL R18 R12 R12
+REMARK builtin buffer.readf64/2
+FASTCALL2 76 R4 R11 L15
+MOVE R22 R4
+MOVE R23 R11
+GETUPVAL R21 U3
+CALL R21 2 1
+L15: MUL R20 R21 R13
+REMARK builtin buffer.readf64/2
+ADDK R24 R11 K9 [8]
+FASTCALL2 76 R4 R24 L16
+MOVE R23 R4
+GETUPVAL R22 U3
+CALL R22 2 1
+L16: MUL R21 R22 R14
+ADD R19 R20 R21
+MUL R17 R18 R19
+ADD R15 R15 R17
+  154: 	return n * SCALE2
+L17: MULK R17 R15 K10 [70]
+RETURN R17 1
+
+Function 2 (sample2DWithDerivative):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+U0: any
+U1: any
+U2: any
+U3: any
+R5: number from 4 to 14
+R5: number from 14 to 29
+R6: number from 6 to 43
+R7: number from 10 to 50
+R11: any from 20 to 67
+R15: number from 37 to 79
+R10: any from 20 to 99
+R6: number from 43 to 102
+R20: number from 86 to 119
+R21: number from 86 to 119
+R10: number from 99 to 119
+R6: number from 102 to 119
+R15: number from 79 to 119
+R9: number from 18 to 139
+R8: number from 16 to 142
+R20: number from 126 to 161
+R21: number from 126 to 161
+R9: any from 139 to 161
+R8: any from 142 to 161
+R16: any from 58 to 161
+R15: any from 119 to 181
+R12: any from 31 to 184
+R20: number from 168 to 201
+R21: number from 168 to 201
+R15: number from 181 to 201
+R12: number from 184 to 201
+R3: any from 0 to 205
+R4: any from 2 to 205
+R5: any from 29 to 205
+R7: number from 50 to 205
+R11: number from 67 to 205
+R13: number from 33 to 205
+R14: number from 35 to 205
+R16: number from 161 to 205
+R17: number from 76 to 205
+R18: number from 76 to 205
+R19: number from 76 to 205
+  169: 	local perm = self._perm
+GETTABLEKS R3 R0 K0 ['_perm']
+  170: 	local gradients = self._grad2
+GETTABLEKS R4 R0 K1 ['_grad2']
+  172: 	local skew = (x + y) * F2
+ADD R6 R1 R2
+MULK R5 R6 K2 [0.36602540378443865]
+REMARK builtin math.floor/1
+  173: 	local i = floor(x + skew)
+ADD R7 R1 R5
+FASTCALL1 12 R7 L0
+GETUPVAL R6 U0
+CALL R6 1 1
+REMARK builtin math.floor/1
+  174: 	local j = floor(y + skew)
+L0: ADD R8 R2 R5
+FASTCALL1 12 R8 L1
+GETUPVAL R7 U0
+CALL R7 1 1
+  175: 	local unskew = (i + j) * G2
+L1: ADD R8 R6 R7
+MULK R5 R8 K3 [0.21132486540518713]
+  176: 	local x0 = x - (i - unskew)
+SUB R9 R6 R5
+SUB R8 R1 R9
+  177: 	local y0 = y - (j - unskew)
+SUB R10 R7 R5
+SUB R9 R2 R10
+  179: 	local i1, j1
+LOADNIL R10
+LOADNIL R11
+  180: 	if x0 > y0 then
+JUMPIFNOTLT R9 R8 L2
+  181: 		i1, j1 = 1, 0
+LOADN R10 1
+LOADN R11 0
+JUMP L3
+  183: 		i1, j1 = 0, 1
+L2: LOADN R10 0
+LOADN R11 1
+  186: 	local x1 = x0 - i1 + G2
+L3: SUB R12 R8 R10
+ADDK R5 R12 K3 [0.21132486540518713]
+  187: 	local y1 = y0 - j1 + G2
+SUB R13 R9 R11
+ADDK R12 R13 K3 [0.21132486540518713]
+  188: 	local x2 = x0 - 1 + G2_2
+SUBK R14 R8 K5 [1]
+ADDK R13 R14 K4 [0.42264973081037427]
+  189: 	local y2 = y0 - 1 + G2_2
+SUBK R15 R9 K5 [1]
+ADDK R14 R15 K4 [0.42264973081037427]
+REMARK builtin bit32.band/2
+  191: 	local ii = band(i, 255)
+FASTCALL2K 29 R6 K6 L4 [255]
+MOVE R16 R6
+LOADK R17 K6 [255]
+GETUPVAL R15 U1
+CALL R15 2 1
+REMARK builtin bit32.band/2
+  192: 	local jj = band(j, 255)
+L4: FASTCALL2K 29 R7 K6 L5 [255]
+MOVE R17 R7
+LOADK R18 K6 [255]
+GETUPVAL R16 U1
+CALL R16 2 1
+L5: MOVE R6 R16
+REMARK builtin buffer.readu8/2
+  193: 	local gi0 = (ii + readu8(perm, jj)) * 16
+FASTCALL2 66 R3 R6 L6
+MOVE R18 R3
+MOVE R19 R6
+GETUPVAL R17 U2
+CALL R17 2 1
+L6: ADD R16 R15 R17
+MULK R7 R16 K7 [16]
+  194: 	local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+ADD R18 R15 R10
+REMARK builtin buffer.readu8/2
+ADD R21 R6 R11
+FASTCALL2 66 R3 R21 L7
+MOVE R20 R3
+GETUPVAL R19 U2
+CALL R19 2 1
+L7: ADD R17 R18 R19
+MULK R16 R17 K7 [16]
+  195: 	local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+ADDK R18 R15 K5 [1]
+REMARK builtin buffer.readu8/2
+ADDK R21 R6 K5 [1]
+FASTCALL2 66 R3 R21 L8
+MOVE R20 R3
+GETUPVAL R19 U2
+CALL R19 2 1
+L8: ADD R17 R18 R19
+MULK R11 R17 K7 [16]
+  197: 	local n, dx, dy = 0, 0, 0
+LOADN R17 0
+LOADN R18 0
+LOADN R19 0
+  199: 	local t0 = 0.5 - x0 * x0 - y0 * y0
+MUL R21 R8 R8
+SUBRK R20 K8 [0.5] R21
+MUL R21 R9 R9
+SUB R15 R20 R21
+  200: 	if t0 > 0 then
+LOADN R20 0
+JUMPIFNOTLT R20 R15 L11
+REMARK builtin buffer.readf64/2
+  201: 		local gx, gy = readf64(gradients, gi0), readf64(gradients, gi0 + 8)
+FASTCALL2 76 R4 R7 L9
+MOVE R23 R4
+MOVE R24 R7
+GETUPVAL R22 U3
+CALL R22 2 1
+L9: MOVE R20 R22
+REMARK builtin buffer.readf64/2
+ADDK R23 R7 K9 [8]
+FASTCALL2 76 R4 R23 L10
+MOVE R22 R4
+GETUPVAL R21 U3
+CALL R21 2 1
+  202: 		local dot = gx * x0 + gy * y0
+L10: MUL R22 R20 R8
+MUL R23 R21 R9
+ADD R10 R22 R23
+  203: 		local t03 = t0 * t0 * t0
+MUL R22 R15 R15
+MUL R6 R22 R15
+  204: 		n += t03 * t0 * dot
+MUL R23 R6 R15
+MUL R22 R23 R10
+ADD R17 R17 R22
+  205: 		dx += t03 * (t0 * gx - 8 * x0 * dot)
+MUL R24 R15 R20
+MULK R26 R8 K9 [8]
+MUL R25 R26 R10
+SUB R23 R24 R25
+MUL R22 R6 R23
+ADD R18 R18 R22
+  206: 		dy += t03 * (t0 * gy - 8 * y0 * dot)
+MUL R24 R15 R21
+MULK R26 R9 K9 [8]
+MUL R25 R26 R10
+SUB R23 R24 R25
+MUL R22 R6 R23
+ADD R19 R19 R22
+  209: 	local t1 = 0.5 - x1 * x1 - y1 * y1
+L11: MUL R21 R5 R5
+SUBRK R20 K8 [0.5] R21
+MUL R21 R12 R12
+SUB R15 R20 R21
+  210: 	if t1 > 0 then
+LOADN R20 0
+JUMPIFNOTLT R20 R15 L14
+REMARK builtin buffer.readf64/2
+  211: 		local gx, gy = readf64(gradients, gi1), readf64(gradients, gi1 + 8)
+FASTCALL2 76 R4 R16 L12
+MOVE R23 R4
+MOVE R24 R16
+GETUPVAL R22 U3
+CALL R22 2 1
+L12: MOVE R20 R22
+REMARK builtin buffer.readf64/2
+ADDK R23 R16 K9 [8]
+FASTCALL2 76 R4 R23 L13
+MOVE R22 R4
+GETUPVAL R21 U3
+CALL R21 2 1
+  212: 		local dot = gx * x1 + gy * y1
+L13: MUL R22 R20 R5
+MUL R23 R21 R12
+ADD R9 R22 R23
+  213: 		local t13 = t1 * t1 * t1
+MUL R22 R15 R15
+MUL R8 R22 R15
+  214: 		n += t13 * t1 * dot
+MUL R23 R8 R15
+MUL R22 R23 R9
+ADD R17 R17 R22
+  215: 		dx += t13 * (t1 * gx - 8 * x1 * dot)
+MUL R24 R15 R20
+LOADN R27 8
+MUL R26 R27 R5
+MUL R25 R26 R9
+SUB R23 R24 R25
+MUL R22 R8 R23
+ADD R18 R18 R22
+  216: 		dy += t13 * (t1 * gy - 8 * y1 * dot)
+MUL R24 R15 R21
+LOADN R27 8
+MUL R26 R27 R12
+MUL R25 R26 R9
+SUB R23 R24 R25
+MUL R22 R8 R23
+ADD R19 R19 R22
+  219: 	local t2 = 0.5 - x2 * x2 - y2 * y2
+L14: MUL R21 R13 R13
+SUBRK R20 K8 [0.5] R21
+MUL R21 R14 R14
+SUB R16 R20 R21
+  220: 	if t2 > 0 then
+LOADN R20 0
+JUMPIFNOTLT R20 R16 L17
+REMARK builtin buffer.readf64/2
+  221: 		local gx, gy = readf64(gradients, gi2), readf64(gradients, gi2 + 8)
+FASTCALL2 76 R4 R11 L15
+MOVE R23 R4
+MOVE R24 R11
+GETUPVAL R22 U3
+CALL R22 2 1
+L15: MOVE R20 R22
+REMARK builtin buffer.readf64/2
+ADDK R23 R11 K9 [8]
+FASTCALL2 76 R4 R23 L16
+MOVE R22 R4
+GETUPVAL R21 U3
+CALL R21 2 1
+  222: 		local dot = gx * x2 + gy * y2
+L16: MUL R22 R20 R13
+MUL R23 R21 R14
+ADD R15 R22 R23
+  223: 		local t23 = t2 * t2 * t2
+MUL R22 R16 R16
+MUL R12 R22 R16
+  224: 		n += t23 * t2 * dot
+MUL R23 R12 R16
+MUL R22 R23 R15
+ADD R17 R17 R22
+  225: 		dx += t23 * (t2 * gx - 8 * x2 * dot)
+MUL R24 R16 R20
+MULK R26 R13 K9 [8]
+MUL R25 R26 R15
+SUB R23 R24 R25
+MUL R22 R12 R23
+ADD R18 R18 R22
+  226: 		dy += t23 * (t2 * gy - 8 * y2 * dot)
+MUL R24 R16 R21
+MULK R26 R14 K9 [8]
+MUL R25 R26 R15
+SUB R23 R24 R25
+MUL R22 R12 R23
+ADD R19 R19 R22
+  229: 	return n * SCALE2, dx * SCALE2, dy * SCALE2
+L17: MULK R20 R17 K10 [70]
+MULK R21 R18 K10 [70]
+MULK R22 R19 K10 [70]
+RETURN R20 3
+
+Function 3 (sample3D):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number [argument]
+U0: any
+U1: any
+U2: any
+U3: any
+R6: number from 4 to 19
+R6: number from 19 to 85
+R7: number from 7 to 106
+R8: number from 11 to 113
+R9: number from 15 to 120
+R15: any from 28 to 150
+R18: any from 28 to 166
+R27: number from 100 to 182
+R17: any from 28 to 183
+R16: any from 28 to 192
+R16: number from 192 to 219
+R17: number from 183 to 219
+R14: any from 28 to 228
+R14: any from 228 to 255
+R28: any from 134 to 255
+R20: any from 89 to 264
+R20: any from 264 to 291
+R28: any from 255 to 291
+R23: any from 95 to 300
+R23: number from 300 to 327
+R4: any from 0 to 329
+R5: any from 2 to 329
+R6: any from 85 to 329
+R7: number from 106 to 329
+R8: number from 113 to 329
+R9: number from 120 to 329
+R10: number from 22 to 329
+R11: number from 24 to 329
+R12: number from 26 to 329
+R13: any from 28 to 329
+R15: any from 150 to 329
+R17: any from 219 to 329
+R18: number from 166 to 329
+R19: any from 87 to 329
+R21: any from 91 to 329
+R22: any from 93 to 329
+R24: number from 97 to 329
+R25: number from 98 to 329
+R26: number from 99 to 329
+R28: number from 291 to 329
+R27: number from 182 to 329
+  243: 	local perm = self._perm
+GETTABLEKS R4 R0 K0 ['_perm']
+  244: 	local gradients = self._grad3
+GETTABLEKS R5 R0 K1 ['_grad3']
+  246: 	local skew = (x + y + z) * F3
+ADD R8 R1 R2
+ADD R7 R8 R3
+MULK R6 R7 K2 [0.33333333333333331]
+REMARK builtin math.floor/1
+  247: 	local i = floor(x + skew)
+ADD R8 R1 R6
+FASTCALL1 12 R8 L0
+GETUPVAL R7 U0
+CALL R7 1 1
+REMARK builtin math.floor/1
+  248: 	local j = floor(y + skew)
+L0: ADD R9 R2 R6
+FASTCALL1 12 R9 L1
+GETUPVAL R8 U0
+CALL R8 1 1
+REMARK builtin math.floor/1
+  249: 	local k = floor(z + skew)
+L1: ADD R10 R3 R6
+FASTCALL1 12 R10 L2
+GETUPVAL R9 U0
+CALL R9 1 1
+  250: 	local unskew = (i + j + k) * G3
+L2: ADD R11 R7 R8
+ADD R10 R11 R9
+MULK R6 R10 K3 [0.16666666666666666]
+  251: 	local x0 = x - (i - unskew)
+SUB R11 R7 R6
+SUB R10 R1 R11
+  252: 	local y0 = y - (j - unskew)
+SUB R12 R8 R6
+SUB R11 R2 R12
+  253: 	local z0 = z - (k - unskew)
+SUB R13 R9 R6
+SUB R12 R3 R13
+  255: 	local i1, j1, k1, i2, j2, k2
+LOADNIL R13
+LOADNIL R14
+LOADNIL R15
+LOADNIL R16
+LOADNIL R17
+LOADNIL R18
+  256: 	if x0 >= y0 then
+JUMPIFNOTLE R11 R10 L5
+  257: 		if y0 >= z0 then
+JUMPIFNOTLE R12 R11 L3
+  258: 			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+LOADN R13 1
+LOADN R14 0
+LOADN R15 0
+LOADN R16 1
+LOADN R17 1
+LOADN R18 0
+JUMP L8
+  259: 		elseif x0 >= z0 then
+L3: JUMPIFNOTLE R12 R10 L4
+  260: 			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+LOADN R13 1
+LOADN R14 0
+LOADN R15 0
+LOADN R16 1
+LOADN R17 0
+LOADN R18 1
+JUMP L8
+  262: 			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+L4: LOADN R13 0
+LOADN R14 0
+LOADN R15 1
+LOADN R16 1
+LOADN R17 0
+LOADN R18 1
+JUMP L8
+  265: 		if y0 < z0 then
+L5: JUMPIFNOTLT R11 R12 L6
+  266: 			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+LOADN R13 0
+LOADN R14 0
+LOADN R15 1
+LOADN R16 0
+LOADN R17 1
+LOADN R18 1
+JUMP L8
+  267: 		elseif x0 < z0 then
+L6: JUMPIFNOTLT R10 R12 L7
+  268: 			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+LOADN R13 0
+LOADN R14 1
+LOADN R15 0
+LOADN R16 0
+LOADN R17 1
+LOADN R18 1
+JUMP L8
+  270: 			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+L7: LOADN R13 0
+LOADN R14 1
+LOADN R15 0
+LOADN R16 1
+LOADN R17 1
+LOADN R18 0
+  274: 	local x1 = x0 - i1 + G3
+L8: SUB R19 R10 R13
+ADDK R6 R19 K3 [0.16666666666666666]
+  275: 	local y1 = y0 - j1 + G3
+SUB R20 R11 R14
+ADDK R19 R20 K3 [0.16666666666666666]
+  276: 	local z1 = z0 - k1 + G3
+SUB R21 R12 R15
+ADDK R20 R21 K3 [0.16666666666666666]
+  277: 	local x2 = x0 - i2 + G3_2
+SUB R22 R10 R16
+ADDK R21 R22 K2 [0.33333333333333331]
+  278: 	local y2 = y0 - j2 + G3_2
+SUB R23 R11 R17
+ADDK R22 R23 K2 [0.33333333333333331]
+  279: 	local z2 = z0 - k2 + G3_2
+SUB R24 R12 R18
+ADDK R23 R24 K2 [0.33333333333333331]
+  280: 	local x3 = x0 - 0.5
+SUBK R24 R10 K4 [0.5]
+  281: 	local y3 = y0 - 0.5
+SUBK R25 R11 K4 [0.5]
+  282: 	local z3 = z0 - 0.5
+SUBK R26 R12 K4 [0.5]
+REMARK builtin bit32.band/2
+  284: 	local ii = band(i, 255)
+FASTCALL2K 29 R7 K5 L9 [255]
+MOVE R28 R7
+LOADK R29 K5 [255]
+GETUPVAL R27 U1
+CALL R27 2 1
+REMARK builtin bit32.band/2
+  285: 	local jj = band(j, 255)
+L9: FASTCALL2K 29 R8 K5 L10 [255]
+MOVE R29 R8
+LOADK R30 K5 [255]
+GETUPVAL R28 U1
+CALL R28 2 1
+L10: MOVE R7 R28
+REMARK builtin bit32.band/2
+  286: 	local kk = band(k, 255)
+FASTCALL2K 29 R9 K5 L11 [255]
+MOVE R29 R9
+LOADK R30 K5 [255]
+GETUPVAL R28 U1
+CALL R28 2 1
+L11: MOVE R8 R28
+REMARK builtin buffer.readu8/2
+REMARK builtin buffer.readu8/2
+  287: 	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+FASTCALL2 66 R4 R8 L12
+MOVE R33 R4
+MOVE R34 R8
+GETUPVAL R32 U2
+CALL R32 2 1
+L12: ADD R31 R7 R32
+FASTCALL2 66 R4 R31 L13
+MOVE R30 R4
+GETUPVAL R29 U2
+CALL R29 2 1
+L13: ADD R28 R27 R29
+MULK R9 R28 K6 [24]
+  288: 	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+ADD R30 R27 R13
+REMARK builtin buffer.readu8/2
+ADD R34 R7 R14
+REMARK builtin buffer.readu8/2
+ADD R37 R8 R15
+FASTCALL2 66 R4 R37 L14
+MOVE R36 R4
+GETUPVAL R35 U2
+CALL R35 2 1
+L14: ADD R33 R34 R35
+FASTCALL2 66 R4 R33 L15
+MOVE R32 R4
+GETUPVAL R31 U2
+CALL R31 2 1
+L15: ADD R29 R30 R31
+MULK R28 R29 K6 [24]
+  289: 	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+ADD R30 R27 R16
+REMARK builtin buffer.readu8/2
+ADD R34 R7 R17
+REMARK builtin buffer.readu8/2
+ADD R37 R8 R18
+FASTCALL2 66 R4 R37 L16
+MOVE R36 R4
+GETUPVAL R35 U2
+CALL R35 2 1
+L16: ADD R33 R34 R35
+FASTCALL2 66 R4 R33 L17
+MOVE R32 R4
+GETUPVAL R31 U2
+CALL R31 2 1
+L17: ADD R29 R30 R31
+MULK R15 R29 K6 [24]
+  290: 	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ADDK R30 R27 K7 [1]
+REMARK builtin buffer.readu8/2
+ADDK R34 R7 K7 [1]
+REMARK builtin buffer.readu8/2
+ADDK R37 R8 K7 [1]
+FASTCALL2 66 R4 R37 L18
+MOVE R36 R4
+GETUPVAL R35 U2
+CALL R35 2 1
+L18: ADD R33 R34 R35
+FASTCALL2 66 R4 R33 L19
+MOVE R32 R4
+GETUPVAL R31 U2
+CALL R31 2 1
+L19: ADD R29 R30 R31
+MULK R18 R29 K6 [24]
+  292: 	local n = 0
+LOADN R27 0
+  294: 	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+MUL R31 R10 R10
+SUBRK R30 K4 [0.5] R31
+MUL R31 R11 R11
+SUB R29 R30 R31
+MUL R30 R12 R12
+SUB R17 R29 R30
+  295: 	if t0 > 0 then
+LOADN R29 0
+JUMPIFNOTLT R29 R17 L23
+  296: 		local t02 = t0 * t0
+MUL R16 R17 R17
+  297: 		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
+MUL R30 R16 R16
+REMARK builtin buffer.readf64/2
+FASTCALL2 76 R5 R9 L20
+MOVE R35 R5
+MOVE R36 R9
+GETUPVAL R34 U3
+CALL R34 2 1
+L20: MUL R33 R34 R10
+REMARK builtin buffer.readf64/2
+ADDK R37 R9 K8 [8]
+FASTCALL2 76 R5 R37 L21
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+L21: MUL R34 R35 R11
+ADD R32 R33 R34
+REMARK builtin buffer.readf64/2
+ADDK R36 R9 K9 [16]
+FASTCALL2 76 R5 R36 L22
+MOVE R35 R5
+GETUPVAL R34 U3
+CALL R34 2 1
+L22: MUL R33 R34 R12
+ADD R31 R32 R33
+MUL R29 R30 R31
+ADD R27 R27 R29
+  300: 	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+L23: MUL R31 R6 R6
+SUBRK R30 K4 [0.5] R31
+MUL R31 R19 R19
+SUB R29 R30 R31
+MUL R30 R20 R20
+SUB R17 R29 R30
+  301: 	if t1 > 0 then
+LOADN R29 0
+JUMPIFNOTLT R29 R17 L27
+  302: 		local t12 = t1 * t1
+MUL R14 R17 R17
+  303: 		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
+MUL R30 R14 R14
+REMARK builtin buffer.readf64/2
+FASTCALL2 76 R5 R28 L24
+MOVE R35 R5
+MOVE R36 R28
+GETUPVAL R34 U3
+CALL R34 2 1
+L24: MUL R33 R34 R6
+REMARK builtin buffer.readf64/2
+ADDK R37 R28 K8 [8]
+FASTCALL2 76 R5 R37 L25
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+L25: MUL R34 R35 R19
+ADD R32 R33 R34
+REMARK builtin buffer.readf64/2
+ADDK R36 R28 K9 [16]
+FASTCALL2 76 R5 R36 L26
+MOVE R35 R5
+GETUPVAL R34 U3
+CALL R34 2 1
+L26: MUL R33 R34 R20
+ADD R31 R32 R33
+MUL R29 R30 R31
+ADD R27 R27 R29
+  306: 	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+L27: MUL R31 R21 R21
+SUBRK R30 K4 [0.5] R31
+MUL R31 R22 R22
+SUB R29 R30 R31
+MUL R30 R23 R23
+SUB R28 R29 R30
+  307: 	if t2 > 0 then
+LOADN R29 0
+JUMPIFNOTLT R29 R28 L31
+  308: 		local t22 = t2 * t2
+MUL R20 R28 R28
+  309: 		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
+MUL R30 R20 R20
+REMARK builtin buffer.readf64/2
+FASTCALL2 76 R5 R15 L28
+MOVE R35 R5
+MOVE R36 R15
+GETUPVAL R34 U3
+CALL R34 2 1
+L28: MUL R33 R34 R21
+REMARK builtin buffer.readf64/2
+ADDK R37 R15 K8 [8]
+FASTCALL2 76 R5 R37 L29
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+L29: MUL R34 R35 R22
+ADD R32 R33 R34
+REMARK builtin buffer.readf64/2
+ADDK R36 R15 K9 [16]
+FASTCALL2 76 R5 R36 L30
+MOVE R35 R5
+GETUPVAL R34 U3
+CALL R34 2 1
+L30: MUL R33 R34 R23
+ADD R31 R32 R33
+MUL R29 R30 R31
+ADD R27 R27 R29
+  312: 	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+L31: MUL R31 R24 R24
+SUBRK R30 K4 [0.5] R31
+MUL R31 R25 R25
+SUB R29 R30 R31
+MUL R30 R26 R26
+SUB R28 R29 R30
+  313: 	if t3 > 0 then
+LOADN R29 0
+JUMPIFNOTLT R29 R28 L35
+  314: 		local t32 = t3 * t3
+MUL R23 R28 R28
+  315: 		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
+MUL R30 R23 R23
+REMARK builtin buffer.readf64/2
+FASTCALL2 76 R5 R18 L32
+MOVE R35 R5
+MOVE R36 R18
+GETUPVAL R34 U3
+CALL R34 2 1
+L32: MUL R33 R34 R24
+REMARK builtin buffer.readf64/2
+ADDK R37 R18 K8 [8]
+FASTCALL2 76 R5 R37 L33
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+L33: MUL R34 R35 R25
+ADD R32 R33 R34
+REMARK builtin buffer.readf64/2
+ADDK R36 R18 K9 [16]
+FASTCALL2 76 R5 R36 L34
+MOVE R35 R5
+GETUPVAL R34 U3
+CALL R34 2 1
+L34: MUL R33 R34 R26
+ADD R31 R32 R33
+MUL R29 R30 R31
+ADD R27 R27 R29
+  318: 	return n * SCALE3
+L35: MULK R29 R27 K10 [100]
+RETURN R29 1
+
+Function 4 (sample3DWithDerivative):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number [argument]
+U0: any
+U1: any
+U2: any
+U3: any
+R6: number from 4 to 19
+R6: number from 19 to 85
+R7: number from 7 to 106
+R8: number from 11 to 113
+R9: number from 15 to 120
+R15: any from 28 to 150
+R18: any from 28 to 166
+R27: number from 100 to 186
+R17: any from 28 to 215
+R16: any from 28 to 220
+R33: number from 195 to 243
+R34: number from 195 to 243
+R35: number from 195 to 243
+R17: number from 215 to 243
+R16: number from 220 to 243
+R27: number from 186 to 243
+R14: any from 28 to 272
+R13: any from 28 to 277
+R33: number from 252 to 303
+R34: number from 252 to 303
+R35: number from 252 to 303
+R14: any from 272 to 303
+R13: any from 277 to 303
+R28: any from 134 to 303
+R27: any from 243 to 332
+R20: any from 89 to 337
+R33: number from 312 to 363
+R34: number from 312 to 363
+R35: number from 312 to 363
+R27: any from 332 to 363
+R20: any from 337 to 363
+R28: any from 303 to 363
+R23: any from 95 to 392
+R22: any from 93 to 397
+R33: number from 372 to 420
+R34: number from 372 to 420
+R35: number from 372 to 420
+R23: number from 392 to 420
+R22: number from 397 to 420
+R4: any from 0 to 425
+R5: any from 2 to 425
+R6: any from 85 to 425
+R7: number from 106 to 425
+R8: number from 113 to 425
+R9: number from 120 to 425
+R10: number from 22 to 425
+R11: number from 24 to 425
+R12: number from 26 to 425
+R15: any from 150 to 425
+R18: number from 166 to 425
+R19: any from 87 to 425
+R21: any from 91 to 425
+R24: number from 97 to 425
+R25: number from 98 to 425
+R26: number from 99 to 425
+R28: number from 363 to 425
+R29: number from 182 to 425
+R30: number from 182 to 425
+R31: number from 182 to 425
+R32: number from 182 to 425
+  340: 	local perm = self._perm
+GETTABLEKS R4 R0 K0 ['_perm']
+  341: 	local gradients = self._grad3
+GETTABLEKS R5 R0 K1 ['_grad3']
+  343: 	local skew = (x + y + z) * F3
+ADD R8 R1 R2
+ADD R7 R8 R3
+MULK R6 R7 K2 [0.33333333333333331]
+REMARK builtin math.floor/1
+  344: 	local i = floor(x + skew)
+ADD R8 R1 R6
+FASTCALL1 12 R8 L0
+GETUPVAL R7 U0
+CALL R7 1 1
+REMARK builtin math.floor/1
+  345: 	local j = floor(y + skew)
+L0: ADD R9 R2 R6
+FASTCALL1 12 R9 L1
+GETUPVAL R8 U0
+CALL R8 1 1
+REMARK builtin math.floor/1
+  346: 	local k = floor(z + skew)
+L1: ADD R10 R3 R6
+FASTCALL1 12 R10 L2
+GETUPVAL R9 U0
+CALL R9 1 1
+  347: 	local unskew = (i + j + k) * G3
+L2: ADD R11 R7 R8
+ADD R10 R11 R9
+MULK R6 R10 K3 [0.16666666666666666]
+  348: 	local x0 = x - (i - unskew)
+SUB R11 R7 R6
+SUB R10 R1 R11
+  349: 	local y0 = y - (j - unskew)
+SUB R12 R8 R6
+SUB R11 R2 R12
+  350: 	local z0 = z - (k - unskew)
+SUB R13 R9 R6
+SUB R12 R3 R13
+  352: 	local i1, j1, k1, i2, j2, k2
+LOADNIL R13
+LOADNIL R14
+LOADNIL R15
+LOADNIL R16
+LOADNIL R17
+LOADNIL R18
+  353: 	if x0 >= y0 then
+JUMPIFNOTLE R11 R10 L5
+  354: 		if y0 >= z0 then
+JUMPIFNOTLE R12 R11 L3
+  355: 			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+LOADN R13 1
+LOADN R14 0
+LOADN R15 0
+LOADN R16 1
+LOADN R17 1
+LOADN R18 0
+JUMP L8
+  356: 		elseif x0 >= z0 then
+L3: JUMPIFNOTLE R12 R10 L4
+  357: 			i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+LOADN R13 1
+LOADN R14 0
+LOADN R15 0
+LOADN R16 1
+LOADN R17 0
+LOADN R18 1
+JUMP L8
+  359: 			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+L4: LOADN R13 0
+LOADN R14 0
+LOADN R15 1
+LOADN R16 1
+LOADN R17 0
+LOADN R18 1
+JUMP L8
+  362: 		if y0 < z0 then
+L5: JUMPIFNOTLT R11 R12 L6
+  363: 			i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+LOADN R13 0
+LOADN R14 0
+LOADN R15 1
+LOADN R16 0
+LOADN R17 1
+LOADN R18 1
+JUMP L8
+  364: 		elseif x0 < z0 then
+L6: JUMPIFNOTLT R10 R12 L7
+  365: 			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+LOADN R13 0
+LOADN R14 1
+LOADN R15 0
+LOADN R16 0
+LOADN R17 1
+LOADN R18 1
+JUMP L8
+  367: 			i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+L7: LOADN R13 0
+LOADN R14 1
+LOADN R15 0
+LOADN R16 1
+LOADN R17 1
+LOADN R18 0
+  371: 	local x1 = x0 - i1 + G3
+L8: SUB R19 R10 R13
+ADDK R6 R19 K3 [0.16666666666666666]
+  372: 	local y1 = y0 - j1 + G3
+SUB R20 R11 R14
+ADDK R19 R20 K3 [0.16666666666666666]
+  373: 	local z1 = z0 - k1 + G3
+SUB R21 R12 R15
+ADDK R20 R21 K3 [0.16666666666666666]
+  374: 	local x2 = x0 - i2 + G3_2
+SUB R22 R10 R16
+ADDK R21 R22 K2 [0.33333333333333331]
+  375: 	local y2 = y0 - j2 + G3_2
+SUB R23 R11 R17
+ADDK R22 R23 K2 [0.33333333333333331]
+  376: 	local z2 = z0 - k2 + G3_2
+SUB R24 R12 R18
+ADDK R23 R24 K2 [0.33333333333333331]
+  377: 	local x3 = x0 - 0.5
+SUBK R24 R10 K4 [0.5]
+  378: 	local y3 = y0 - 0.5
+SUBK R25 R11 K4 [0.5]
+  379: 	local z3 = z0 - 0.5
+SUBK R26 R12 K4 [0.5]
+REMARK builtin bit32.band/2
+  381: 	local ii = band(i, 255)
+FASTCALL2K 29 R7 K5 L9 [255]
+MOVE R28 R7
+LOADK R29 K5 [255]
+GETUPVAL R27 U1
+CALL R27 2 1
+REMARK builtin bit32.band/2
+  382: 	local jj = band(j, 255)
+L9: FASTCALL2K 29 R8 K5 L10 [255]
+MOVE R29 R8
+LOADK R30 K5 [255]
+GETUPVAL R28 U1
+CALL R28 2 1
+L10: MOVE R7 R28
+REMARK builtin bit32.band/2
+  383: 	local kk = band(k, 255)
+FASTCALL2K 29 R9 K5 L11 [255]
+MOVE R29 R9
+LOADK R30 K5 [255]
+GETUPVAL R28 U1
+CALL R28 2 1
+L11: MOVE R8 R28
+REMARK builtin buffer.readu8/2
+REMARK builtin buffer.readu8/2
+  384: 	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+FASTCALL2 66 R4 R8 L12
+MOVE R33 R4
+MOVE R34 R8
+GETUPVAL R32 U2
+CALL R32 2 1
+L12: ADD R31 R7 R32
+FASTCALL2 66 R4 R31 L13
+MOVE R30 R4
+GETUPVAL R29 U2
+CALL R29 2 1
+L13: ADD R28 R27 R29
+MULK R9 R28 K6 [24]
+  385: 	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+ADD R30 R27 R13
+REMARK builtin buffer.readu8/2
+ADD R34 R7 R14
+REMARK builtin buffer.readu8/2
+ADD R37 R8 R15
+FASTCALL2 66 R4 R37 L14
+MOVE R36 R4
+GETUPVAL R35 U2
+CALL R35 2 1
+L14: ADD R33 R34 R35
+FASTCALL2 66 R4 R33 L15
+MOVE R32 R4
+GETUPVAL R31 U2
+CALL R31 2 1
+L15: ADD R29 R30 R31
+MULK R28 R29 K6 [24]
+  386: 	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+ADD R30 R27 R16
+REMARK builtin buffer.readu8/2
+ADD R34 R7 R17
+REMARK builtin buffer.readu8/2
+ADD R37 R8 R18
+FASTCALL2 66 R4 R37 L16
+MOVE R36 R4
+GETUPVAL R35 U2
+CALL R35 2 1
+L16: ADD R33 R34 R35
+FASTCALL2 66 R4 R33 L17
+MOVE R32 R4
+GETUPVAL R31 U2
+CALL R31 2 1
+L17: ADD R29 R30 R31
+MULK R15 R29 K6 [24]
+  387: 	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+ADDK R30 R27 K7 [1]
+REMARK builtin buffer.readu8/2
+ADDK R34 R7 K7 [1]
+REMARK builtin buffer.readu8/2
+ADDK R37 R8 K7 [1]
+FASTCALL2 66 R4 R37 L18
+MOVE R36 R4
+GETUPVAL R35 U2
+CALL R35 2 1
+L18: ADD R33 R34 R35
+FASTCALL2 66 R4 R33 L19
+MOVE R32 R4
+GETUPVAL R31 U2
+CALL R31 2 1
+L19: ADD R29 R30 R31
+MULK R18 R29 K6 [24]
+  389: 	local n, dx, dy, dz = 0, 0, 0, 0
+LOADN R29 0
+LOADN R30 0
+LOADN R31 0
+LOADN R32 0
+  391: 	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+MUL R35 R10 R10
+SUBRK R34 K4 [0.5] R35
+MUL R35 R11 R11
+SUB R33 R34 R35
+MUL R34 R12 R12
+SUB R27 R33 R34
+  392: 	if t0 > 0 then
+LOADN R33 0
+JUMPIFNOTLT R33 R27 L23
+REMARK builtin buffer.readf64/2
+  393: 		local gx, gy, gz = readf64(gradients, gi0), readf64(gradients, gi0 + 8), readf64(gradients, gi0 + 16)
+FASTCALL2 76 R5 R9 L20
+MOVE R37 R5
+MOVE R38 R9
+GETUPVAL R36 U3
+CALL R36 2 1
+L20: MOVE R33 R36
+REMARK builtin buffer.readf64/2
+ADDK R38 R9 K8 [8]
+FASTCALL2 76 R5 R38 L21
+MOVE R37 R5
+GETUPVAL R36 U3
+CALL R36 2 1
+L21: MOVE R34 R36
+REMARK builtin buffer.readf64/2
+ADDK R37 R9 K9 [16]
+FASTCALL2 76 R5 R37 L22
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+  394: 		local dot = gx * x0 + gy * y0 + gz * z0
+L22: MUL R37 R33 R10
+MUL R38 R34 R11
+ADD R36 R37 R38
+MUL R37 R35 R12
+ADD R17 R36 R37
+  395: 		local t03 = t0 * t0 * t0
+MUL R36 R27 R27
+MUL R16 R36 R27
+  396: 		n += t03 * t0 * dot
+MUL R37 R16 R27
+MUL R36 R37 R17
+ADD R29 R29 R36
+  397: 		dx += t03 * (t0 * gx - 8 * x0 * dot)
+MUL R38 R27 R33
+MULK R40 R10 K8 [8]
+MUL R39 R40 R17
+SUB R37 R38 R39
+MUL R36 R16 R37
+ADD R30 R30 R36
+  398: 		dy += t03 * (t0 * gy - 8 * y0 * dot)
+MUL R38 R27 R34
+MULK R40 R11 K8 [8]
+MUL R39 R40 R17
+SUB R37 R38 R39
+MUL R36 R16 R37
+ADD R31 R31 R36
+  399: 		dz += t03 * (t0 * gz - 8 * z0 * dot)
+MUL R38 R27 R35
+MULK R40 R12 K8 [8]
+MUL R39 R40 R17
+SUB R37 R38 R39
+MUL R36 R16 R37
+ADD R32 R32 R36
+  402: 	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+L23: MUL R35 R6 R6
+SUBRK R34 K4 [0.5] R35
+MUL R35 R19 R19
+SUB R33 R34 R35
+MUL R34 R20 R20
+SUB R27 R33 R34
+  403: 	if t1 > 0 then
+LOADN R33 0
+JUMPIFNOTLT R33 R27 L27
+REMARK builtin buffer.readf64/2
+  404: 		local gx, gy, gz = readf64(gradients, gi1), readf64(gradients, gi1 + 8), readf64(gradients, gi1 + 16)
+FASTCALL2 76 R5 R28 L24
+MOVE R37 R5
+MOVE R38 R28
+GETUPVAL R36 U3
+CALL R36 2 1
+L24: MOVE R33 R36
+REMARK builtin buffer.readf64/2
+ADDK R38 R28 K8 [8]
+FASTCALL2 76 R5 R38 L25
+MOVE R37 R5
+GETUPVAL R36 U3
+CALL R36 2 1
+L25: MOVE R34 R36
+REMARK builtin buffer.readf64/2
+ADDK R37 R28 K9 [16]
+FASTCALL2 76 R5 R37 L26
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+  405: 		local dot = gx * x1 + gy * y1 + gz * z1
+L26: MUL R37 R33 R6
+MUL R38 R34 R19
+ADD R36 R37 R38
+MUL R37 R35 R20
+ADD R14 R36 R37
+  406: 		local t13 = t1 * t1 * t1
+MUL R36 R27 R27
+MUL R13 R36 R27
+  407: 		n += t13 * t1 * dot
+MUL R37 R13 R27
+MUL R36 R37 R14
+ADD R29 R29 R36
+  408: 		dx += t13 * (t1 * gx - 8 * x1 * dot)
+MUL R38 R27 R33
+LOADN R41 8
+MUL R40 R41 R6
+MUL R39 R40 R14
+SUB R37 R38 R39
+MUL R36 R13 R37
+ADD R30 R30 R36
+  409: 		dy += t13 * (t1 * gy - 8 * y1 * dot)
+MUL R38 R27 R34
+LOADN R41 8
+MUL R40 R41 R19
+MUL R39 R40 R14
+SUB R37 R38 R39
+MUL R36 R13 R37
+ADD R31 R31 R36
+  410: 		dz += t13 * (t1 * gz - 8 * z1 * dot)
+MUL R38 R27 R35
+LOADN R41 8
+MUL R40 R41 R20
+MUL R39 R40 R14
+SUB R37 R38 R39
+MUL R36 R13 R37
+ADD R32 R32 R36
+  413: 	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+L27: MUL R35 R21 R21
+SUBRK R34 K4 [0.5] R35
+MUL R35 R22 R22
+SUB R33 R34 R35
+MUL R34 R23 R23
+SUB R28 R33 R34
+  414: 	if t2 > 0 then
+LOADN R33 0
+JUMPIFNOTLT R33 R28 L31
+REMARK builtin buffer.readf64/2
+  415: 		local gx, gy, gz = readf64(gradients, gi2), readf64(gradients, gi2 + 8), readf64(gradients, gi2 + 16)
+FASTCALL2 76 R5 R15 L28
+MOVE R37 R5
+MOVE R38 R15
+GETUPVAL R36 U3
+CALL R36 2 1
+L28: MOVE R33 R36
+REMARK builtin buffer.readf64/2
+ADDK R38 R15 K8 [8]
+FASTCALL2 76 R5 R38 L29
+MOVE R37 R5
+GETUPVAL R36 U3
+CALL R36 2 1
+L29: MOVE R34 R36
+REMARK builtin buffer.readf64/2
+ADDK R37 R15 K9 [16]
+FASTCALL2 76 R5 R37 L30
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+  416: 		local dot = gx * x2 + gy * y2 + gz * z2
+L30: MUL R37 R33 R21
+MUL R38 R34 R22
+ADD R36 R37 R38
+MUL R37 R35 R23
+ADD R27 R36 R37
+  417: 		local t23 = t2 * t2 * t2
+MUL R36 R28 R28
+MUL R20 R36 R28
+  418: 		n += t23 * t2 * dot
+MUL R37 R20 R28
+MUL R36 R37 R27
+ADD R29 R29 R36
+  419: 		dx += t23 * (t2 * gx - 8 * x2 * dot)
+MUL R38 R28 R33
+LOADN R41 8
+MUL R40 R41 R21
+MUL R39 R40 R27
+SUB R37 R38 R39
+MUL R36 R20 R37
+ADD R30 R30 R36
+  420: 		dy += t23 * (t2 * gy - 8 * y2 * dot)
+MUL R38 R28 R34
+LOADN R41 8
+MUL R40 R41 R22
+MUL R39 R40 R27
+SUB R37 R38 R39
+MUL R36 R20 R37
+ADD R31 R31 R36
+  421: 		dz += t23 * (t2 * gz - 8 * z2 * dot)
+MUL R38 R28 R35
+LOADN R41 8
+MUL R40 R41 R23
+MUL R39 R40 R27
+SUB R37 R38 R39
+MUL R36 R20 R37
+ADD R32 R32 R36
+  424: 	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+L31: MUL R35 R24 R24
+SUBRK R34 K4 [0.5] R35
+MUL R35 R25 R25
+SUB R33 R34 R35
+MUL R34 R26 R26
+SUB R28 R33 R34
+  425: 	if t3 > 0 then
+LOADN R33 0
+JUMPIFNOTLT R33 R28 L35
+REMARK builtin buffer.readf64/2
+  426: 		local gx, gy, gz = readf64(gradients, gi3), readf64(gradients, gi3 + 8), readf64(gradients, gi3 + 16)
+FASTCALL2 76 R5 R18 L32
+MOVE R37 R5
+MOVE R38 R18
+GETUPVAL R36 U3
+CALL R36 2 1
+L32: MOVE R33 R36
+REMARK builtin buffer.readf64/2
+ADDK R38 R18 K8 [8]
+FASTCALL2 76 R5 R38 L33
+MOVE R37 R5
+GETUPVAL R36 U3
+CALL R36 2 1
+L33: MOVE R34 R36
+REMARK builtin buffer.readf64/2
+ADDK R37 R18 K9 [16]
+FASTCALL2 76 R5 R37 L34
+MOVE R36 R5
+GETUPVAL R35 U3
+CALL R35 2 1
+  427: 		local dot = gx * x3 + gy * y3 + gz * z3
+L34: MUL R37 R33 R24
+MUL R38 R34 R25
+ADD R36 R37 R38
+MUL R37 R35 R26
+ADD R23 R36 R37
+  428: 		local t33 = t3 * t3 * t3
+MUL R36 R28 R28
+MUL R22 R36 R28
+  429: 		n += t33 * t3 * dot
+MUL R37 R22 R28
+MUL R36 R37 R23
+ADD R29 R29 R36
+  430: 		dx += t33 * (t3 * gx - 8 * x3 * dot)
+MUL R38 R28 R33
+MULK R40 R24 K8 [8]
+MUL R39 R40 R23
+SUB R37 R38 R39
+MUL R36 R22 R37
+ADD R30 R30 R36
+  431: 		dy += t33 * (t3 * gy - 8 * y3 * dot)
+MUL R38 R28 R34
+MULK R40 R25 K8 [8]
+MUL R39 R40 R23
+SUB R37 R38 R39
+MUL R36 R22 R37
+ADD R31 R31 R36
+  432: 		dz += t33 * (t3 * gz - 8 * z3 * dot)
+MUL R38 R28 R35
+MULK R40 R26 K8 [8]
+MUL R39 R40 R23
+SUB R37 R38 R39
+MUL R36 R22 R37
+ADD R32 R32 R36
+  435: 	return n * SCALE3, dx * SCALE3, dy * SCALE3, dz * SCALE3
+L35: MULK R33 R29 K10 [100]
+MULK R34 R30 K10 [100]
+MULK R35 R31 K10 [100]
+MULK R36 R32 K10 [100]
+RETURN R33 4
+
+Function 5 (??):
+R9: any from 26 to 158
+R12: number from 202 to 235
+R9: any from 158 to 236
+R6: any from 16 to 236
+R0: any from 1 to 277
+R1: any from 6 to 277
+R2: any from 8 to 277
+R3: any from 10 to 277
+R4: any from 12 to 277
+R5: any from 14 to 277
+R7: any from 18 to 277
+R8: any from 22 to 277
+R6: any from 236 to 277
+    5: local Permutation = require(script.Parent.Permutation)
+GETIMPORT R0 1 [require]
+GETIMPORT R1 5 [script.Parent.Permutation]
+CALL R0 1 1
+    7: local band = bit32.band
+GETIMPORT R1 8 [bit32.band]
+    8: local floor = math.floor
+GETIMPORT R2 11 [math.floor]
+    9: local random = math.random
+GETIMPORT R3 13 [math.random]
+   10: local readu8 = buffer.readu8
+GETIMPORT R4 16 [buffer.readu8]
+   11: local readf64 = buffer.readf64
+GETIMPORT R5 18 [buffer.readf64]
+   12: local writef64 = buffer.writef64
+GETIMPORT R6 20 [buffer.writef64]
+   27: local GRAD2 = buffer.create(128)
+GETIMPORT R7 22 [buffer.create]
+LOADN R8 128
+CALL R7 1 1
+   28: local GRAD3 = buffer.create(288)
+GETIMPORT R8 22 [buffer.create]
+LOADN R9 288
+CALL R8 1 1
+REMARK allocation: table array 16
+   32: 	local grad2 = { 1, 0, -1, 0, 0, 1, 0, -1, s, s, -s, s, s, -s, -s, -s }
+NEWTABLE R9 0 16
+LOADN R10 1
+LOADN R11 0
+LOADN R12 -1
+LOADN R13 0
+LOADN R14 0
+LOADN R15 1
+LOADN R16 0
+LOADN R17 -1
+LOADK R18 K23 [0.70710678118654757]
+LOADK R19 K23 [0.70710678118654757]
+LOADK R20 K24 [-0.70710678118654757]
+LOADK R21 K23 [0.70710678118654757]
+LOADK R22 K23 [0.70710678118654757]
+LOADK R23 K24 [-0.70710678118654757]
+LOADK R24 K24 [-0.70710678118654757]
+LOADK R25 K24 [-0.70710678118654757]
+SETLIST R9 R10 16 [1]
+REMARK loop unroll succeeded (iterations 8, cost 48, profit 2.33x)
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+LOADN R12 0
+GETTABLEN R13 R9 1
+FASTCALL3 77 R7 R12 R13 L0
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L0: LOADN R12 8
+GETTABLEN R13 R9 2
+FASTCALL3 77 R7 R12 R13 L1
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+L1: LOADN R12 16
+GETTABLEN R13 R9 3
+FASTCALL3 77 R7 R12 R13 L2
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L2: LOADN R12 24
+GETTABLEN R13 R9 4
+FASTCALL3 77 R7 R12 R13 L3
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+L3: LOADN R12 32
+GETTABLEN R13 R9 5
+FASTCALL3 77 R7 R12 R13 L4
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L4: LOADN R12 40
+GETTABLEN R13 R9 6
+FASTCALL3 77 R7 R12 R13 L5
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+L5: LOADN R12 48
+GETTABLEN R13 R9 7
+FASTCALL3 77 R7 R12 R13 L6
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L6: LOADN R12 56
+GETTABLEN R13 R9 8
+FASTCALL3 77 R7 R12 R13 L7
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+L7: LOADN R12 64
+GETTABLEN R13 R9 9
+FASTCALL3 77 R7 R12 R13 L8
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L8: LOADN R12 72
+GETTABLEN R13 R9 10
+FASTCALL3 77 R7 R12 R13 L9
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+L9: LOADN R12 80
+GETTABLEN R13 R9 11
+FASTCALL3 77 R7 R12 R13 L10
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L10: LOADN R12 88
+GETTABLEN R13 R9 12
+FASTCALL3 77 R7 R12 R13 L11
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+L11: LOADN R12 96
+GETTABLEN R13 R9 13
+FASTCALL3 77 R7 R12 R13 L12
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L12: LOADN R12 104
+GETTABLEN R13 R9 14
+FASTCALL3 77 R7 R12 R13 L13
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   34: 		writef64(GRAD2, i * 16, grad2[i * 2 + 1])
+L13: LOADN R12 112
+GETTABLEN R13 R9 15
+FASTCALL3 77 R7 R12 R13 L14
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK builtin buffer.writef64/3
+   35: 		writef64(GRAD2, i * 16 + 8, grad2[i * 2 + 2])
+L14: LOADN R12 120
+GETTABLEN R13 R9 16
+FASTCALL3 77 R7 R12 R13 L15
+MOVE R11 R7
+MOVE R10 R6
+CALL R10 3 0
+REMARK allocation: table array 36
+   39: 	local grad3 = {
+L15: NEWTABLE R9 0 36
+   40: 		s, s, 0, -s, s, 0, s, -s, 0, -s, -s, 0,
+LOADK R10 K23 [0.70710678118654757]
+LOADK R11 K23 [0.70710678118654757]
+LOADN R12 0
+LOADK R13 K24 [-0.70710678118654757]
+LOADK R14 K23 [0.70710678118654757]
+LOADN R15 0
+LOADK R16 K23 [0.70710678118654757]
+LOADK R17 K24 [-0.70710678118654757]
+LOADN R18 0
+LOADK R19 K24 [-0.70710678118654757]
+LOADK R20 K24 [-0.70710678118654757]
+LOADN R21 0
+   41: 		s, 0, s, -s, 0, s, s, 0, -s, -s, 0, -s,
+LOADK R22 K23 [0.70710678118654757]
+LOADN R23 0
+LOADK R24 K23 [0.70710678118654757]
+LOADK R25 K24 [-0.70710678118654757]
+SETLIST R9 R10 16 [1]
+LOADN R10 0
+LOADK R11 K23 [0.70710678118654757]
+LOADK R12 K23 [0.70710678118654757]
+LOADN R13 0
+LOADK R14 K24 [-0.70710678118654757]
+LOADK R15 K24 [-0.70710678118654757]
+LOADN R16 0
+LOADK R17 K24 [-0.70710678118654757]
+   42: 		0, s, s, 0, -s, s, 0, s, -s, 0, -s, -s,
+LOADN R18 0
+LOADK R19 K23 [0.70710678118654757]
+LOADK R20 K23 [0.70710678118654757]
+LOADN R21 0
+LOADK R22 K24 [-0.70710678118654757]
+LOADK R23 K23 [0.70710678118654757]
+LOADN R24 0
+LOADK R25 K23 [0.70710678118654757]
+SETLIST R9 R10 16 [17]
+LOADK R10 K24 [-0.70710678118654757]
+LOADN R11 0
+LOADK R12 K24 [-0.70710678118654757]
+LOADK R13 K24 [-0.70710678118654757]
+SETLIST R9 R10 4 [33]
+REMARK loop unroll failed: too expensive (iterations 12, cost 108, profit 2.33x)
+   44: 	for i = 0, 11 do
+LOADN R12 0
+LOADN R10 11
+LOADN R11 1
+FORNPREP R10 L20
+REMARK builtin buffer.writef64/3
+   45: 		writef64(GRAD3, i * 24, grad3[i * 3 + 1])
+L16: MULK R15 R12 K25 [24]
+MULK R18 R12 K27 [3]
+ADDK R17 R18 K26 [1]
+GETTABLE R16 R9 R17
+FASTCALL3 77 R8 R15 R16 L17
+MOVE R14 R8
+MOVE R13 R6
+CALL R13 3 0
+REMARK builtin buffer.writef64/3
+   46: 		writef64(GRAD3, i * 24 + 8, grad3[i * 3 + 2])
+L17: MULK R16 R12 K25 [24]
+ADDK R15 R16 K28 [8]
+MULK R18 R12 K27 [3]
+ADDK R17 R18 K29 [2]
+GETTABLE R16 R9 R17
+FASTCALL3 77 R8 R15 R16 L18
+MOVE R14 R8
+MOVE R13 R6
+CALL R13 3 0
+REMARK builtin buffer.writef64/3
+   47: 		writef64(GRAD3, i * 24 + 16, grad3[i * 3 + 3])
+L18: MULK R16 R12 K25 [24]
+ADDK R15 R16 K30 [16]
+MULK R18 R12 K27 [3]
+ADDK R17 R18 K27 [3]
+GETTABLE R16 R9 R17
+FASTCALL3 77 R8 R15 R16 L19
+MOVE R14 R8
+MOVE R13 R6
+CALL R13 3 0
+   44: 	for i = 0, 11 do
+L19: FORNLOOP R10 L16
+REMARK allocation: table hash 6
+   62: local Simplex = {}
+L20: NEWTABLE R6 8 0
+   63: Simplex.__index = Simplex
+SETTABLEKS R6 R6 K31 ['__index']
+   85: function Simplex.new(seed: number?): Simplex
+DUPCLOSURE R9 K32 ['new']
+CAPTURE VAL R3
+CAPTURE VAL R0
+CAPTURE VAL R7
+CAPTURE VAL R8
+CAPTURE VAL R6
+SETTABLEKS R9 R6 K33 ['new']
+  105: function Simplex.sample2D(self: Simplex, x: number, y: number): number
+DUPCLOSURE R9 K34 ['sample2D']
+CAPTURE VAL R2
+CAPTURE VAL R1
+CAPTURE VAL R4
+CAPTURE VAL R5
+SETTABLEKS R9 R6 K35 ['sample2D']
+  168: function Simplex.sample2DWithDerivative(self: Simplex, x: number, y: number): (number, number, number)
+DUPCLOSURE R9 K36 ['sample2DWithDerivative']
+CAPTURE VAL R2
+CAPTURE VAL R1
+CAPTURE VAL R4
+CAPTURE VAL R5
+SETTABLEKS R9 R6 K37 ['sample2DWithDerivative']
+  242: function Simplex.sample3D(self: Simplex, x: number, y: number, z: number): number
+DUPCLOSURE R9 K38 ['sample3D']
+CAPTURE VAL R2
+CAPTURE VAL R1
+CAPTURE VAL R4
+CAPTURE VAL R5
+SETTABLEKS R9 R6 K39 ['sample3D']
+  334: function Simplex.sample3DWithDerivative(
+DUPCLOSURE R9 K40 ['sample3DWithDerivative']
+CAPTURE VAL R2
+CAPTURE VAL R1
+CAPTURE VAL R4
+CAPTURE VAL R5
+SETTABLEKS R9 R6 K41 ['sample3DWithDerivative']
+  438: return Simplex
+RETURN R6 1
+

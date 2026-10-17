@@ -40,4 +40,15 @@ function Permutation.build(seed: number): buffer
 	return perm
 end
 
+-- Fold the final permutation lookup and gradient selection into seeded data.
+-- Copy doubles verbatim so sampling retains exactly the original gradients.
+function Permutation.gradients(perm: buffer, source: buffer, stride: number, count: number): buffer
+	local expanded = buffer.create(512 * stride)
+	for i = 0, 255 do
+		buffer.copy(expanded, i * stride, source, (readu8(perm, i) % count) * stride, stride)
+	end
+	buffer.copy(expanded, 256 * stride, expanded, 0, 256 * stride)
+	return expanded
+end
+
 return Permutation

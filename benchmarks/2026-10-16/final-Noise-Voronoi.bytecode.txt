@@ -1,0 +1,1023 @@
+Function 0 (new):
+R0: number? [argument]
+U0: any
+U1: any
+U2: any
+R1: any from 0 to 25
+   49: 	local resolved = seed or random(1, 2147483646)
+MOVE R1 R0
+JUMPIF R1 L0
+GETUPVAL R1 U0
+LOADN R2 1
+LOADK R3 K0 [2147483646]
+CALLFB R1 2 1 [0]
+REMARK builtin setmetatable/2
+REMARK allocation: table template 2
+   50: 	return setmetatable({
+L0: DUPTABLE R3 3
+   51: 		seed = resolved,
+SETTABLEKS R1 R3 K1 ['seed']
+   52: 		_state = Permutation.normalize(resolved),
+GETUPVAL R4 U1
+GETTABLEKS R4 R4 K4 ['normalize']
+MOVE R5 R1
+CALLFB R4 1 1 [1]
+SETTABLEKS R4 R3 K2 ['_state']
+   53: 	}, Voronoi)
+GETUPVAL R4 U2
+FASTCALL2 61 R3 R4 L1
+   50: 	return setmetatable({
+GETIMPORT R2 6 [setmetatable]
+CALL R2 2 1
+L1: RETURN R2 1
+
+Function 1 (sample2D):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+U0: any
+U1: any
+R15: any from 26 to 39
+R14: number from 25 to 45
+R16: any from 31 to 45
+R17: any from 36 to 45
+R15: any from 39 to 45
+R5: number from 45 to 58
+R14: any from 45 to 58
+R15: any from 50 to 64
+R16: any from 55 to 64
+R14: any from 58 to 64
+R15: any from 65 to 78
+R14: number from 64 to 84
+R16: any from 70 to 84
+R17: any from 75 to 84
+R15: any from 78 to 84
+R13: number from 23 to 84
+R12: number from 19 to 84
+R3: any from 0 to 90
+R4: number from 2 to 90
+R5: number from 6 to 90
+R6: any from 10 to 90
+R7: number from 11 to 90
+R8: number from 14 to 90
+R9: number from 16 to 90
+   66: 	local state = self._state
+GETTABLEKS R3 R0 K0 ['_state']
+REMARK builtin math.floor/1
+   67: 	local ci = floor(x)
+FASTCALL1 12 R1 L0
+MOVE R5 R1
+GETUPVAL R4 U0
+CALL R4 1 1
+REMARK builtin math.floor/1
+   68: 	local cj = floor(y)
+L0: FASTCALL1 12 R2 L1
+MOVE R6 R2
+GETUPVAL R5 U0
+CALL R5 1 1
+   69: 	local best = huge
+L1: LOADK R6 K1 [inf]
+   72: 	local hj0 = ((cj - 1) % 65536) * 668265263
+SUBK R9 R5 K4 [1]
+MODK R8 R9 K3 [65536]
+MULK R7 R8 K2 [668265263]
+   73: 	local hj1 = (cj % 65536) * 668265263
+MODK R9 R5 K3 [65536]
+MULK R8 R9 K2 [668265263]
+   74: 	local hj2 = ((cj + 1) % 65536) * 668265263
+ADDK R11 R5 K4 [1]
+MODK R10 R11 K3 [65536]
+MULK R9 R10 K2 [668265263]
+   76: 	for i = ci - 1, ci + 1 do
+SUBK R12 R4 K4 [1]
+ADDK R10 R4 K4 [1]
+LOADN R11 1
+FORNPREP R10 L6
+   77: 		local hx = (i % 65536) * 374761393
+L2: MODK R14 R12 K3 [65536]
+MULK R13 R14 K5 [374761393]
+   79: 			local j = cj - 1
+SUBK R14 R5 K4 [1]
+   80: 			local h = (hx + hj0 + state) % 2147483647
+ADD R17 R13 R7
+ADD R16 R17 R3
+MODK R15 R16 K6 [2147483647]
+   81: 			h = h * 48271 % 2147483647
+MULK R16 R15 K7 [48271]
+MODK R15 R16 K6 [2147483647]
+   82: 			local dx = i + h * INV_M - x
+MULK R18 R15 K8 [4.6566128752457969e-10]
+ADD R17 R12 R18
+SUB R16 R17 R1
+   83: 			h = h * 48271 % 2147483647
+MULK R17 R15 K7 [48271]
+MODK R15 R17 K6 [2147483647]
+   84: 			local dy = j + h * INV_M - y
+MULK R19 R15 K8 [4.6566128752457969e-10]
+ADD R18 R14 R19
+SUB R17 R18 R2
+   85: 			local d = dx * dx + dy * dy
+MUL R18 R16 R16
+MUL R19 R17 R17
+ADD R15 R18 R19
+   86: 			if d < best then
+JUMPIFNOTLT R15 R6 L3
+   87: 				best = d
+MOVE R6 R15
+   92: 			local h = (hx + hj1 + state) % 2147483647
+L3: ADD R16 R13 R8
+ADD R15 R16 R3
+MODK R14 R15 K6 [2147483647]
+   93: 			h = h * 48271 % 2147483647
+MULK R15 R14 K7 [48271]
+MODK R14 R15 K6 [2147483647]
+   94: 			local dx = i + h * INV_M - x
+MULK R17 R14 K8 [4.6566128752457969e-10]
+ADD R16 R12 R17
+SUB R15 R16 R1
+   95: 			h = h * 48271 % 2147483647
+MULK R16 R14 K7 [48271]
+MODK R14 R16 K6 [2147483647]
+   96: 			local dy = j + h * INV_M - y
+MULK R18 R14 K8 [4.6566128752457969e-10]
+ADD R17 R5 R18
+SUB R16 R17 R2
+   97: 			local d = dx * dx + dy * dy
+MUL R17 R15 R15
+MUL R18 R16 R16
+ADD R14 R17 R18
+   98: 			if d < best then
+JUMPIFNOTLT R14 R6 L4
+   99: 				best = d
+MOVE R6 R14
+  103: 			local j = cj + 1
+L4: ADDK R14 R5 K4 [1]
+  104: 			local h = (hx + hj2 + state) % 2147483647
+ADD R17 R13 R9
+ADD R16 R17 R3
+MODK R15 R16 K6 [2147483647]
+  105: 			h = h * 48271 % 2147483647
+MULK R16 R15 K7 [48271]
+MODK R15 R16 K6 [2147483647]
+  106: 			local dx = i + h * INV_M - x
+MULK R18 R15 K8 [4.6566128752457969e-10]
+ADD R17 R12 R18
+SUB R16 R17 R1
+  107: 			h = h * 48271 % 2147483647
+MULK R17 R15 K7 [48271]
+MODK R15 R17 K6 [2147483647]
+  108: 			local dy = j + h * INV_M - y
+MULK R19 R15 K8 [4.6566128752457969e-10]
+ADD R18 R14 R19
+SUB R17 R18 R2
+  109: 			local d = dx * dx + dy * dy
+MUL R18 R16 R16
+MUL R19 R17 R17
+ADD R15 R18 R19
+  110: 			if d < best then
+JUMPIFNOTLT R15 R6 L5
+  111: 				best = d
+MOVE R6 R15
+   76: 	for i = ci - 1, ci + 1 do
+L5: FORNLOOP R10 L2
+REMARK builtin math.sqrt/1
+  116: 	return sqrt(best)
+L6: FASTCALL1 25 R6 L7
+MOVE R11 R6
+GETUPVAL R10 U1
+CALL R10 1 1
+L7: RETURN R10 1
+
+Function 2 (sample3D):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number [argument]
+U0: any
+U1: any
+R21: any from 37 to 55
+R20: number from 36 to 63
+R22: any from 42 to 63
+R23: any from 47 to 63
+R24: any from 52 to 63
+R21: any from 55 to 63
+R7: number from 63 to 81
+R20: any from 63 to 81
+R21: any from 68 to 89
+R22: any from 73 to 89
+R23: any from 78 to 89
+R20: any from 81 to 89
+R21: any from 90 to 108
+R20: number from 89 to 116
+R22: any from 95 to 116
+R23: any from 100 to 116
+R24: any from 105 to 116
+R21: any from 108 to 116
+R19: number from 33 to 116
+R18: number from 29 to 116
+R15: number from 27 to 117
+R14: number from 23 to 117
+R4: any from 0 to 123
+R5: number from 2 to 123
+R6: number from 6 to 123
+R7: number from 10 to 123
+R8: any from 14 to 123
+R9: number from 15 to 123
+R10: number from 18 to 123
+R11: number from 20 to 123
+  130: 	local state = self._state
+GETTABLEKS R4 R0 K0 ['_state']
+REMARK builtin math.floor/1
+  131: 	local ci = floor(x)
+FASTCALL1 12 R1 L0
+MOVE R6 R1
+GETUPVAL R5 U0
+CALL R5 1 1
+REMARK builtin math.floor/1
+  132: 	local cj = floor(y)
+L0: FASTCALL1 12 R2 L1
+MOVE R7 R2
+GETUPVAL R6 U0
+CALL R6 1 1
+REMARK builtin math.floor/1
+  133: 	local ck = floor(z)
+L1: FASTCALL1 12 R3 L2
+MOVE R8 R3
+GETUPVAL R7 U0
+CALL R7 1 1
+  134: 	local best = huge
+L2: LOADK R8 K1 [inf]
+  137: 	local hk0 = ((ck - 1) % 65536) * 1274126177
+SUBK R11 R7 K4 [1]
+MODK R10 R11 K3 [65536]
+MULK R9 R10 K2 [1274126177]
+  138: 	local hk1 = (ck % 65536) * 1274126177
+MODK R11 R7 K3 [65536]
+MULK R10 R11 K2 [1274126177]
+  139: 	local hk2 = ((ck + 1) % 65536) * 1274126177
+ADDK R13 R7 K4 [1]
+MODK R12 R13 K3 [65536]
+MULK R11 R12 K2 [1274126177]
+  141: 	for i = ci - 1, ci + 1 do
+SUBK R14 R5 K4 [1]
+ADDK R12 R5 K4 [1]
+LOADN R13 1
+FORNPREP R12 L9
+  142: 		local hx = (i % 65536) * 374761393
+L3: MODK R16 R14 K3 [65536]
+MULK R15 R16 K5 [374761393]
+  143: 		for j = cj - 1, cj + 1 do
+SUBK R18 R6 K4 [1]
+ADDK R16 R6 K4 [1]
+LOADN R17 1
+FORNPREP R16 L8
+  144: 			local hxy = hx + (j % 65536) * 668265263
+L4: MODK R21 R18 K3 [65536]
+MULK R20 R21 K6 [668265263]
+ADD R19 R15 R20
+  146: 				local k = ck - 1
+SUBK R20 R7 K4 [1]
+  147: 				local h = (hxy + hk0 + state) % 2147483647
+ADD R23 R19 R9
+ADD R22 R23 R4
+MODK R21 R22 K7 [2147483647]
+  148: 				h = h * 48271 % 2147483647
+MULK R22 R21 K8 [48271]
+MODK R21 R22 K7 [2147483647]
+  149: 				local dx = i + h * INV_M - x
+MULK R24 R21 K9 [4.6566128752457969e-10]
+ADD R23 R14 R24
+SUB R22 R23 R1
+  150: 				h = h * 48271 % 2147483647
+MULK R23 R21 K8 [48271]
+MODK R21 R23 K7 [2147483647]
+  151: 				local dy = j + h * INV_M - y
+MULK R25 R21 K9 [4.6566128752457969e-10]
+ADD R24 R18 R25
+SUB R23 R24 R2
+  152: 				h = h * 48271 % 2147483647
+MULK R24 R21 K8 [48271]
+MODK R21 R24 K7 [2147483647]
+  153: 				local dz = k + h * INV_M - z
+MULK R26 R21 K9 [4.6566128752457969e-10]
+ADD R25 R20 R26
+SUB R24 R25 R3
+  154: 				local d = dx * dx + dy * dy + dz * dz
+MUL R26 R22 R22
+MUL R27 R23 R23
+ADD R25 R26 R27
+MUL R26 R24 R24
+ADD R21 R25 R26
+  155: 				if d < best then
+JUMPIFNOTLT R21 R8 L5
+  156: 					best = d
+MOVE R8 R21
+  161: 				local h = (hxy + hk1 + state) % 2147483647
+L5: ADD R22 R19 R10
+ADD R21 R22 R4
+MODK R20 R21 K7 [2147483647]
+  162: 				h = h * 48271 % 2147483647
+MULK R21 R20 K8 [48271]
+MODK R20 R21 K7 [2147483647]
+  163: 				local dx = i + h * INV_M - x
+MULK R23 R20 K9 [4.6566128752457969e-10]
+ADD R22 R14 R23
+SUB R21 R22 R1
+  164: 				h = h * 48271 % 2147483647
+MULK R22 R20 K8 [48271]
+MODK R20 R22 K7 [2147483647]
+  165: 				local dy = j + h * INV_M - y
+MULK R24 R20 K9 [4.6566128752457969e-10]
+ADD R23 R18 R24
+SUB R22 R23 R2
+  166: 				h = h * 48271 % 2147483647
+MULK R23 R20 K8 [48271]
+MODK R20 R23 K7 [2147483647]
+  167: 				local dz = k + h * INV_M - z
+MULK R25 R20 K9 [4.6566128752457969e-10]
+ADD R24 R7 R25
+SUB R23 R24 R3
+  168: 				local d = dx * dx + dy * dy + dz * dz
+MUL R25 R21 R21
+MUL R26 R22 R22
+ADD R24 R25 R26
+MUL R25 R23 R23
+ADD R20 R24 R25
+  169: 				if d < best then
+JUMPIFNOTLT R20 R8 L6
+  170: 					best = d
+MOVE R8 R20
+  174: 				local k = ck + 1
+L6: ADDK R20 R7 K4 [1]
+  175: 				local h = (hxy + hk2 + state) % 2147483647
+ADD R23 R19 R11
+ADD R22 R23 R4
+MODK R21 R22 K7 [2147483647]
+  176: 				h = h * 48271 % 2147483647
+MULK R22 R21 K8 [48271]
+MODK R21 R22 K7 [2147483647]
+  177: 				local dx = i + h * INV_M - x
+MULK R24 R21 K9 [4.6566128752457969e-10]
+ADD R23 R14 R24
+SUB R22 R23 R1
+  178: 				h = h * 48271 % 2147483647
+MULK R23 R21 K8 [48271]
+MODK R21 R23 K7 [2147483647]
+  179: 				local dy = j + h * INV_M - y
+MULK R25 R21 K9 [4.6566128752457969e-10]
+ADD R24 R18 R25
+SUB R23 R24 R2
+  180: 				h = h * 48271 % 2147483647
+MULK R24 R21 K8 [48271]
+MODK R21 R24 K7 [2147483647]
+  181: 				local dz = k + h * INV_M - z
+MULK R26 R21 K9 [4.6566128752457969e-10]
+ADD R25 R20 R26
+SUB R24 R25 R3
+  182: 				local d = dx * dx + dy * dy + dz * dz
+MUL R26 R22 R22
+MUL R27 R23 R23
+ADD R25 R26 R27
+MUL R26 R24 R24
+ADD R21 R25 R26
+  183: 				if d < best then
+JUMPIFNOTLT R21 R8 L7
+  184: 					best = d
+MOVE R8 R21
+  143: 		for j = cj - 1, cj + 1 do
+L7: FORNLOOP R16 L4
+  141: 	for i = ci - 1, ci + 1 do
+L8: FORNLOOP R12 L3
+REMARK builtin math.sqrt/1
+  190: 	return sqrt(best)
+L9: FASTCALL1 25 R8 L10
+MOVE R13 R8
+GETUPVAL R12 U1
+CALL R12 1 1
+L10: RETURN R12 1
+
+Function 3 (cell2D):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+U0: any
+U1: any
+R17: any from 28 to 42
+R16: number from 27 to 54
+R18: any from 33 to 54
+R19: any from 34 to 54
+R20: any from 39 to 54
+R17: any from 42 to 54
+R5: number from 54 to 68
+R16: any from 54 to 68
+R17: any from 59 to 80
+R18: any from 60 to 80
+R19: any from 65 to 80
+R16: any from 68 to 80
+R17: any from 81 to 95
+R16: number from 80 to 107
+R18: any from 86 to 107
+R19: any from 87 to 107
+R20: any from 92 to 107
+R17: any from 95 to 107
+R15: number from 25 to 107
+R14: number from 21 to 107
+R3: any from 0 to 118
+R4: number from 2 to 118
+R5: number from 6 to 118
+R6: any from 10 to 118
+R7: any from 11 to 118
+R8: number from 12 to 118
+R9: number from 13 to 118
+R10: number from 16 to 118
+R11: number from 18 to 118
+  207: 	local state = self._state
+GETTABLEKS R3 R0 K0 ['_state']
+REMARK builtin math.floor/1
+  208: 	local ci = floor(x)
+FASTCALL1 12 R1 L0
+MOVE R5 R1
+GETUPVAL R4 U0
+CALL R4 1 1
+REMARK builtin math.floor/1
+  209: 	local cj = floor(y)
+L0: FASTCALL1 12 R2 L1
+MOVE R6 R2
+GETUPVAL R5 U0
+CALL R5 1 1
+  210: 	local f1 = huge
+L1: LOADK R6 K1 [inf]
+  211: 	local f2 = huge
+LOADK R7 K1 [inf]
+  212: 	local id = 0
+LOADN R8 0
+  215: 	local hj0 = ((cj - 1) % 65536) * 668265263
+SUBK R11 R5 K4 [1]
+MODK R10 R11 K3 [65536]
+MULK R9 R10 K2 [668265263]
+  216: 	local hj1 = (cj % 65536) * 668265263
+MODK R11 R5 K3 [65536]
+MULK R10 R11 K2 [668265263]
+  217: 	local hj2 = ((cj + 1) % 65536) * 668265263
+ADDK R13 R5 K4 [1]
+MODK R12 R13 K3 [65536]
+MULK R11 R12 K2 [668265263]
+  219: 	for i = ci - 1, ci + 1 do
+SUBK R14 R4 K4 [1]
+ADDK R12 R4 K4 [1]
+LOADN R13 1
+FORNPREP R12 L9
+  220: 		local hx = (i % 65536) * 374761393
+L2: MODK R16 R14 K3 [65536]
+MULK R15 R16 K5 [374761393]
+  222: 			local j = cj - 1
+SUBK R16 R5 K4 [1]
+  223: 			local h = (hx + hj0 + state) % 2147483647
+ADD R19 R15 R9
+ADD R18 R19 R3
+MODK R17 R18 K6 [2147483647]
+  224: 			h = h * 48271 % 2147483647
+MULK R18 R17 K7 [48271]
+MODK R17 R18 K6 [2147483647]
+  225: 			local cellId = h
+MOVE R18 R17
+  226: 			local dx = i + h * INV_M - x
+MULK R21 R17 K8 [4.6566128752457969e-10]
+ADD R20 R14 R21
+SUB R19 R20 R1
+  227: 			h = h * 48271 % 2147483647
+MULK R20 R17 K7 [48271]
+MODK R17 R20 K6 [2147483647]
+  228: 			local dy = j + h * INV_M - y
+MULK R22 R17 K8 [4.6566128752457969e-10]
+ADD R21 R16 R22
+SUB R20 R21 R2
+  229: 			local d = dx * dx + dy * dy
+MUL R21 R19 R19
+MUL R22 R20 R20
+ADD R17 R21 R22
+  230: 			if d < f1 then
+JUMPIFNOTLT R17 R6 L3
+  231: 				f2 = f1
+MOVE R7 R6
+  232: 				f1 = d
+MOVE R6 R17
+  233: 				id = cellId
+MOVE R8 R18
+JUMP L4
+  234: 			elseif d < f2 then
+L3: JUMPIFNOTLT R17 R7 L4
+  235: 				f2 = d
+MOVE R7 R17
+  240: 			local h = (hx + hj1 + state) % 2147483647
+L4: ADD R18 R15 R10
+ADD R17 R18 R3
+MODK R16 R17 K6 [2147483647]
+  241: 			h = h * 48271 % 2147483647
+MULK R17 R16 K7 [48271]
+MODK R16 R17 K6 [2147483647]
+  242: 			local cellId = h
+MOVE R17 R16
+  243: 			local dx = i + h * INV_M - x
+MULK R20 R16 K8 [4.6566128752457969e-10]
+ADD R19 R14 R20
+SUB R18 R19 R1
+  244: 			h = h * 48271 % 2147483647
+MULK R19 R16 K7 [48271]
+MODK R16 R19 K6 [2147483647]
+  245: 			local dy = j + h * INV_M - y
+MULK R21 R16 K8 [4.6566128752457969e-10]
+ADD R20 R5 R21
+SUB R19 R20 R2
+  246: 			local d = dx * dx + dy * dy
+MUL R20 R18 R18
+MUL R21 R19 R19
+ADD R16 R20 R21
+  247: 			if d < f1 then
+JUMPIFNOTLT R16 R6 L5
+  248: 				f2 = f1
+MOVE R7 R6
+  249: 				f1 = d
+MOVE R6 R16
+  250: 				id = cellId
+MOVE R8 R17
+JUMP L6
+  251: 			elseif d < f2 then
+L5: JUMPIFNOTLT R16 R7 L6
+  252: 				f2 = d
+MOVE R7 R16
+  256: 			local j = cj + 1
+L6: ADDK R16 R5 K4 [1]
+  257: 			local h = (hx + hj2 + state) % 2147483647
+ADD R19 R15 R11
+ADD R18 R19 R3
+MODK R17 R18 K6 [2147483647]
+  258: 			h = h * 48271 % 2147483647
+MULK R18 R17 K7 [48271]
+MODK R17 R18 K6 [2147483647]
+  259: 			local cellId = h
+MOVE R18 R17
+  260: 			local dx = i + h * INV_M - x
+MULK R21 R17 K8 [4.6566128752457969e-10]
+ADD R20 R14 R21
+SUB R19 R20 R1
+  261: 			h = h * 48271 % 2147483647
+MULK R20 R17 K7 [48271]
+MODK R17 R20 K6 [2147483647]
+  262: 			local dy = j + h * INV_M - y
+MULK R22 R17 K8 [4.6566128752457969e-10]
+ADD R21 R16 R22
+SUB R20 R21 R2
+  263: 			local d = dx * dx + dy * dy
+MUL R21 R19 R19
+MUL R22 R20 R20
+ADD R17 R21 R22
+  264: 			if d < f1 then
+JUMPIFNOTLT R17 R6 L7
+  265: 				f2 = f1
+MOVE R7 R6
+  266: 				f1 = d
+MOVE R6 R17
+  267: 				id = cellId
+MOVE R8 R18
+JUMP L8
+  268: 			elseif d < f2 then
+L7: JUMPIFNOTLT R17 R7 L8
+  269: 				f2 = d
+MOVE R7 R17
+  219: 	for i = ci - 1, ci + 1 do
+L8: FORNLOOP R12 L2
+REMARK builtin math.sqrt/1
+  274: 	return sqrt(f1), sqrt(f2), id
+L9: FASTCALL1 25 R6 L10
+MOVE R13 R6
+GETUPVAL R12 U1
+CALL R12 1 1
+REMARK builtin math.sqrt/1
+L10: FASTCALL1 25 R7 L11
+MOVE R14 R7
+GETUPVAL R13 U1
+CALL R13 1 1
+L11: MOVE R14 R8
+RETURN R12 3
+
+Function 4 (cell3D):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number [argument]
+U0: any
+U1: any
+R23: any from 39 to 58
+R22: number from 38 to 72
+R24: any from 44 to 72
+R25: any from 45 to 72
+R26: any from 50 to 72
+R27: any from 55 to 72
+R23: any from 58 to 72
+R7: number from 72 to 91
+R22: any from 72 to 91
+R23: any from 77 to 105
+R24: any from 78 to 105
+R25: any from 83 to 105
+R26: any from 88 to 105
+R22: any from 91 to 105
+R23: any from 106 to 125
+R22: number from 105 to 139
+R24: any from 111 to 139
+R25: any from 112 to 139
+R26: any from 117 to 139
+R27: any from 122 to 139
+R23: any from 125 to 139
+R21: number from 35 to 139
+R20: number from 31 to 139
+R17: number from 29 to 140
+R16: number from 25 to 140
+R4: any from 0 to 151
+R5: number from 2 to 151
+R6: number from 6 to 151
+R7: number from 10 to 151
+R8: any from 14 to 151
+R9: any from 15 to 151
+R10: number from 16 to 151
+R11: number from 17 to 151
+R12: number from 20 to 151
+R13: number from 22 to 151
+  291: 	local state = self._state
+GETTABLEKS R4 R0 K0 ['_state']
+REMARK builtin math.floor/1
+  292: 	local ci = floor(x)
+FASTCALL1 12 R1 L0
+MOVE R6 R1
+GETUPVAL R5 U0
+CALL R5 1 1
+REMARK builtin math.floor/1
+  293: 	local cj = floor(y)
+L0: FASTCALL1 12 R2 L1
+MOVE R7 R2
+GETUPVAL R6 U0
+CALL R6 1 1
+REMARK builtin math.floor/1
+  294: 	local ck = floor(z)
+L1: FASTCALL1 12 R3 L2
+MOVE R8 R3
+GETUPVAL R7 U0
+CALL R7 1 1
+  295: 	local f1 = huge
+L2: LOADK R8 K1 [inf]
+  296: 	local f2 = huge
+LOADK R9 K1 [inf]
+  297: 	local id = 0
+LOADN R10 0
+  300: 	local hk0 = ((ck - 1) % 65536) * 1274126177
+SUBK R13 R7 K4 [1]
+MODK R12 R13 K3 [65536]
+MULK R11 R12 K2 [1274126177]
+  301: 	local hk1 = (ck % 65536) * 1274126177
+MODK R13 R7 K3 [65536]
+MULK R12 R13 K2 [1274126177]
+  302: 	local hk2 = ((ck + 1) % 65536) * 1274126177
+ADDK R15 R7 K4 [1]
+MODK R14 R15 K3 [65536]
+MULK R13 R14 K2 [1274126177]
+  304: 	for i = ci - 1, ci + 1 do
+SUBK R16 R5 K4 [1]
+ADDK R14 R5 K4 [1]
+LOADN R15 1
+FORNPREP R14 L12
+  305: 		local hx = (i % 65536) * 374761393
+L3: MODK R18 R16 K3 [65536]
+MULK R17 R18 K5 [374761393]
+  306: 		for j = cj - 1, cj + 1 do
+SUBK R20 R6 K4 [1]
+ADDK R18 R6 K4 [1]
+LOADN R19 1
+FORNPREP R18 L11
+  307: 			local hxy = hx + (j % 65536) * 668265263
+L4: MODK R23 R20 K3 [65536]
+MULK R22 R23 K6 [668265263]
+ADD R21 R17 R22
+  309: 				local k = ck - 1
+SUBK R22 R7 K4 [1]
+  310: 				local h = (hxy + hk0 + state) % 2147483647
+ADD R25 R21 R11
+ADD R24 R25 R4
+MODK R23 R24 K7 [2147483647]
+  311: 				h = h * 48271 % 2147483647
+MULK R24 R23 K8 [48271]
+MODK R23 R24 K7 [2147483647]
+  312: 				local cellId = h
+MOVE R24 R23
+  313: 				local dx = i + h * INV_M - x
+MULK R27 R23 K9 [4.6566128752457969e-10]
+ADD R26 R16 R27
+SUB R25 R26 R1
+  314: 				h = h * 48271 % 2147483647
+MULK R26 R23 K8 [48271]
+MODK R23 R26 K7 [2147483647]
+  315: 				local dy = j + h * INV_M - y
+MULK R28 R23 K9 [4.6566128752457969e-10]
+ADD R27 R20 R28
+SUB R26 R27 R2
+  316: 				h = h * 48271 % 2147483647
+MULK R27 R23 K8 [48271]
+MODK R23 R27 K7 [2147483647]
+  317: 				local dz = k + h * INV_M - z
+MULK R29 R23 K9 [4.6566128752457969e-10]
+ADD R28 R22 R29
+SUB R27 R28 R3
+  318: 				local d = dx * dx + dy * dy + dz * dz
+MUL R29 R25 R25
+MUL R30 R26 R26
+ADD R28 R29 R30
+MUL R29 R27 R27
+ADD R23 R28 R29
+  319: 				if d < f1 then
+JUMPIFNOTLT R23 R8 L5
+  320: 					f2 = f1
+MOVE R9 R8
+  321: 					f1 = d
+MOVE R8 R23
+  322: 					id = cellId
+MOVE R10 R24
+JUMP L6
+  323: 				elseif d < f2 then
+L5: JUMPIFNOTLT R23 R9 L6
+  324: 					f2 = d
+MOVE R9 R23
+  329: 				local h = (hxy + hk1 + state) % 2147483647
+L6: ADD R24 R21 R12
+ADD R23 R24 R4
+MODK R22 R23 K7 [2147483647]
+  330: 				h = h * 48271 % 2147483647
+MULK R23 R22 K8 [48271]
+MODK R22 R23 K7 [2147483647]
+  331: 				local cellId = h
+MOVE R23 R22
+  332: 				local dx = i + h * INV_M - x
+MULK R26 R22 K9 [4.6566128752457969e-10]
+ADD R25 R16 R26
+SUB R24 R25 R1
+  333: 				h = h * 48271 % 2147483647
+MULK R25 R22 K8 [48271]
+MODK R22 R25 K7 [2147483647]
+  334: 				local dy = j + h * INV_M - y
+MULK R27 R22 K9 [4.6566128752457969e-10]
+ADD R26 R20 R27
+SUB R25 R26 R2
+  335: 				h = h * 48271 % 2147483647
+MULK R26 R22 K8 [48271]
+MODK R22 R26 K7 [2147483647]
+  336: 				local dz = k + h * INV_M - z
+MULK R28 R22 K9 [4.6566128752457969e-10]
+ADD R27 R7 R28
+SUB R26 R27 R3
+  337: 				local d = dx * dx + dy * dy + dz * dz
+MUL R28 R24 R24
+MUL R29 R25 R25
+ADD R27 R28 R29
+MUL R28 R26 R26
+ADD R22 R27 R28
+  338: 				if d < f1 then
+JUMPIFNOTLT R22 R8 L7
+  339: 					f2 = f1
+MOVE R9 R8
+  340: 					f1 = d
+MOVE R8 R22
+  341: 					id = cellId
+MOVE R10 R23
+JUMP L8
+  342: 				elseif d < f2 then
+L7: JUMPIFNOTLT R22 R9 L8
+  343: 					f2 = d
+MOVE R9 R22
+  347: 				local k = ck + 1
+L8: ADDK R22 R7 K4 [1]
+  348: 				local h = (hxy + hk2 + state) % 2147483647
+ADD R25 R21 R13
+ADD R24 R25 R4
+MODK R23 R24 K7 [2147483647]
+  349: 				h = h * 48271 % 2147483647
+MULK R24 R23 K8 [48271]
+MODK R23 R24 K7 [2147483647]
+  350: 				local cellId = h
+MOVE R24 R23
+  351: 				local dx = i + h * INV_M - x
+MULK R27 R23 K9 [4.6566128752457969e-10]
+ADD R26 R16 R27
+SUB R25 R26 R1
+  352: 				h = h * 48271 % 2147483647
+MULK R26 R23 K8 [48271]
+MODK R23 R26 K7 [2147483647]
+  353: 				local dy = j + h * INV_M - y
+MULK R28 R23 K9 [4.6566128752457969e-10]
+ADD R27 R20 R28
+SUB R26 R27 R2
+  354: 				h = h * 48271 % 2147483647
+MULK R27 R23 K8 [48271]
+MODK R23 R27 K7 [2147483647]
+  355: 				local dz = k + h * INV_M - z
+MULK R29 R23 K9 [4.6566128752457969e-10]
+ADD R28 R22 R29
+SUB R27 R28 R3
+  356: 				local d = dx * dx + dy * dy + dz * dz
+MUL R29 R25 R25
+MUL R30 R26 R26
+ADD R28 R29 R30
+MUL R29 R27 R27
+ADD R23 R28 R29
+  357: 				if d < f1 then
+JUMPIFNOTLT R23 R8 L9
+  358: 					f2 = f1
+MOVE R9 R8
+  359: 					f1 = d
+MOVE R8 R23
+  360: 					id = cellId
+MOVE R10 R24
+JUMP L10
+  361: 				elseif d < f2 then
+L9: JUMPIFNOTLT R23 R9 L10
+  362: 					f2 = d
+MOVE R9 R23
+  306: 		for j = cj - 1, cj + 1 do
+L10: FORNLOOP R18 L4
+  304: 	for i = ci - 1, ci + 1 do
+L11: FORNLOOP R14 L3
+REMARK builtin math.sqrt/1
+  368: 	return sqrt(f1), sqrt(f2), id
+L12: FASTCALL1 25 R8 L13
+MOVE R15 R8
+GETUPVAL R14 U1
+CALL R14 1 1
+REMARK builtin math.sqrt/1
+L13: FASTCALL1 25 R9 L14
+MOVE R16 R9
+GETUPVAL R15 U1
+CALL R15 1 1
+L14: MOVE R16 R10
+RETURN R14 3
+
+Function 5 (sample2DWithDerivative):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number? [argument]
+R4: any from 0 to 37
+R5: any from 1 to 37
+R6: any from 2 to 37
+R7: any from 8 to 37
+R8: any from 22 to 37
+  386: 	local eps = epsilon or 1e-3
+ORK R4 R3 K0 [0.001]
+  387: 	local halfInv = 0.5 / eps
+DIVRK R5 K1 [0.5] R4
+  388: 	local value = self:sample2D(x, y)
+MOVE R8 R1
+MOVE R9 R2
+NAMECALL R6 R0 K2 ['sample2D']
+CALLFB R6 3 1 [0]
+  389: 	local dx = (self:sample2D(x + eps, y) - self:sample2D(x - eps, y)) * halfInv
+ADD R11 R1 R4
+MOVE R12 R2
+NAMECALL R9 R0 K2 ['sample2D']
+CALLFB R9 3 1 [1]
+SUB R12 R1 R4
+MOVE R13 R2
+NAMECALL R10 R0 K2 ['sample2D']
+CALLFB R10 3 1 [2]
+SUB R8 R9 R10
+MUL R7 R8 R5
+  390: 	local dy = (self:sample2D(x, y + eps) - self:sample2D(x, y - eps)) * halfInv
+MOVE R12 R1
+ADD R13 R2 R4
+NAMECALL R10 R0 K2 ['sample2D']
+CALLFB R10 3 1 [3]
+MOVE R13 R1
+SUB R14 R2 R4
+NAMECALL R11 R0 K2 ['sample2D']
+CALLFB R11 3 1 [4]
+SUB R9 R10 R11
+MUL R8 R9 R5
+  391: 	return value, dx, dy
+RETURN R6 3
+
+Function 6 (sample3DWithDerivative):
+R0: any [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number [argument]
+R4: number? [argument]
+R5: any from 0 to 58
+R6: any from 1 to 58
+R7: any from 2 to 58
+R8: any from 9 to 58
+R9: any from 25 to 58
+R10: any from 41 to 58
+  416: 	local eps = epsilon or 1e-3
+ORK R5 R4 K0 [0.001]
+  417: 	local halfInv = 0.5 / eps
+DIVRK R6 K1 [0.5] R5
+  418: 	local value = self:sample3D(x, y, z)
+MOVE R9 R1
+MOVE R10 R2
+MOVE R11 R3
+NAMECALL R7 R0 K2 ['sample3D']
+CALLFB R7 4 1 [0]
+  419: 	local dx = (self:sample3D(x + eps, y, z) - self:sample3D(x - eps, y, z)) * halfInv
+ADD R12 R1 R5
+MOVE R13 R2
+MOVE R14 R3
+NAMECALL R10 R0 K2 ['sample3D']
+CALLFB R10 4 1 [1]
+SUB R13 R1 R5
+MOVE R14 R2
+MOVE R15 R3
+NAMECALL R11 R0 K2 ['sample3D']
+CALLFB R11 4 1 [2]
+SUB R9 R10 R11
+MUL R8 R9 R6
+  420: 	local dy = (self:sample3D(x, y + eps, z) - self:sample3D(x, y - eps, z)) * halfInv
+MOVE R13 R1
+ADD R14 R2 R5
+MOVE R15 R3
+NAMECALL R11 R0 K2 ['sample3D']
+CALLFB R11 4 1 [3]
+MOVE R14 R1
+SUB R15 R2 R5
+MOVE R16 R3
+NAMECALL R12 R0 K2 ['sample3D']
+CALLFB R12 4 1 [4]
+SUB R10 R11 R12
+MUL R9 R10 R6
+  421: 	local dz = (self:sample3D(x, y, z + eps) - self:sample3D(x, y, z - eps)) * halfInv
+MOVE R14 R1
+MOVE R15 R2
+ADD R16 R3 R5
+NAMECALL R12 R0 K2 ['sample3D']
+CALLFB R12 4 1 [5]
+MOVE R15 R1
+MOVE R16 R2
+SUB R17 R3 R5
+NAMECALL R13 R0 K2 ['sample3D']
+CALLFB R13 4 1 [6]
+SUB R11 R12 R13
+MUL R10 R11 R6
+  422: 	return value, dx, dy, dz
+RETURN R7 4
+
+Function 7 (??):
+R0: any from 1 to 49
+R1: any from 6 to 49
+R2: any from 8 to 49
+R3: any from 10 to 49
+R4: any from 12 to 49
+    5: local Permutation = require(script.Parent.Permutation)
+GETIMPORT R0 1 [require]
+GETIMPORT R1 5 [script.Parent.Permutation]
+CALL R0 1 1
+    7: local floor = math.floor
+GETIMPORT R1 8 [math.floor]
+    9: local random = math.random
+GETIMPORT R2 10 [math.random]
+   10: local sqrt = math.sqrt
+GETIMPORT R3 12 [math.sqrt]
+REMARK allocation: table hash 8
+   28: local Voronoi = {}
+NEWTABLE R4 8 0
+   29: Voronoi.__index = Voronoi
+SETTABLEKS R4 R4 K13 ['__index']
+   48: function Voronoi.new(seed: number?): Voronoi
+DUPCLOSURE R5 K14 ['new']
+CAPTURE VAL R2
+CAPTURE VAL R0
+CAPTURE VAL R4
+SETTABLEKS R5 R4 K15 ['new']
+   65: function Voronoi.sample2D(self: Voronoi, x: number, y: number): number
+DUPCLOSURE R5 K16 ['sample2D']
+CAPTURE VAL R1
+CAPTURE VAL R3
+SETTABLEKS R5 R4 K17 ['sample2D']
+  129: function Voronoi.sample3D(self: Voronoi, x: number, y: number, z: number): number
+DUPCLOSURE R5 K18 ['sample3D']
+CAPTURE VAL R1
+CAPTURE VAL R3
+SETTABLEKS R5 R4 K19 ['sample3D']
+  206: function Voronoi.cell2D(self: Voronoi, x: number, y: number): (number, number, number)
+DUPCLOSURE R5 K20 ['cell2D']
+CAPTURE VAL R1
+CAPTURE VAL R3
+SETTABLEKS R5 R4 K21 ['cell2D']
+  290: function Voronoi.cell3D(self: Voronoi, x: number, y: number, z: number): (number, number, number)
+DUPCLOSURE R5 K22 ['cell3D']
+CAPTURE VAL R1
+CAPTURE VAL R3
+SETTABLEKS R5 R4 K23 ['cell3D']
+  385: function Voronoi.sample2DWithDerivative(self: Voronoi, x: number, y: number, epsilon: number?): (number, number, number)
+DUPCLOSURE R5 K24 ['sample2DWithDerivative']
+SETTABLEKS R5 R4 K25 ['sample2DWithDerivative']
+  409: function Voronoi.sample3DWithDerivative(
+DUPCLOSURE R5 K26 ['sample3DWithDerivative']
+SETTABLEKS R5 R4 K27 ['sample3DWithDerivative']
+  425: return Voronoi
+RETURN R4 1
+

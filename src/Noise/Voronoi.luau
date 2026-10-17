@@ -68,10 +68,40 @@ function Voronoi.sample2D(self: Voronoi, x: number, y: number): number
 	local cj = floor(y)
 	local best = huge
 
+	-- Hash each shared neighbor coordinate once, preserving visit order.
+	local hj0 = ((cj - 1) % 65536) * 668265263
+	local hj1 = (cj % 65536) * 668265263
+	local hj2 = ((cj + 1) % 65536) * 668265263
+
 	for i = ci - 1, ci + 1 do
 		local hx = (i % 65536) * 374761393
-		for j = cj - 1, cj + 1 do
-			local h = (hx + (j % 65536) * 668265263 + state) % 2147483647
+		do
+			local j = cj - 1
+			local h = (hx + hj0 + state) % 2147483647
+			h = h * 48271 % 2147483647
+			local dx = i + h * INV_M - x
+			h = h * 48271 % 2147483647
+			local dy = j + h * INV_M - y
+			local d = dx * dx + dy * dy
+			if d < best then
+				best = d
+			end
+		end
+		do
+			local j = cj
+			local h = (hx + hj1 + state) % 2147483647
+			h = h * 48271 % 2147483647
+			local dx = i + h * INV_M - x
+			h = h * 48271 % 2147483647
+			local dy = j + h * INV_M - y
+			local d = dx * dx + dy * dy
+			if d < best then
+				best = d
+			end
+		end
+		do
+			local j = cj + 1
+			local h = (hx + hj2 + state) % 2147483647
 			h = h * 48271 % 2147483647
 			local dx = i + h * INV_M - x
 			h = h * 48271 % 2147483647
@@ -103,12 +133,46 @@ function Voronoi.sample3D(self: Voronoi, x: number, y: number, z: number): numbe
 	local ck = floor(z)
 	local best = huge
 
+	-- Hash each shared neighbor coordinate once, preserving visit order.
+	local hk0 = ((ck - 1) % 65536) * 1274126177
+	local hk1 = (ck % 65536) * 1274126177
+	local hk2 = ((ck + 1) % 65536) * 1274126177
+
 	for i = ci - 1, ci + 1 do
 		local hx = (i % 65536) * 374761393
 		for j = cj - 1, cj + 1 do
 			local hxy = hx + (j % 65536) * 668265263
-			for k = ck - 1, ck + 1 do
-				local h = (hxy + (k % 65536) * 1274126177 + state) % 2147483647
+			do
+				local k = ck - 1
+				local h = (hxy + hk0 + state) % 2147483647
+				h = h * 48271 % 2147483647
+				local dx = i + h * INV_M - x
+				h = h * 48271 % 2147483647
+				local dy = j + h * INV_M - y
+				h = h * 48271 % 2147483647
+				local dz = k + h * INV_M - z
+				local d = dx * dx + dy * dy + dz * dz
+				if d < best then
+					best = d
+				end
+			end
+			do
+				local k = ck
+				local h = (hxy + hk1 + state) % 2147483647
+				h = h * 48271 % 2147483647
+				local dx = i + h * INV_M - x
+				h = h * 48271 % 2147483647
+				local dy = j + h * INV_M - y
+				h = h * 48271 % 2147483647
+				local dz = k + h * INV_M - z
+				local d = dx * dx + dy * dy + dz * dz
+				if d < best then
+					best = d
+				end
+			end
+			do
+				local k = ck + 1
+				local h = (hxy + hk2 + state) % 2147483647
 				h = h * 48271 % 2147483647
 				local dx = i + h * INV_M - x
 				h = h * 48271 % 2147483647
@@ -147,10 +211,50 @@ function Voronoi.cell2D(self: Voronoi, x: number, y: number): (number, number, n
 	local f2 = huge
 	local id = 0
 
+	-- Hash each shared neighbor coordinate once, preserving visit order.
+	local hj0 = ((cj - 1) % 65536) * 668265263
+	local hj1 = (cj % 65536) * 668265263
+	local hj2 = ((cj + 1) % 65536) * 668265263
+
 	for i = ci - 1, ci + 1 do
 		local hx = (i % 65536) * 374761393
-		for j = cj - 1, cj + 1 do
-			local h = (hx + (j % 65536) * 668265263 + state) % 2147483647
+		do
+			local j = cj - 1
+			local h = (hx + hj0 + state) % 2147483647
+			h = h * 48271 % 2147483647
+			local cellId = h
+			local dx = i + h * INV_M - x
+			h = h * 48271 % 2147483647
+			local dy = j + h * INV_M - y
+			local d = dx * dx + dy * dy
+			if d < f1 then
+				f2 = f1
+				f1 = d
+				id = cellId
+			elseif d < f2 then
+				f2 = d
+			end
+		end
+		do
+			local j = cj
+			local h = (hx + hj1 + state) % 2147483647
+			h = h * 48271 % 2147483647
+			local cellId = h
+			local dx = i + h * INV_M - x
+			h = h * 48271 % 2147483647
+			local dy = j + h * INV_M - y
+			local d = dx * dx + dy * dy
+			if d < f1 then
+				f2 = f1
+				f1 = d
+				id = cellId
+			elseif d < f2 then
+				f2 = d
+			end
+		end
+		do
+			local j = cj + 1
+			local h = (hx + hj2 + state) % 2147483647
 			h = h * 48271 % 2147483647
 			local cellId = h
 			local dx = i + h * INV_M - x
@@ -192,12 +296,56 @@ function Voronoi.cell3D(self: Voronoi, x: number, y: number, z: number): (number
 	local f2 = huge
 	local id = 0
 
+	-- Hash each shared neighbor coordinate once, preserving visit order.
+	local hk0 = ((ck - 1) % 65536) * 1274126177
+	local hk1 = (ck % 65536) * 1274126177
+	local hk2 = ((ck + 1) % 65536) * 1274126177
+
 	for i = ci - 1, ci + 1 do
 		local hx = (i % 65536) * 374761393
 		for j = cj - 1, cj + 1 do
 			local hxy = hx + (j % 65536) * 668265263
-			for k = ck - 1, ck + 1 do
-				local h = (hxy + (k % 65536) * 1274126177 + state) % 2147483647
+			do
+				local k = ck - 1
+				local h = (hxy + hk0 + state) % 2147483647
+				h = h * 48271 % 2147483647
+				local cellId = h
+				local dx = i + h * INV_M - x
+				h = h * 48271 % 2147483647
+				local dy = j + h * INV_M - y
+				h = h * 48271 % 2147483647
+				local dz = k + h * INV_M - z
+				local d = dx * dx + dy * dy + dz * dz
+				if d < f1 then
+					f2 = f1
+					f1 = d
+					id = cellId
+				elseif d < f2 then
+					f2 = d
+				end
+			end
+			do
+				local k = ck
+				local h = (hxy + hk1 + state) % 2147483647
+				h = h * 48271 % 2147483647
+				local cellId = h
+				local dx = i + h * INV_M - x
+				h = h * 48271 % 2147483647
+				local dy = j + h * INV_M - y
+				h = h * 48271 % 2147483647
+				local dz = k + h * INV_M - z
+				local d = dx * dx + dy * dy + dz * dz
+				if d < f1 then
+					f2 = f1
+					f1 = d
+					id = cellId
+				elseif d < f2 then
+					f2 = d
+				end
+			end
+			do
+				local k = ck + 1
+				local h = (hxy + hk2 + state) % 2147483647
 				h = h * 48271 % 2147483647
 				local cellId = h
 				local dx = i + h * INV_M - x
@@ -222,8 +370,7 @@ end
 
 --[=[
 	Samples 2D Voronoi noise along with its slope, estimated by central finite
-	differences. Worley noise has no clean analytical gradient, and the
-	distance field is not differentiable on cell borders.
+	differences. The distance field is not differentiable on cell borders.
 
 	@method sample2DWithDerivative
 	@within Voronoi

@@ -40,8 +40,9 @@ export type NoiseSampler3D = {
 	@within Noise
 	.sample2DWithDerivative (self: any, x: number, y: number) -> (number, number, number)
 
-	Anything with a `sample2DWithDerivative` method — every Atlas noise
-	sampler qualifies.
+	Anything with a `sample2DWithDerivative` method. Perlin and Simplex provide
+	analytical derivatives; Voronoi uses finite differences. Island has no
+	derivative method.
 ]=]
 export type NoiseSampler2DWithDerivative = {
 	sample2DWithDerivative: (self: any, x: number, y: number) -> (number, number, number),

@@ -21,7 +21,15 @@ do
 	local b = Atlas.Noise.Perlin.new(42)
 	local c = Atlas.Noise.Perlin.new(43)
 	check("Perlin: same seed matches", a:sample2D(1.5, 2.5) == b:sample2D(1.5, 2.5))
-	check("Perlin: different seed differs", a:sample2D(1.5, 2.5) ~= c:sample2D(1.5, 2.5))
+	-- Half-integer coordinates can coincide across seeds; compare several off-grid samples.
+	local differs = false
+	for i = 1, 10 do
+		if a:sample2D(i * 0.137, i * 0.291) ~= c:sample2D(i * 0.137, i * 0.291) then
+			differs = true
+			break
+		end
+	end
+	check("Perlin: different seed differs", differs)
 
 	local s1 = Atlas.Noise.Simplex.new(7)
 	local s2 = Atlas.Noise.Simplex.new(7)
@@ -242,13 +250,70 @@ do
 	check("Curve: domain and range", minX == 0 and maxX == 1 and minY == 0 and maxY == 1)
 end
 
+-- Bulk Perlin sampling must match scalar coordinates on both grid paths.
+do
+	local sampler = Atlas.Noise.Perlin.new(42)
+	local matches = true
+	for _, width in { 16, 31, 32 } do
+		for _, step in { -0.137, 0, 0.137, 0.5, 1.3 } do
+			local values = sampler:sampleGrid2D(width, 7, 65535.9, -3.5, step, 0.291)
+			matches = matches and #values == width * 7
+			for row = 0, 6 do
+				for column = 0, width - 1 do
+					matches = matches
+						and values[row * width + column + 1]
+							== sampler:sample2D(65535.9 + column * step, -3.5 + row * 0.291)
+				end
+			end
+		end
+	end
+	check("Perlin: grid matches scalar samples exactly", matches)
+	check("Perlin: empty grid", #sampler:sampleGrid2D(0, 7, 0, 0, 0.1, 0.1) == 0)
+	check("Perlin: grid rejects fractional dimensions", not pcall(function()
+		sampler:sampleGrid2D(2.5, 7, 0, 0, 0.1, 0.1)
+	end))
+end
+
+do
+	for _, name in { "Perlin", "Simplex" } do
+		local sampler = Atlas.Noise[name].new(42)
+		local matches = true
+		for _, step in { -0.137, 0, 0.137, 1.3 } do
+			local values = sampler:sampleGrid3D(7, 5, 3, 65535.9, -3.5, 0.2, step, -step, step)
+			for slice = 0, 2 do
+				for row = 0, 4 do
+					for column = 0, 6 do
+						matches = matches
+							and values[(slice * 5 + row) * 7 + column + 1]
+								== sampler:sample3D(65535.9 + column * step, -3.5 - row * step, 0.2 + slice * step)
+					end
+				end
+			end
+		end
+		check(name .. ": volume matches scalar samples exactly", matches)
+		check(name .. ": empty volume", #sampler:sampleGrid3D(7, 5, 0, 0, 0, 0, 1, 1, 1) == 0)
+		check(name .. ": volume rejects fractional depth", not pcall(function()
+			sampler:sampleGrid3D(7, 5, 0.5, 0, 0, 0, 1, 1, 1)
+		end))
+	end
+	local sampler = Atlas.Noise.Simplex.new(42)
+	local values = sampler:sampleGrid2D(7, 5, -0.7, 3.5, -0.137, 0.291)
+	local matches = #values == 35
+	for row = 0, 4 do
+		for column = 0, 6 do
+			matches = matches
+				and values[row * 7 + column + 1] == sampler:sample2D(-0.7 - column * 0.137, 3.5 + row * 0.291)
+		end
+	end
+	check("Simplex: grid matches scalar samples exactly", matches)
+	check("Simplex: empty grid", #sampler:sampleGrid2D(0, 5, 0, 0, 1, 1) == 0)
+	check("Simplex: grid rejects fractional height", not pcall(function()
+		sampler:sampleGrid2D(7, 0.5, 0, 0, 1, 1)
+	end))
+end
+
 print(`Atlas smoke tests: {passed} passed, {failed} failed`)
 if failed == 0 then
 	print("")
 	Benchmarks.run()
 end
-
-task.wait(1)
-
-local benchmarks = require(script.Benchmarks)
-benchmarks.run()

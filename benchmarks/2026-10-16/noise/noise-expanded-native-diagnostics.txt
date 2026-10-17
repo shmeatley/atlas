@@ -1,0 +1,3 @@
+; function sample3D($arg0, $arg1, $arg2, $arg3) line 198
+#   ; spill %235 (double xmm0) to slot 0
+; skipping (can't lower)

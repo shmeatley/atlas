@@ -62,7 +62,10 @@ end
 local Simplex = {}
 Simplex.__index = Simplex
 
-export type Simplex = typeof(setmetatable({} :: { seed: number, _perm: buffer }, Simplex))
+export type Simplex = typeof(setmetatable(
+	{} :: { seed: number, _perm: buffer, _grad2: buffer, _grad3: buffer },
+	Simplex
+))
 
 --[=[
 	@prop seed number
@@ -81,9 +84,12 @@ export type Simplex = typeof(setmetatable({} :: { seed: number, _perm: buffer },
 ]=]
 function Simplex.new(seed: number?): Simplex
 	local resolved = seed or random(1, 2147483646)
+	local perm = Permutation.build(resolved)
 	return setmetatable({
 		seed = resolved,
-		_perm = Permutation.build(resolved),
+		_perm = perm,
+		_grad2 = Permutation.gradients(perm, GRAD2, 16, 8),
+		_grad3 = Permutation.gradients(perm, GRAD3, 24, 12),
 	}, Simplex)
 end
 
@@ -98,6 +104,7 @@ end
 ]=]
 function Simplex.sample2D(self: Simplex, x: number, y: number): number
 	local perm = self._perm
+	local gradients = self._grad2
 
 	local skew = (x + y) * F2
 	local i = floor(x + skew)
@@ -120,28 +127,28 @@ function Simplex.sample2D(self: Simplex, x: number, y: number): number
 
 	local ii = band(i, 255)
 	local jj = band(j, 255)
-	local gi0 = band(readu8(perm, ii + readu8(perm, jj)), 7) * 16
-	local gi1 = band(readu8(perm, ii + i1 + readu8(perm, jj + j1)), 7) * 16
-	local gi2 = band(readu8(perm, ii + 1 + readu8(perm, jj + 1)), 7) * 16
+	local gi0 = (ii + readu8(perm, jj)) * 16
+	local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+	local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
 
 	local n = 0
 
 	local t0 = 0.5 - x0 * x0 - y0 * y0
 	if t0 > 0 then
 		local t02 = t0 * t0
-		n += t02 * t02 * (readf64(GRAD2, gi0) * x0 + readf64(GRAD2, gi0 + 8) * y0)
+		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
 	end
 
 	local t1 = 0.5 - x1 * x1 - y1 * y1
 	if t1 > 0 then
 		local t12 = t1 * t1
-		n += t12 * t12 * (readf64(GRAD2, gi1) * x1 + readf64(GRAD2, gi1 + 8) * y1)
+		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
 	end
 
 	local t2 = 0.5 - x2 * x2 - y2 * y2
 	if t2 > 0 then
 		local t22 = t2 * t2
-		n += t22 * t22 * (readf64(GRAD2, gi2) * x2 + readf64(GRAD2, gi2 + 8) * y2)
+		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
 	end
 
 	return n * SCALE2
@@ -160,6 +167,7 @@ end
 ]=]
 function Simplex.sample2DWithDerivative(self: Simplex, x: number, y: number): (number, number, number)
 	local perm = self._perm
+	local gradients = self._grad2
 
 	local skew = (x + y) * F2
 	local i = floor(x + skew)
@@ -182,15 +190,15 @@ function Simplex.sample2DWithDerivative(self: Simplex, x: number, y: number): (n
 
 	local ii = band(i, 255)
 	local jj = band(j, 255)
-	local gi0 = band(readu8(perm, ii + readu8(perm, jj)), 7) * 16
-	local gi1 = band(readu8(perm, ii + i1 + readu8(perm, jj + j1)), 7) * 16
-	local gi2 = band(readu8(perm, ii + 1 + readu8(perm, jj + 1)), 7) * 16
+	local gi0 = (ii + readu8(perm, jj)) * 16
+	local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+	local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
 
 	local n, dx, dy = 0, 0, 0
 
 	local t0 = 0.5 - x0 * x0 - y0 * y0
 	if t0 > 0 then
-		local gx, gy = readf64(GRAD2, gi0), readf64(GRAD2, gi0 + 8)
+		local gx, gy = readf64(gradients, gi0), readf64(gradients, gi0 + 8)
 		local dot = gx * x0 + gy * y0
 		local t03 = t0 * t0 * t0
 		n += t03 * t0 * dot
@@ -200,7 +208,7 @@ function Simplex.sample2DWithDerivative(self: Simplex, x: number, y: number): (n
 
 	local t1 = 0.5 - x1 * x1 - y1 * y1
 	if t1 > 0 then
-		local gx, gy = readf64(GRAD2, gi1), readf64(GRAD2, gi1 + 8)
+		local gx, gy = readf64(gradients, gi1), readf64(gradients, gi1 + 8)
 		local dot = gx * x1 + gy * y1
 		local t13 = t1 * t1 * t1
 		n += t13 * t1 * dot
@@ -210,7 +218,7 @@ function Simplex.sample2DWithDerivative(self: Simplex, x: number, y: number): (n
 
 	local t2 = 0.5 - x2 * x2 - y2 * y2
 	if t2 > 0 then
-		local gx, gy = readf64(GRAD2, gi2), readf64(GRAD2, gi2 + 8)
+		local gx, gy = readf64(gradients, gi2), readf64(gradients, gi2 + 8)
 		local dot = gx * x2 + gy * y2
 		local t23 = t2 * t2 * t2
 		n += t23 * t2 * dot
@@ -233,6 +241,7 @@ end
 ]=]
 function Simplex.sample3D(self: Simplex, x: number, y: number, z: number): number
 	local perm = self._perm
+	local gradients = self._grad3
 
 	local skew = (x + y + z) * F3
 	local i = floor(x + skew)
@@ -275,35 +284,35 @@ function Simplex.sample3D(self: Simplex, x: number, y: number, z: number): numbe
 	local ii = band(i, 255)
 	local jj = band(j, 255)
 	local kk = band(k, 255)
-	local gi0 = readu8(perm, ii + readu8(perm, jj + readu8(perm, kk))) % 12 * 24
-	local gi1 = readu8(perm, ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) % 12 * 24
-	local gi2 = readu8(perm, ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) % 12 * 24
-	local gi3 = readu8(perm, ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) % 12 * 24
+	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
 
 	local n = 0
 
 	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
 	if t0 > 0 then
 		local t02 = t0 * t0
-		n += t02 * t02 * (readf64(GRAD3, gi0) * x0 + readf64(GRAD3, gi0 + 8) * y0 + readf64(GRAD3, gi0 + 16) * z0)
+		n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(gradients, gi0 + 16) * z0)
 	end
 
 	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
 	if t1 > 0 then
 		local t12 = t1 * t1
-		n += t12 * t12 * (readf64(GRAD3, gi1) * x1 + readf64(GRAD3, gi1 + 8) * y1 + readf64(GRAD3, gi1 + 16) * z1)
+		n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(gradients, gi1 + 16) * z1)
 	end
 
 	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
 	if t2 > 0 then
 		local t22 = t2 * t2
-		n += t22 * t22 * (readf64(GRAD3, gi2) * x2 + readf64(GRAD3, gi2 + 8) * y2 + readf64(GRAD3, gi2 + 16) * z2)
+		n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(gradients, gi2 + 16) * z2)
 	end
 
 	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
 	if t3 > 0 then
 		local t32 = t3 * t3
-		n += t32 * t32 * (readf64(GRAD3, gi3) * x3 + readf64(GRAD3, gi3 + 8) * y3 + readf64(GRAD3, gi3 + 16) * z3)
+		n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(gradients, gi3 + 16) * z3)
 	end
 
 	return n * SCALE3
@@ -329,6 +338,7 @@ function Simplex.sample3DWithDerivative(
 	z: number
 ): (number, number, number, number)
 	local perm = self._perm
+	local gradients = self._grad3
 
 	local skew = (x + y + z) * F3
 	local i = floor(x + skew)
@@ -371,16 +381,16 @@ function Simplex.sample3DWithDerivative(
 	local ii = band(i, 255)
 	local jj = band(j, 255)
 	local kk = band(k, 255)
-	local gi0 = readu8(perm, ii + readu8(perm, jj + readu8(perm, kk))) % 12 * 24
-	local gi1 = readu8(perm, ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) % 12 * 24
-	local gi2 = readu8(perm, ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) % 12 * 24
-	local gi3 = readu8(perm, ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) % 12 * 24
+	local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+	local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+	local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+	local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
 
 	local n, dx, dy, dz = 0, 0, 0, 0
 
 	local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
 	if t0 > 0 then
-		local gx, gy, gz = readf64(GRAD3, gi0), readf64(GRAD3, gi0 + 8), readf64(GRAD3, gi0 + 16)
+		local gx, gy, gz = readf64(gradients, gi0), readf64(gradients, gi0 + 8), readf64(gradients, gi0 + 16)
 		local dot = gx * x0 + gy * y0 + gz * z0
 		local t03 = t0 * t0 * t0
 		n += t03 * t0 * dot
@@ -391,7 +401,7 @@ function Simplex.sample3DWithDerivative(
 
 	local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
 	if t1 > 0 then
-		local gx, gy, gz = readf64(GRAD3, gi1), readf64(GRAD3, gi1 + 8), readf64(GRAD3, gi1 + 16)
+		local gx, gy, gz = readf64(gradients, gi1), readf64(gradients, gi1 + 8), readf64(gradients, gi1 + 16)
 		local dot = gx * x1 + gy * y1 + gz * z1
 		local t13 = t1 * t1 * t1
 		n += t13 * t1 * dot
@@ -402,7 +412,7 @@ function Simplex.sample3DWithDerivative(
 
 	local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
 	if t2 > 0 then
-		local gx, gy, gz = readf64(GRAD3, gi2), readf64(GRAD3, gi2 + 8), readf64(GRAD3, gi2 + 16)
+		local gx, gy, gz = readf64(gradients, gi2), readf64(gradients, gi2 + 8), readf64(gradients, gi2 + 16)
 		local dot = gx * x2 + gy * y2 + gz * z2
 		local t23 = t2 * t2 * t2
 		n += t23 * t2 * dot
@@ -413,7 +423,7 @@ function Simplex.sample3DWithDerivative(
 
 	local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
 	if t3 > 0 then
-		local gx, gy, gz = readf64(GRAD3, gi3), readf64(GRAD3, gi3 + 8), readf64(GRAD3, gi3 + 16)
+		local gx, gy, gz = readf64(gradients, gi3), readf64(gradients, gi3 + 8), readf64(gradients, gi3 + 16)
 		local dot = gx * x3 + gy * y3 + gz * z3
 		local t33 = t3 * t3 * t3
 		n += t33 * t3 * dot
@@ -423,6 +433,237 @@ function Simplex.sample3DWithDerivative(
 	end
 
 	return n * SCALE3, dx * SCALE3, dy * SCALE3, dz * SCALE3
+end
+
+--[=[
+ Samples a rectangular grid into a new row-major array (X varies fastest).
+ Coordinates use start + zero-based index * step on each axis, exactly as
+ repeated sample2D calls. Negative and zero steps are supported. Dimensions
+ must be non-negative integers; any zero dimension returns an empty array.
+ Array index: `row * width + column + 1`.
+
+ @method sampleGrid2D
+ @within Simplex
+ @param width number -- X samples.
+ @param height number -- Y samples.
+ @param startX number
+ @param startY number
+ @param stepX number
+ @param stepY number
+ @return {number} -- Samples in grid order.
+]=]
+function Simplex.sampleGrid2D(
+	self: Simplex,
+	width: number,
+	height: number,
+	startX: number,
+	startY: number,
+	stepX: number,
+	stepY: number
+): { number }
+	assert(width >= 0 and width % 1 == 0, "width must be a non-negative integer")
+	assert(height >= 0 and height % 1 == 0, "height must be a non-negative integer")
+	local values: { number } = table.create(width * height)
+	if width * height == 0 then
+		return values
+	end
+	local perm = self._perm
+	local gradients = self._grad2
+	local index = 0
+	for row = 0, height - 1 do
+		local y = startY + row * stepY
+		for column = 0, width - 1 do
+			local x = startX + column * stepX
+			index += 1
+			local skew = (x + y) * F2
+			local i = floor(x + skew)
+			local j = floor(y + skew)
+			local unskew = (i + j) * G2
+			local x0 = x - (i - unskew)
+			local y0 = y - (j - unskew)
+
+			local i1, j1
+			if x0 > y0 then
+				i1, j1 = 1, 0
+			else
+				i1, j1 = 0, 1
+			end
+
+			local x1 = x0 - i1 + G2
+			local y1 = y0 - j1 + G2
+			local x2 = x0 - 1 + G2_2
+			local y2 = y0 - 1 + G2_2
+
+			local ii = band(i, 255)
+			local jj = band(j, 255)
+			local gi0 = (ii + readu8(perm, jj)) * 16
+			local gi1 = (ii + i1 + readu8(perm, jj + j1)) * 16
+			local gi2 = (ii + 1 + readu8(perm, jj + 1)) * 16
+
+			local n = 0
+
+			local t0 = 0.5 - x0 * x0 - y0 * y0
+			if t0 > 0 then
+				local t02 = t0 * t0
+				n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0)
+			end
+
+			local t1 = 0.5 - x1 * x1 - y1 * y1
+			if t1 > 0 then
+				local t12 = t1 * t1
+				n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1)
+			end
+
+			local t2 = 0.5 - x2 * x2 - y2 * y2
+			if t2 > 0 then
+				local t22 = t2 * t2
+				n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2)
+			end
+
+			values[index] = n * SCALE2
+		end
+	end
+	return values
+end
+
+--[=[
+ Samples a rectangular grid into a new flat volume (X fastest, then Y, then Z).
+ Coordinates use start + zero-based index * step on each axis, exactly as
+ repeated sample3D calls. Negative and zero steps are supported. Dimensions
+ must be non-negative integers; any zero dimension returns an empty array.
+ Array index: `(slice * height + row) * width + column + 1`.
+
+ @method sampleGrid3D
+ @within Simplex
+ @param width number -- X samples.
+ @param height number -- Y samples.
+ @param depth number -- Z samples.
+ @param startX number
+ @param startY number
+ @param startZ number
+ @param stepX number
+ @param stepY number
+ @param stepZ number
+ @return {number} -- Samples in grid order.
+]=]
+function Simplex.sampleGrid3D(
+	self: Simplex,
+	width: number,
+	height: number,
+	depth: number,
+	startX: number,
+	startY: number,
+	startZ: number,
+	stepX: number,
+	stepY: number,
+	stepZ: number
+): { number }
+	assert(width >= 0 and width % 1 == 0, "width must be a non-negative integer")
+	assert(height >= 0 and height % 1 == 0, "height must be a non-negative integer")
+	assert(depth >= 0 and depth % 1 == 0, "depth must be a non-negative integer")
+	local values: { number } = table.create(width * height * depth)
+	if width * height * depth == 0 then
+		return values
+	end
+	local perm = self._perm
+	local gradients = self._grad3
+	local index = 0
+	for slice = 0, depth - 1 do
+		local z = startZ + slice * stepZ
+		for row = 0, height - 1 do
+			local y = startY + row * stepY
+			for column = 0, width - 1 do
+				local x = startX + column * stepX
+				index += 1
+				local skew = (x + y + z) * F3
+				local i = floor(x + skew)
+				local j = floor(y + skew)
+				local k = floor(z + skew)
+				local unskew = (i + j + k) * G3
+				local x0 = x - (i - unskew)
+				local y0 = y - (j - unskew)
+				local z0 = z - (k - unskew)
+
+				local i1, j1, k1, i2, j2, k2
+				if x0 >= y0 then
+					if y0 >= z0 then
+						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 1, 0
+					elseif x0 >= z0 then
+						i1, j1, k1, i2, j2, k2 = 1, 0, 0, 1, 0, 1
+					else
+						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 1, 0, 1
+					end
+				else
+					if y0 < z0 then
+						i1, j1, k1, i2, j2, k2 = 0, 0, 1, 0, 1, 1
+					elseif x0 < z0 then
+						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 0, 1, 1
+					else
+						i1, j1, k1, i2, j2, k2 = 0, 1, 0, 1, 1, 0
+					end
+				end
+
+				local x1 = x0 - i1 + G3
+				local y1 = y0 - j1 + G3
+				local z1 = z0 - k1 + G3
+				local x2 = x0 - i2 + G3_2
+				local y2 = y0 - j2 + G3_2
+				local z2 = z0 - k2 + G3_2
+				local x3 = x0 - 0.5
+				local y3 = y0 - 0.5
+				local z3 = z0 - 0.5
+
+				local ii = band(i, 255)
+				local jj = band(j, 255)
+				local kk = band(k, 255)
+				local gi0 = (ii + readu8(perm, jj + readu8(perm, kk))) * 24
+				local gi1 = (ii + i1 + readu8(perm, jj + j1 + readu8(perm, kk + k1))) * 24
+				local gi2 = (ii + i2 + readu8(perm, jj + j2 + readu8(perm, kk + k2))) * 24
+				local gi3 = (ii + 1 + readu8(perm, jj + 1 + readu8(perm, kk + 1))) * 24
+
+				local n = 0
+
+				local t0 = 0.5 - x0 * x0 - y0 * y0 - z0 * z0
+				if t0 > 0 then
+					local t02 = t0 * t0
+					n += t02 * t02 * (readf64(gradients, gi0) * x0 + readf64(gradients, gi0 + 8) * y0 + readf64(
+						gradients,
+						gi0 + 16
+					) * z0)
+				end
+
+				local t1 = 0.5 - x1 * x1 - y1 * y1 - z1 * z1
+				if t1 > 0 then
+					local t12 = t1 * t1
+					n += t12 * t12 * (readf64(gradients, gi1) * x1 + readf64(gradients, gi1 + 8) * y1 + readf64(
+						gradients,
+						gi1 + 16
+					) * z1)
+				end
+
+				local t2 = 0.5 - x2 * x2 - y2 * y2 - z2 * z2
+				if t2 > 0 then
+					local t22 = t2 * t2
+					n += t22 * t22 * (readf64(gradients, gi2) * x2 + readf64(gradients, gi2 + 8) * y2 + readf64(
+						gradients,
+						gi2 + 16
+					) * z2)
+				end
+
+				local t3 = 0.5 - x3 * x3 - y3 * y3 - z3 * z3
+				if t3 > 0 then
+					local t32 = t3 * t3
+					n += t32 * t32 * (readf64(gradients, gi3) * x3 + readf64(gradients, gi3 + 8) * y3 + readf64(
+						gradients,
+						gi3 + 16
+					) * z3)
+				end
+
+				values[index] = n * SCALE3
+			end
+		end
+	end
+	return values
 end
 
 return Simplex

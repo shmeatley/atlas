@@ -1,0 +1,45 @@
+mode,workload,iterations,baseline_us,final_us,time_reduction_percent,checksum_equal
+vm,ROBLOX-PERLIN-2d,100000,0.042570,0.046565,-9.38,True
+vm,ROBLOX-PERLIN-2d-cached,100000,0.042141,0.045424,-7.79,True
+vm,Perlin.sample2D,100000,0.200207,0.194260,2.97,True
+vm,Perlin.sample2DWithDerivative,100000,0.390721,0.402489,-3.01,True
+vm,ROBLOX-PERLIN-3d,100000,0.042613,0.046035,-8.03,True
+vm,ROBLOX-PERLIN-3d-cached,100000,0.041547,0.044683,-7.55,True
+vm,Perlin.sample3D,100000,0.414229,0.431508,-4.17,True
+vm,Perlin.sample3DWithDerivative,100000,0.913495,0.941549,-3.07,True
+vm,Simplex.sample2D,100000,0.207944,0.212405,-2.15,True
+vm,Simplex.sample3D,100000,0.395896,0.411087,-3.84,True
+vm,Simplex.sample2DWithDerivative,100000,0.332040,0.342389,-3.12,True
+vm,Simplex.sample3DWithDerivative,100000,0.576039,0.588731,-2.20,True
+vm,Voronoi.sample2D,100000,0.528354,0.457529,13.40,True
+vm,Voronoi.sample3D,100000,2.196740,1.944532,11.48,True
+vm,Voronoi.cell2D,100000,0.554341,0.496779,10.38,True
+vm,Island.sample2D,100000,0.111933,0.116331,-3.93,True
+vm,"Noise.fbm2D (4 octaves, simplex)",100000,0.888037,0.908558,-2.31,True
+vm,Curve.evaluate (8 points),100000,0.135662,0.136190,-0.39,True
+vm,Sampling.uniform (256 points),100,10.280999,10.155999,1.22,True
+vm,"Sampling.poissonDisc (100x100, r=5)",100,2736.531000,2860.303000,-4.52,True
+vm,"Sampling.blueNoiseGrid (100x100, cellSize=3)",100,69.528001,75.784000,-9.00,True
+vm,Visualizer render math (128x128),30,4501.706664,4879.620000,-8.39,True
+native,ROBLOX-PERLIN-2d,100000,0.043229,0.045294,-4.78,True
+native,ROBLOX-PERLIN-2d-cached,100000,0.043027,0.050177,-16.62,True
+native,Perlin.sample2D,100000,0.039008,0.039186,-0.46,True
+native,Perlin.sample2DWithDerivative,100000,0.052918,0.048220,8.88,True
+native,ROBLOX-PERLIN-3d,100000,0.048130,0.043985,8.61,True
+native,ROBLOX-PERLIN-3d-cached,100000,0.045417,0.043157,4.98,True
+native,Perlin.sample3D,100000,0.059952,0.058709,2.07,True
+native,Perlin.sample3DWithDerivative,100000,0.071704,0.072155,-0.63,True
+native,Simplex.sample2D,100000,0.061706,0.055145,10.63,True
+native,Simplex.sample3D,100000,0.086221,0.074354,13.76,True
+native,Simplex.sample2DWithDerivative,100000,0.067727,0.064355,4.98,True
+native,Simplex.sample3DWithDerivative,100000,0.089183,0.090041,-0.96,True
+native,Voronoi.sample2D,100000,0.137324,0.114703,16.47,True
+native,Voronoi.sample3D,100000,0.438403,0.353857,19.28,True
+native,Voronoi.cell2D,100000,0.175984,0.140110,20.38,True
+native,Island.sample2D,100000,0.045069,0.047999,-6.50,True
+native,"Noise.fbm2D (4 octaves, simplex)",100000,0.229607,0.243676,-6.13,True
+native,Curve.evaluate (8 points),100000,0.074725,0.077134,-3.22,True
+native,Sampling.uniform (256 points),100,4.445999,4.094000,7.92,True
+native,"Sampling.poissonDisc (100x100, r=5)",100,2812.449000,2836.992000,-0.87,True
+native,"Sampling.blueNoiseGrid (100x100, cellSize=3)",100,28.179999,31.436000,-11.55,True
+native,Visualizer render math (128x128),30,1222.336669,1276.036666,-4.39,True

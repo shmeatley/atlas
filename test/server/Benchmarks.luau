@@ -172,6 +172,46 @@ function Benchmarks.run()
 		end
 		return buffer.readu8(canvas, 0)
 	end)
+	local function builtinGrid(w, h, d, startX, step)
+		local values = table.create(w * h * d)
+		local index = 0
+		for slice = 0, d - 1 do
+			local z = 0.2 + slice * step
+			for row = 0, h - 1 do
+				local y = -3.5 - row * step
+				for column = 0, w - 1 do
+					index += 1
+					local x = startX + column * step
+					values[index] = if d == 1 then math.noise(x, y) else math.noise(x, y, z)
+				end
+			end
+		end
+		return values
+	end
+	local p = Atlas.Noise.Perlin.new(42)
+	local s = Atlas.Noise.Simplex.new(42)
+	bench("math.noise grid2D (128x128)", 20, function(i)
+		local v = builtinGrid(128, 128, 1, -0.7 + i * 0.03, 0.137)
+		return v[1] + v[#v]
+	end)
+	for _, entry in { { "Perlin", p }, { "Simplex", s } } do
+		local sampler = entry[2]
+		bench(entry[1] .. ".sampleGrid2D (128x128)", 20, function(i)
+			local v = sampler:sampleGrid2D(128, 128, -0.7 + i * 0.03, -3.5, 0.137, -0.137)
+			return v[1] + v[#v]
+		end)
+	end
+	bench("math.noise grid3D (32x32x32)", 10, function(i)
+		local v = builtinGrid(32, 32, 32, -0.7 + i * 0.03, 0.137)
+		return v[1] + v[#v]
+	end)
+	for _, entry in { { "Perlin", p }, { "Simplex", s } } do
+		local sampler = entry[2]
+		bench(entry[1] .. ".sampleGrid3D (32x32x32)", 10, function(i)
+			local v = sampler:sampleGrid3D(32, 32, 32, -0.7 + i * 0.03, -3.5, 0.2, 0.137, -0.137, 0.137)
+			return v[1] + v[#v]
+		end)
+	end
 end
 
 return Benchmarks

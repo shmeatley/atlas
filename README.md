@@ -9,7 +9,7 @@ Atlas is a procedural generation toolkit for Roblox, written in fully-typed
 Luau.
 
 - **Noise** — seeded Perlin, simplex, and Voronoi (Worley) samplers in 2D and
-  3D, with analytical derivatives for slope-aware generation, binary island
+  3D, with derivatives (analytical for Perlin and Simplex), binary island
   masks, plus fBm helpers for layering octaves.
 - **Sampling** — uniform random and Poisson disc (blue noise) point
   scattering, deterministic per seed.
@@ -23,7 +23,7 @@ Luau.
 
 ```toml
 [dependencies]
-Atlas = "shmeatley/atlas@0.1.0"
+Atlas = "shmeatley/atlas@0.2.0"
 ```
 
 Then run:
@@ -73,42 +73,101 @@ window:render(Atlas.Visualizer.Presets.noise(simplex, { scale = 0.02, curve = fa
 
 Full API reference: [shmeatley.github.io/atlas](https://shmeatley.github.io/atlas)
 
-## Performance notes
+## Performance
 
-- Every sampler builds its seeded state once at construction; sampling methods
-  are allocation-free.
-- In your own hot loops, localize the method once:
-  `local sample2D = noise.sample2D` then call `sample2D(noise, x, y)`.
+Measured October 17, 2026 on an AMD Ryzen 5 7600X. Tables show medians of
+11 trials, including closure-call overhead. **Native CLI** uses Luau O2 with
+native code generation; **Studio interpreter** is a fresh measurement inside
+Roblox Studio Edit mode. Studio native performance has not been measured.
+Compare ratios within one runtime: **lower is better; 1.00x equals that
+runtime's `math.noise` cost**. These algorithms produce different fields;
+derivative, cell and fBm rows also return more information or do more work.
 
-The test place ships with benchmarks: build it with
-`rojo build test.project.json -o AtlasTest.rbxl`, open in Studio, and press
-Play — smoke tests plus per-call timings print to the output, and demo
+### Scalar noise
 
-Here is my benchmarks output from my machine:
+Microseconds per call, 100,000 calls per trial. Atlas samplers use seed 42.
+Each ratio uses the matching-dimensional `math.noise` reference.
 
-Yes, it is faster than roblox when sampling pure 2d noise(seeded). It also supports derivatives which are extremely useful.
+| Workload | Native CLI us/call | vs math.noise | Studio interpreter us/call | vs math.noise |
+|---|---:|---:|---:|---:|
+| math.noise 2D | 0.043 | 1.00x | 0.040 | 1.00x |
+| Perlin 2D | 0.033 | 0.77x | 0.120 | 2.99x |
+| Perlin 2D + derivatives | 0.043 | 1.00x | 0.274 | 6.81x |
+| Simplex 2D | 0.046 | 1.07x | 0.153 | 3.80x |
+| Simplex 2D + derivatives | 0.054 | 1.26x | 0.224 | 5.57x |
+| Voronoi 2D | 0.108 | 2.51x | 0.405 | 10.07x |
+| Voronoi cell2D (F1, F2, ID) | 0.133 | 3.11x | 0.447 | 11.10x |
+| Island 2D | 0.043 | 1.00x | 0.093 | 2.32x |
+| fBm 2D (4 Simplex octaves) | 0.198 | 4.62x | 0.634 | 15.77x |
+| math.noise 3D | 0.042 | 1.00x | 0.043 | 1.00x |
+| Perlin 3D | 0.043 | 1.01x | 0.312 | 7.27x |
+| Perlin 3D + derivatives | 0.060 | 1.43x | 0.597 | 13.93x |
+| Simplex 3D | 0.060 | 1.43x | 0.280 | 6.52x |
+| Simplex 3D + derivatives | 0.073 | 1.74x | 0.483 | 11.28x |
+| Voronoi 3D | 0.335 | 7.94x | 1.515 | 35.34x |
 
+### Bulk grids and volumes
+
+Milliseconds per **whole result array**, including allocation. Every path
+fills the same number of entries at the same coordinates. Ratios compare
+with a loop of `math.noise` calls producing that same array; outputs differ
+between noise algorithms. These gains require using the bulk APIs.
+
+| Workload | Native CLI ms/grid | vs math.noise | Studio interpreter ms/grid | vs math.noise |
+|---|---:|---:|---:|---:|
+| math.noise grid2D (128x128) | 0.676 | 1.00x | 0.808 | 1.00x |
+| Perlin.sampleGrid2D (128x128) | 0.209 | 0.31x | 1.218 | 1.51x |
+| Simplex.sampleGrid2D (128x128) | 0.479 | 0.71x | 2.407 | 2.98x |
+| math.noise grid3D (32x32x32) | 1.350 | 1.00x | 1.703 | 1.00x |
+| Perlin.sampleGrid3D (32x32x32) | 0.787 | 0.58x | 8.071 | 4.74x |
+| Simplex.sampleGrid3D (32x32x32) | 1.599 | 1.18x | 8.803 | 5.17x |
+
+Native CLI Perlin's 128x128 bulk path took about **31% of the `math.noise`
+loop's time** in this run. This is not a Studio native result; the actual
+Studio interpreter results above are slower than its built-in `math.noise`.
+
+### Other operations
+
+Microseconds per complete operation; these units differ from one noise sample.
+
+| Operation | Native CLI us/op | Studio interpreter us/op |
+|---|---:|---:|
+| Curve.evaluate (8 points) | 0.074 | 0.124 |
+| Sampling.uniform (256 points) | 4.340 | 13.286 |
+| Sampling.poissonDisc (100x100, r=5) | 2559.592 | 2505.496 |
+| Sampling.blueNoiseGrid (100x100, cellSize=3) | 28.074 | 183.560 |
+| Visualizer render math (128x128) | 1057.525 | 3592.990 |
+
+### Usage and reproducibility
+
+```lua
+local perlin = Atlas.Noise.Perlin.new(42)
+local simplex = Atlas.Noise.Simplex.new(42)
+local heights = perlin:sampleGrid2D(128, 128, 0, 0, 0.02, 0.02)
+local surface = simplex:sampleGrid2D(128, 128, 0, 0, 0.02, 0.02)
+local volume = perlin:sampleGrid3D(32, 32, 32, 0, 0, 0, 0.02, 0.02, 0.02)
+-- simplex:sampleGrid3D takes the same arguments.
+-- 2D index: row * width + column + 1 (zero-based row/column).
+-- 3D index: (slice * height + row) * width + column + 1.
 ```
-ROBLOX-PERLIN-2d                               4.036 ms      0.040 us/op  [n=100000]
-ROBLOX-PERLIN-2d-cached                        4.074 ms      0.041 us/op  [n=100000]
-Perlin.sample2D                                3.831 ms      0.038 us/op  [n=100000]
-Perlin.sample2DWithDerivative                  4.751 ms      0.048 us/op  [n=100000]
-ROBLOX-PERLIN-3d                               4.032 ms      0.040 us/op  [n=100000]
-ROBLOX-PERLIN-3d-cached                        3.990 ms      0.040 us/op  [n=100000]
-Perlin.sample3D                                5.575 ms      0.056 us/op  [n=100000]
-Perlin.sample3DWithDerivative                  8.299 ms      0.083 us/op  [n=100000]
-Simplex.sample2DWithDerivative                 0.062 ms      0.062 us/op  [n=1000]
-Simplex.sample3DWithDerivative                 0.088 ms      0.088 us/op  [n=1000]
-Voronoi.sample2D                               0.139 ms      0.139 us/op  [n=1000]
-Voronoi.sample3D                               0.417 ms      0.417 us/op  [n=1000]
-Voronoi.cell2D                                 0.171 ms      0.171 us/op  [n=1000]
-Noise.fbm2D (4 octaves, simplex)               0.207 ms      0.207 us/op  [n=1000]
-Curve.evaluate (8 points)                      0.076 ms      0.076 us/op  [n=1000]
-Sampling.uniform (256 points)                  4.806 ms      4.806 us/op  [n=1000]
-Sampling.poissonDisc (100x100, r=5)         1171.568 ms   1171.568 us/op  [n=1000]
-Sampling.blueNoiseGrid (100x100, cellSize=3)  25.427 ms     25.427 us/op  [n=1000]
-Visualizer render math (128x128)             112.179 ms   1121.792 us/op  [n=100]
-```
+
+- Scalar samples are allocation-free. Bulk calls allocate their result arrays;
+  Perlin uses an additional temporary buffer of 24 bytes per column.
+- Perlin and Simplex prepare 20 KiB of gradient buffers per instance. Construct
+  samplers once and reuse them; keep repeated method calls localized in hot loops.
+- Bulk outputs match the corresponding Atlas scalar methods exactly, including
+  negative/zero steps. This does not mean Atlas matches Roblox's noise field.
+- Benchmarks vary by runtime, native settings, workload and hardware. Raw logs
+  retain trial ranges and checksums; small differences should not be generalized.
+
+[Complete release measurements and methodology](benchmarks/2026-10-17/release-v0.2.0/README.md),
+[optimization history](benchmarks/2026-10-16/README.md),
+[Perlin 2D trials](benchmarks/2026-10-16/research/README.md), and
+[Simplex/3D trials](benchmarks/2026-10-17/bulk-noise/README.md).
+
+Build the test place with `rojo build test.project.json -o AtlasTest.rbxl` and
+press Play in Studio to run smoke checks and the original benchmark suite.
+The release benchmark harness is `test/release-performance.luau`.
 
 ## License
 

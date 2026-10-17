@@ -1,0 +1,20 @@
+PARITY: 503019 exact output comparisons passed
+PAIRED|Perlin.sample2D|0.032771|0.032856|-0.26%
+PAIRED|Perlin.sample3D|0.042487|0.042043|1.05%
+PAIRED|Perlin.sample2DWithDerivative|0.036445|0.036358|0.24%
+PAIRED|Perlin.sample3DWithDerivative|0.051257|0.050407|1.66%
+PAIRED|Simplex.sample2D|0.046466|0.046868|-0.87%
+PAIRED|Simplex.sample3D|0.062296|0.064501|-3.54%
+PAIRED|Simplex.sample2DWithDerivative|0.048762|0.048712|0.10%
+PAIRED|Simplex.sample3DWithDerivative|0.066627|0.067928|-1.95%
+PAIRED|Perlin compiled fBm 1|0.070186|0.060483|13.82%
+PAIRED|Perlin compiled fBm 2|0.090888|0.088682|2.43%
+PAIRED|Perlin compiled fBm 4|0.134789|0.121321|9.99%
+PAIRED|Perlin compiled fBm 6|0.180423|0.198505|-10.02%
+PAIRED|Perlin compiled fBm 8|0.221430|0.254007|-14.71%
+PAIRED|Simplex compiled fBm 1|0.081437|0.071029|12.78%
+PAIRED|Simplex compiled fBm 2|0.117468|0.110941|5.56%
+PAIRED|Simplex compiled fBm 4|0.199563|0.192906|3.34%
+PAIRED|Simplex compiled fBm 6|0.275889|0.289783|-5.04%
+PAIRED|Simplex compiled fBm 8|0.352036|0.370638|-5.28%
+FBM PARITY: 90000 exact comparisons passed

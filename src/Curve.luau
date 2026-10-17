@@ -110,14 +110,17 @@ function Curve.new(points: { Vector2 }): Curve
 		end
 	end
 
-	return setmetatable(({
-		_xs = xs,
-		_ys = ys,
-		_tangents = tangents,
-		_count = count,
-		_minY = minY,
-		_maxY = maxY,
-	} :: CurveProps), Curve)
+	return setmetatable(
+		{
+			_xs = xs,
+			_ys = ys,
+			_tangents = tangents,
+			_count = count,
+			_minY = minY,
+			_maxY = maxY,
+		} :: CurveProps,
+		Curve
+	)
 end
 
 --[=[

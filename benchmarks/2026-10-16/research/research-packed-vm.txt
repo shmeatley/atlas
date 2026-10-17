@@ -1,0 +1,9 @@
+PARITY: 503019 exact output comparisons passed
+PAIRED|Perlin.sample2D|0.212918|0.231938|-8.93%
+PAIRED|Perlin.sample3D|0.399495|0.392102|1.85%
+PAIRED|Perlin.sample2DWithDerivative|0.366585|0.364364|0.61%
+PAIRED|Perlin.sample3DWithDerivative|0.912952|0.925315|-1.35%
+PAIRED|Simplex.sample2D|0.184510|0.184973|-0.25%
+PAIRED|Simplex.sample3D|0.329178|0.354481|-7.69%
+PAIRED|Simplex.sample2DWithDerivative|0.303446|0.301380|0.68%
+PAIRED|Simplex.sample3DWithDerivative|0.488969|0.486712|0.46%

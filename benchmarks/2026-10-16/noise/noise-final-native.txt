@@ -1,0 +1,18 @@
+PARITY: 503019 exact output comparisons passed
+PAIRED|Perlin.sample2D|0.036963|0.033053|10.58%
+PAIRED|Perlin.sample3D|0.057301|0.042670|25.53%
+PAIRED|Perlin.sample2DWithDerivative|0.040013|0.036675|8.34%
+PAIRED|Perlin.sample3DWithDerivative|0.062590|0.051269|18.09%
+PAIRED|Simplex.sample2D|0.054947|0.048194|12.29%
+PAIRED|Simplex.sample3D|0.073890|0.062417|15.53%
+PAIRED|Simplex.sample2DWithDerivative|0.053924|0.048469|10.12%
+PAIRED|Simplex.sample3DWithDerivative|0.078004|0.067522|13.44%
+PAIRED|Voronoi.sample2D|0.109427|0.111054|-1.49%
+PAIRED|Voronoi.sample3D|0.335703|0.337850|-0.64%
+PAIRED|Voronoi.cell2D|0.134438|0.134017|0.31%
+PAIRED|Voronoi.cell3D|0.457285|0.460240|-0.65%
+PAIRED|Sampling.poissonDisc|2599.560000|2602.414000|-0.11%
+PAIRED|Perlin.new|3.387400|16.120000|-375.88%
+PAIRED|Perlin fbm2D (4 octaves)|0.175688|0.168676|3.99%
+PAIRED|Simplex.new|3.707800|21.381800|-476.67%
+PAIRED|Simplex fbm2D (4 octaves)|0.278973|0.242658|13.02%

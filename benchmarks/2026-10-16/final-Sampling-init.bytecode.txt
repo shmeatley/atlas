@@ -1,0 +1,602 @@
+Function 0 (nextState):
+R0: number [argument]
+   20: 	return (state * 48271) % 2147483647
+MULK R2 R0 K1 [48271]
+MODK R1 R2 K0 [2147483647]
+RETURN R1 1
+
+Function 1 (uniform):
+R0: number [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number? [argument]
+U0: any
+U1: any
+U2: any
+R9: any from 23 to 37
+R10: any from 28 to 37
+R8: number from 17 to 37
+R4: any from 0 to 39
+R5: any from 12 to 39
+   48: 	local state = Permutation.normalize(seed or random(1, 2147483646))
+GETUPVAL R4 U0
+GETTABLEKS R4 R4 K0 ['normalize']
+MOVE R5 R3
+JUMPIF R5 L0
+GETUPVAL R5 U1
+LOADN R6 1
+LOADK R7 K1 [2147483646]
+CALLFB R5 2 1 [0]
+L0: CALLFB R4 1 1 [1]
+   49: 	local points = table.create(count)
+GETIMPORT R5 4 [table.create]
+MOVE R6 R2
+CALLFB R5 1 1 [2]
+   51: 	for i = 1, count do
+LOADN R8 1
+MOVE R6 R2
+LOADN R7 1
+FORNPREP R6 L2
+   52: 		state = state * 48271 % 2147483647
+L1: MULK R9 R4 K6 [48271]
+MODK R4 R9 K5 [2147483647]
+   53: 		local x = width * ((state - 1) * INV_RANGE)
+SUBK R11 R4 K8 [1]
+MULK R10 R11 K7 [4.6566128774142013e-10]
+MUL R9 R0 R10
+   54: 		state = state * 48271 % 2147483647
+MULK R10 R4 K6 [48271]
+MODK R4 R10 K5 [2147483647]
+   55: 		local y = height * ((state - 1) * INV_RANGE)
+SUBK R12 R4 K8 [1]
+MULK R11 R12 K7 [4.6566128774142013e-10]
+MUL R10 R1 R11
+   56: 		points[i] = vector3(x, y) :: Vector3
+GETUPVAL R11 U2
+MOVE R12 R9
+MOVE R13 R10
+CALLFB R11 2 1 [3]
+SETTABLE R11 R5 R8
+   51: 	for i = 1, count do
+FORNLOOP R6 L1
+   59: 	return points :: { Vector3 }
+L2: RETURN R5 1
+
+Function 2 (poissonDisc):
+R0: number [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number? [argument]
+R4: number? [argument]
+U0: any
+U1: any
+U2: any
+U3: any
+U4: any
+U5: any
+U6: any
+U7: any
+R7: number from 13 to 15
+R14: number from 42 to 45
+R15: number from 48 to 51
+R14: any from 45 to 66
+R16: number from 62 to 76
+R15: any from 51 to 77
+R17: number from 81 to 84
+R14: number from 66 to 84
+R17: number from 91 to 93
+R18: userdata from 92 to 97
+R23: number from 102 to 105
+R24: number from 109 to 112
+R24: any from 112 to 139
+R23: any from 105 to 144
+R38: userdata from 187 to 201
+R39: any from 188 to 201
+R40: any from 191 to 201
+R37: any from 182 to 201
+R36: number from 178 to 201
+R33: number from 177 to 203
+R32: number from 162 to 203
+R24: number from 139 to 220
+R23: number from 144 to 220
+R27: number from 149 to 220
+R28: number from 155 to 220
+R29: boolean from 161 to 220
+R25: any from 117 to 220
+R26: any from 123 to 220
+R22: number from 98 to 220
+R14: number from 84 to 227
+R17: any from 93 to 227
+R19: any from 95 to 227
+R18: boolean from 97 to 227
+R5: any from 0 to 229
+R6: any from 1 to 229
+R7: number from 15 to 229
+R8: number from 14 to 229
+R9: number from 20 to 229
+R10: any from 25 to 229
+R11: number from 31 to 229
+R12: table from 32 to 229
+R13: table from 37 to 229
+R15: number from 77 to 229
+R16: number from 76 to 229
+   83: 	local k = maxAttempts or 30
+ORK R5 R4 K0 [30]
+   84: 	local state = Permutation.normalize(seed or random(1, 2147483646))
+GETUPVAL R6 U0
+GETTABLEKS R6 R6 K1 ['normalize']
+MOVE R7 R3
+JUMPIF R7 L0
+GETUPVAL R7 U1
+LOADN R8 1
+LOADK R9 K2 [2147483646]
+CALLFB R7 2 1 [0]
+L0: CALLFB R6 1 1 [1]
+   86: 	local cellSize = radius * 0.7071067811865476
+MULK R7 R2 K3 [0.70710678118654757]
+   87: 	local invCellSize = 1 / cellSize
+DIVRK R8 K4 [1] R7
+REMARK builtin math.floor/1
+   89: 	local gridW = floor(width * invCellSize) + 1
+MUL R10 R0 R8
+FASTCALL1 12 R10 L1
+GETUPVAL R9 U2
+CALL R9 1 1
+L1: ADDK R7 R9 K4 [1]
+REMARK builtin math.floor/1
+   90: 	local gridH = floor(height * invCellSize) + 1
+MUL R11 R1 R8
+FASTCALL1 12 R11 L2
+GETUPVAL R10 U2
+CALL R10 1 1
+L2: ADDK R9 R10 K4 [1]
+   92: 	local grid = table.create(gridW * gridH, 0)
+GETIMPORT R10 7 [table.create]
+MUL R11 R7 R9
+LOADN R12 0
+CALLFB R10 2 1 [2]
+   93: 	local radiusSq = radius * radius
+MUL R11 R2 R2
+   96: 	local points: { Vector3 } = table.create(64) :: { Vector3 }
+GETIMPORT R12 7 [table.create]
+LOADN R13 64
+CALLFB R12 1 1 [3]
+   97: 	local active: { number } = table.create(64) :: { number }
+GETIMPORT R13 7 [table.create]
+LOADN R14 64
+CALLFB R13 1 1 [4]
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  100: 	state = nextState(state)
+MOVE R14 R6
+   20: 	return (state * 48271) % 2147483647
+MULK R15 R14 K9 [48271]
+MODK R6 R15 K8 [2147483647]
+  101: 	local firstX = width * ((state - 1) * INV_RANGE)
+SUBK R16 R6 K4 [1]
+MULK R15 R16 K10 [4.6566128774142013e-10]
+MUL R14 R0 R15
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  102: 	state = nextState(state)
+MOVE R15 R6
+   20: 	return (state * 48271) % 2147483647
+MULK R16 R15 K9 [48271]
+MODK R6 R16 K8 [2147483647]
+  103: 	local firstY = height * ((state - 1) * INV_RANGE)
+SUBK R17 R6 K4 [1]
+MULK R16 R17 K10 [4.6566128774142013e-10]
+MUL R15 R1 R16
+  105: 	points[1] = vector3(firstX, firstY)
+GETUPVAL R16 U3
+MOVE R17 R14
+MOVE R18 R15
+CALLFB R16 2 1 [5]
+SETTABLEN R16 R12 1
+  106: 	active[1] = 1
+LOADN R16 1
+SETTABLEN R16 R13 1
+REMARK builtin math.floor/1
+  108: 	local gx = floor(firstX * invCellSize)
+MUL R17 R14 R8
+FASTCALL1 12 R17 L3
+GETUPVAL R16 U2
+CALL R16 1 1
+REMARK builtin math.floor/1
+  109: 	local gy = floor(firstY * invCellSize)
+L3: MUL R18 R15 R8
+FASTCALL1 12 R18 L4
+GETUPVAL R17 U2
+CALL R17 1 1
+L4: MOVE R14 R17
+  110: 	grid[gx * gridH + gy + 1] = 1
+MUL R19 R16 R9
+ADD R18 R19 R14
+ADDK R17 R18 K4 [1]
+LOADN R18 1
+SETTABLE R18 R10 R17
+  112: 	local count = 1
+LOADN R16 1
+  113: 	local activeCount = 1
+LOADN R15 1
+  115: 	while activeCount > 0 do
+L5: LOADN R17 0
+JUMPIFNOTLT R17 R15 L24
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  116: 		state = nextState(state)
+MOVE R17 R6
+   20: 	return (state * 48271) % 2147483647
+MULK R18 R17 K9 [48271]
+MODK R6 R18 K8 [2147483647]
+REMARK builtin math.floor/1
+  118: 		local pick = 1 + floor((state - 1) * INV_RANGE * activeCount)
+SUBK R20 R6 K4 [1]
+MULK R19 R20 K10 [4.6566128774142013e-10]
+MUL R18 R19 R15
+FASTCALL1 12 R18 L6
+GETUPVAL R17 U2
+CALL R17 1 1
+L6: ADDK R14 R17 K4 [1]
+  119: 		local parentIndex = active[pick]
+GETTABLE R17 R13 R14
+  120: 		local parent = points[parentIndex]
+GETTABLE R18 R12 R17
+  122: 		local px = parent.X
+GETTABLEKS R17 R18 K11 ['X']
+  123: 		local py = parent.Y
+GETTABLEKS R19 R18 K12 ['Y']
+  125: 		local placed = false
+LOADB R18 0
+  127: 		for _ = 1, k do
+LOADN R22 1
+MOVE R20 R5
+LOADN R21 1
+FORNPREP R20 L22
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  128: 			state = nextState(state)
+L7: MOVE R23 R6
+   20: 	return (state * 48271) % 2147483647
+MULK R24 R23 K9 [48271]
+MODK R6 R24 K8 [2147483647]
+  130: 			local angle = TAU * ((state - 1) * INV_RANGE)
+LOADK R24 K13 [6.2831853071795862]
+SUBK R26 R6 K4 [1]
+MULK R25 R26 K10 [4.6566128774142013e-10]
+MUL R23 R24 R25
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  131: 			state = nextState(state)
+MOVE R24 R6
+   20: 	return (state * 48271) % 2147483647
+MULK R25 R24 K9 [48271]
+MODK R6 R25 K8 [2147483647]
+  133: 			local dist = radius * (1 + (state - 1) * INV_RANGE)
+LOADN R26 1
+SUBK R28 R6 K4 [1]
+MULK R27 R28 K10 [4.6566128774142013e-10]
+ADD R25 R26 R27
+MUL R24 R2 R25
+REMARK builtin math.cos/1
+  135: 			local cx = px + cos(angle) * dist
+FASTCALL1 9 R23 L8
+MOVE R28 R23
+GETUPVAL R27 U4
+CALL R27 1 1
+L8: MUL R26 R27 R24
+ADD R25 R17 R26
+REMARK builtin math.sin/1
+  136: 			local cy = py + sin(angle) * dist
+FASTCALL1 24 R23 L9
+MOVE R29 R23
+GETUPVAL R28 U5
+CALL R28 1 1
+L9: MUL R27 R28 R24
+ADD R26 R19 R27
+  138: 			if cx >= 0 and cx < width and cy >= 0 and cy < height then
+LOADN R27 0
+JUMPIFNOTLE R27 R25 L21
+JUMPIFNOTLT R25 R0 L21
+LOADN R27 0
+JUMPIFNOTLE R27 R26 L21
+JUMPIFNOTLT R26 R1 L21
+REMARK builtin math.floor/1
+  139: 				local cgx = floor(cx * invCellSize)
+MUL R28 R25 R8
+FASTCALL1 12 R28 L10
+GETUPVAL R27 U2
+CALL R27 1 1
+L10: MOVE R24 R27
+REMARK builtin math.floor/1
+  140: 				local cgy = floor(cy * invCellSize)
+MUL R28 R26 R8
+FASTCALL1 12 R28 L11
+GETUPVAL R27 U2
+CALL R27 1 1
+L11: MOVE R23 R27
+REMARK builtin math.max/2
+  142: 				local minY = max(cgy - 2, 0)
+SUBK R28 R23 K14 [2]
+FASTCALL2K 18 R28 K15 L12 [0]
+LOADK R29 K15 [0]
+GETUPVAL R27 U6
+CALL R27 2 1
+REMARK builtin math.min/2
+  143: 				local maxY = min(cgy + 2, gridH - 1)
+L12: ADDK R29 R23 K14 [2]
+SUBK R30 R9 K4 [1]
+FASTCALL2 19 R29 R30 L13
+GETUPVAL R28 U7
+CALL R28 2 1
+  144: 				local ok = true
+L13: LOADB R29 1
+REMARK builtin math.max/2
+  146: 				for ix = max(cgx - 2, 0), min(cgx + 2, gridW - 1) do
+SUBK R33 R24 K14 [2]
+FASTCALL2K 18 R33 K15 L14 [0]
+LOADK R34 K15 [0]
+GETUPVAL R32 U6
+CALL R32 2 1
+REMARK builtin math.min/2
+L14: ADDK R34 R24 K14 [2]
+SUBK R35 R7 K4 [1]
+FASTCALL2 19 R34 R35 L15
+GETUPVAL R33 U7
+CALL R33 2 1
+L15: MOVE R30 R33
+LOADN R31 1
+FORNPREP R30 L20
+  147: 					local base = ix * gridH
+L16: MUL R33 R32 R9
+  149: 					for iy = minY, maxY do
+MOVE R36 R27
+MOVE R34 R28
+LOADN R35 1
+FORNPREP R34 L19
+  150: 						local idx = grid[base + iy + 1]
+L17: ADD R39 R33 R36
+ADDK R38 R39 K4 [1]
+GETTABLE R37 R10 R38
+  152: 						if idx ~= 0 then
+JUMPXEQKN R37 K15 L18 [0]
+  153: 							local op = points[idx]
+GETTABLE R38 R12 R37
+  154: 							local dx = op.X - cx
+GETTABLEKS R40 R38 K11 ['X']
+SUB R39 R40 R25
+  155: 							local dy = op.Y - cy
+GETTABLEKS R41 R38 K12 ['Y']
+SUB R40 R41 R26
+  157: 							if dx * dx + dy * dy < radiusSq then
+MUL R42 R39 R39
+MUL R43 R40 R40
+ADD R41 R42 R43
+JUMPIFNOTLT R41 R11 L18
+  158: 								ok = false
+LOADB R29 0
+  159: 								break
+JUMP L19
+  149: 					for iy = minY, maxY do
+L18: FORNLOOP R34 L17
+  164: 					if not ok then
+L19: JUMPIFNOT R29 L20
+  146: 				for ix = max(cgx - 2, 0), min(cgx + 2, gridW - 1) do
+FORNLOOP R30 L16
+  169: 				if ok then
+L20: JUMPIFNOT R29 L21
+  170: 					count += 1
+ADDK R16 R16 K4 [1]
+  171: 					points[count] = vector3(cx, cy)
+GETUPVAL R30 U3
+MOVE R31 R25
+MOVE R32 R26
+CALLFB R30 2 1 [6]
+SETTABLE R30 R12 R16
+  173: 					activeCount += 1
+ADDK R15 R15 K4 [1]
+  174: 					active[activeCount] = count
+SETTABLE R16 R13 R15
+  176: 					grid[cgx * gridH + cgy + 1] = count
+MUL R32 R24 R9
+ADD R31 R32 R23
+ADDK R30 R31 K4 [1]
+SETTABLE R16 R10 R30
+  178: 					placed = true
+LOADB R18 1
+  179: 					break
+JUMP L22
+  127: 		for _ = 1, k do
+L21: FORNLOOP R20 L7
+  184: 		if not placed then
+L22: JUMPIF R18 L23
+  185: 			active[pick] = active[activeCount]
+GETTABLE R20 R13 R15
+SETTABLE R20 R13 R14
+  186: 			active[activeCount] = nil
+LOADNIL R20
+SETTABLE R20 R13 R15
+  187: 			activeCount -= 1
+SUBK R15 R15 K4 [1]
+  115: 	while activeCount > 0 do
+L23: JUMPBACK L5
+  191: 	return points
+L24: RETURN R12 1
+
+Function 3 (blueNoiseGrid):
+R0: number [argument]
+R1: number [argument]
+R2: number [argument]
+R3: number? [argument]
+R4: number? [argument]
+U0: any
+U1: any
+U2: any
+U3: any
+R6: number from 12 to 21
+R17: number from 37 to 40
+R18: number from 43 to 46
+R19: number from 47 to 50
+R18: any from 46 to 53
+R19: any from 50 to 66
+R20: any from 51 to 66
+R18: any from 53 to 66
+R17: any from 40 to 66
+R16: number from 33 to 66
+R13: number from 29 to 67
+R5: any from 0 to 69
+R7: number from 13 to 69
+R8: number from 17 to 69
+R6: any from 21 to 69
+R9: number from 27 to 69
+R10: any from 28 to 69
+  211: 	local state = Permutation.normalize(seed or random(1, 2147483646))
+GETUPVAL R5 U0
+GETTABLEKS R5 R5 K0 ['normalize']
+MOVE R6 R3
+JUMPIF R6 L0
+GETUPVAL R6 U1
+LOADN R7 1
+LOADK R8 K1 [2147483646]
+CALLFB R6 2 1 [0]
+L0: CALLFB R5 1 1 [1]
+  213: 	local invCell = 1 / cellSize
+DIVRK R6 K2 [1] R2
+REMARK builtin math.floor/1
+  215: 	local gridW = floor(width * invCell)
+MUL R8 R0 R6
+FASTCALL1 12 R8 L1
+GETUPVAL R7 U2
+CALL R7 1 1
+REMARK builtin math.floor/1
+  216: 	local gridH = floor(height * invCell)
+L1: MUL R9 R1 R6
+FASTCALL1 12 R9 L2
+GETUPVAL R8 U2
+CALL R8 1 1
+  218: 	local points = table.create(gridW * gridH)
+L2: GETIMPORT R9 5 [table.create]
+MUL R10 R7 R8
+CALLFB R9 1 1 [2]
+MOVE R6 R9
+  220: 	local count = 0
+LOADN R9 0
+  221: 	local d = density or 1
+ORK R10 R4 K2 [1]
+  223: 	for y = 0, gridH - 1 do
+LOADN R13 0
+SUBK R11 R8 K2 [1]
+LOADN R12 1
+FORNPREP R11 L7
+  224: 		for x = 0, gridW - 1 do
+L3: LOADN R16 0
+SUBK R14 R7 K2 [1]
+LOADN R15 1
+FORNPREP R14 L6
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  225: 			state = nextState(state)
+L4: MOVE R17 R5
+   20: 	return (state * 48271) % 2147483647
+MULK R18 R17 K7 [48271]
+MODK R5 R18 K6 [2147483647]
+  228: 			local keep = state * INV_RANGE
+MULK R17 R5 K8 [4.6566128774142013e-10]
+  229: 			if keep <= d then
+JUMPIFNOTLE R17 R10 L5
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  230: 				state = nextState(state)
+MOVE R18 R5
+   20: 	return (state * 48271) % 2147483647
+MULK R19 R18 K7 [48271]
+MODK R5 R19 K6 [2147483647]
+  231: 				local jx = state * INV_RANGE
+MULK R18 R5 K8 [4.6566128774142013e-10]
+REMARK inlining succeeded (cost 2, profit 2.50x, depth 0)
+  233: 				state = nextState(state)
+MOVE R19 R5
+   20: 	return (state * 48271) % 2147483647
+MULK R20 R19 K7 [48271]
+MODK R5 R20 K6 [2147483647]
+  234: 				local jy = state * INV_RANGE
+MULK R19 R5 K8 [4.6566128774142013e-10]
+  236: 				local px = (x + jx) * cellSize
+ADD R21 R16 R18
+MUL R20 R21 R2
+  237: 				local py = (y + jy) * cellSize
+ADD R21 R13 R19
+MUL R18 R21 R2
+  239: 				if px < width and py < height then
+JUMPIFNOTLT R20 R0 L5
+JUMPIFNOTLT R18 R1 L5
+  240: 					count += 1
+ADDK R9 R9 K2 [1]
+  241: 					points[count] = vector3(px, py)
+GETUPVAL R21 U3
+MOVE R22 R20
+MOVE R23 R18
+CALLFB R21 2 1 [3]
+SETTABLE R21 R6 R9
+  224: 		for x = 0, gridW - 1 do
+L5: FORNLOOP R14 L4
+  223: 	for y = 0, gridH - 1 do
+L6: FORNLOOP R11 L3
+  247: 	return points :: { Vector3 }
+L7: RETURN R6 1
+
+Function 4 (??):
+R0: any from 1 to 50
+R1: any from 8 to 50
+R2: any from 10 to 50
+R3: any from 12 to 50
+R4: any from 14 to 50
+R5: any from 16 to 50
+R6: any from 18 to 50
+R7: any from 20 to 50
+R8: any from 22 to 50
+R9: any from 23 to 50
+    5: local Permutation = require(script.Parent.Noise.Permutation)
+GETIMPORT R0 1 [require]
+GETIMPORT R1 5 [script.Parent.Noise]
+GETTABLEKS R1 R1 K6 ['Permutation']
+CALL R0 1 1
+    7: local floor = math.floor
+GETIMPORT R1 9 [math.floor]
+    8: local max = math.max
+GETIMPORT R2 11 [math.max]
+    9: local min = math.min
+GETIMPORT R3 13 [math.min]
+   10: local sin = math.sin
+GETIMPORT R4 15 [math.sin]
+   11: local cos = math.cos
+GETIMPORT R5 17 [math.cos]
+   12: local random = math.random
+GETIMPORT R6 19 [math.random]
+   13: local vector3 = Vector3.new
+GETIMPORT R7 22 [Vector3.new]
+   19: local function nextState(state: number): number
+DUPCLOSURE R8 K23 ['nextState']
+REMARK allocation: table hash 3
+   34: local Sampling = {}
+NEWTABLE R9 4 0
+   47: function Sampling.uniform(width: number, height: number, count: number, seed: number?): { Vector3 }
+DUPCLOSURE R10 K24 ['uniform']
+CAPTURE VAL R0
+CAPTURE VAL R6
+CAPTURE VAL R7
+SETTABLEKS R10 R9 K25 ['uniform']
+   76: function Sampling.poissonDisc(
+DUPCLOSURE R10 K26 ['poissonDisc']
+CAPTURE VAL R0
+CAPTURE VAL R6
+CAPTURE VAL R1
+CAPTURE VAL R7
+CAPTURE VAL R5
+CAPTURE VAL R4
+CAPTURE VAL R2
+CAPTURE VAL R3
+SETTABLEKS R10 R9 K27 ['poissonDisc']
+  204: function Sampling.blueNoiseGrid(
+DUPCLOSURE R10 K28 ['blueNoiseGrid']
+CAPTURE VAL R0
+CAPTURE VAL R6
+CAPTURE VAL R1
+CAPTURE VAL R7
+SETTABLEKS R10 R9 K29 ['blueNoiseGrid']
+  250: return Sampling
+RETURN R9 1
+

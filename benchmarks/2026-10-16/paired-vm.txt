@@ -1,0 +1,8 @@
+PARITY: 503019 exact output comparisons passed
+PAIRED|Perlin.sample2D|0.206369|0.196379|4.84%
+PAIRED|Perlin.sample2DWithDerivative|0.478609|0.441600|7.73%
+PAIRED|Voronoi.sample2D|0.560556|0.482469|13.93%
+PAIRED|Voronoi.sample3D|2.093044|1.845689|11.82%
+PAIRED|Voronoi.cell2D|0.572097|0.487131|14.85%
+PAIRED|Voronoi.cell3D|2.256032|2.075596|8.00%
+PAIRED|Sampling.poissonDisc|2833.925000|2678.297000|5.49%

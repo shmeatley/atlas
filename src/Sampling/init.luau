@@ -15,7 +15,6 @@ local vector3 = Vector3.new
 local TAU = 6.283185307179586
 local INV_RANGE = 1 / 2147483646
 
-
 -- fast LCG step (kept simple, but reduced duplication sites matter more than micro-optimizing this further)
 local function nextState(state: number): number
 	return (state * 48271) % 2147483647
@@ -25,7 +24,7 @@ end
 	@class Sampling
 
 	Point scattering over a rectangular region. All samplers are deterministic
-	for a given seed and return points as `{Vector2}` with coordinates in
+	for a given seed and return points as `{Vector3}` with X/Y coordinates in
 	`[0, width) × [0, height)`.
 
 	```lua
@@ -81,7 +80,6 @@ function Sampling.poissonDisc(
 	seed: number?,
 	maxAttempts: number?
 ): { Vector3 }
-
 	local k = maxAttempts or 30
 	local state = Permutation.normalize(seed or random(1, 2147483646))
 
@@ -141,12 +139,14 @@ function Sampling.poissonDisc(
 				local cgx = floor(cx * invCellSize)
 				local cgy = floor(cy * invCellSize)
 
+				local minY = max(cgy - 2, 0)
+				local maxY = min(cgy + 2, gridH - 1)
 				local ok = true
 
 				for ix = max(cgx - 2, 0), min(cgx + 2, gridW - 1) do
 					local base = ix * gridH
 
-					for iy = max(cgy - 2, 0), min(cgy + 2, gridH - 1) do
+					for iy = minY, maxY do
 						local idx = grid[base + iy + 1]
 
 						if idx ~= 0 then
@@ -191,8 +191,6 @@ function Sampling.poissonDisc(
 	return points
 end
 
-
-
 --[=[
 	Generates a blue-noise-like point distribution using a jittered grid. Outputs a vector3 because they are much faster internally.
 
@@ -210,7 +208,6 @@ function Sampling.blueNoiseGrid(
 	seed: number?,
 	density: number?
 ): { Vector3 }
-
 	local state = Permutation.normalize(seed or random(1, 2147483646))
 
 	local invCell = 1 / cellSize
@@ -225,13 +222,11 @@ function Sampling.blueNoiseGrid(
 
 	for y = 0, gridH - 1 do
 		for x = 0, gridW - 1 do
-
 			state = nextState(state)
 
 			-- density mask (blue noise approximation)
 			local keep = state * INV_RANGE
 			if keep <= d then
-
 				state = nextState(state)
 				local jx = state * INV_RANGE
 

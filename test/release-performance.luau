@@ -1,0 +1,227 @@
+--!optimize 2
+--!native
+local Atlas = Candidate
+local Vector2 = Vector2 or {
+	new = function(x, y)
+		return vector.create(x, y, 0)
+	end,
+}
+local clock = os.clock
+local format = string.format
+local clamp = math.clamp
+local floor = math.floor
+local writeu32 = buffer.writeu32
+
+local Benchmarks = {}
+
+local function bench(name, iterations, fn)
+	if iterations == 1000 then
+		iterations = if string.find(name, "Sampling") then 50 else 100000
+	end
+	if iterations == 100 then
+		iterations = 20
+	end
+	for i = 1, 20 do
+		fn(i)
+	end
+	if task then
+		task.wait()
+	end
+	local times = {}
+	local checksum = 0
+	for trial = 1, 11 do
+		local sum = 0
+		local start = clock()
+		for i = 1, iterations do
+			sum += fn(i)
+		end
+		times[trial] = (clock() - start) / iterations * 1e6
+		checksum = sum
+		if task then
+			task.wait()
+		end
+	end
+	table.sort(times)
+	print(string.format("RESULT|%s|%d|%.9f|%.9f|%.9f|%.12g", name, iterations, times[6], times[1], times[11], checksum))
+end
+
+function Benchmarks.run()
+	print("Atlas benchmarks (times include closure-call overhead; run on a live")
+	print("server or with Studio native codegen enabled for --!native speeds)")
+
+	local perlin = Atlas.Noise.Perlin.new(42)
+	local simplex = Atlas.Noise.Simplex.new(42)
+	local voronoi = Atlas.Noise.Voronoi.new(42)
+	local island = Atlas.Noise.Island.new({ seed = 42 })
+	local fbm2D = Atlas.Noise.fbm2D
+	local curve = Atlas.Curve.new({
+		Vector2.new(0, 0),
+		Vector2.new(0.15, 0.02),
+		Vector2.new(0.3, 0.1),
+		Vector2.new(0.45, 0.3),
+		Vector2.new(0.6, 0.55),
+		Vector2.new(0.75, 0.8),
+		Vector2.new(0.9, 0.95),
+		Vector2.new(1, 1),
+	})
+
+	local perlinSample2D = perlin.sample2D
+	local perlinSample3D = perlin.sample3D
+	local perlinDerivative2D = perlin.sample2DWithDerivative
+	local perlinDerivative3D = perlin.sample3DWithDerivative
+	local simplexSample2D = simplex.sample2D
+	local simplexSample3D = simplex.sample3D
+	local simplexDerivative2D = simplex.sample2DWithDerivative
+	local simplexDerivative3D = simplex.sample3DWithDerivative
+	local voronoiSample2D = voronoi.sample2D
+	local voronoiSample3D = voronoi.sample3D
+	local voronoiCell2D = voronoi.cell2D
+	local islandSample2D = island.sample2D
+	local evaluate = curve.evaluate
+	local uniform = Atlas.Sampling.uniform
+	local poissonDisc = Atlas.Sampling.poissonDisc
+	local blueNoiseGrid = Atlas.Sampling.blueNoiseGrid
+	local mnoise = math.noise
+
+	bench("ROBLOX-PERLIN-2d", 100000, function(i)
+		return math.noise(i * 0.137, i * 0.291)
+	end)
+
+	bench("ROBLOX-PERLIN-2d-cached", 100000, function(i)
+		return mnoise(i * 0.137, i * 0.291)
+	end)
+	bench("Perlin.sample2D", 100000, function(i)
+		return perlinSample2D(perlin, i * 0.137, i * 0.291)
+	end)
+	bench("Perlin.sample2DWithDerivative", 100000, function(i)
+		local value, dx, dy = perlinDerivative2D(perlin, i * 0.137, i * 0.291)
+		return value + dx + dy
+	end)
+
+	bench("ROBLOX-PERLIN-3d", 100000, function(i)
+		return math.noise(i * 0.137, i * 0.291, i * 0.173)
+	end)
+	bench("ROBLOX-PERLIN-3d-cached", 100000, function(i)
+		return mnoise(i * 0.137, i * 0.291, i * 0.173)
+	end)
+	bench("Perlin.sample3D", 100000, function(i)
+		return perlinSample3D(perlin, i * 0.137, i * 0.291, i * 0.173)
+	end)
+
+	bench("Perlin.sample3DWithDerivative", 100000, function(i)
+		local value, dx, dy, dz = perlinDerivative3D(perlin, i * 0.137, i * 0.291, i * 0.173)
+		return value + dx + dy + dz
+	end)
+
+	bench("Simplex.sample2D", 1000, function(i)
+		return simplexSample2D(simplex, i * 0.137, i * 0.291)
+	end)
+	bench("Simplex.sample3D", 1000, function(i)
+		return simplexSample3D(simplex, i * 0.137, i * 0.291, i * 0.173)
+	end)
+	bench("Simplex.sample2DWithDerivative", 1000, function(i)
+		local value, dx, dy = simplexDerivative2D(simplex, i * 0.137, i * 0.291)
+		return value + dx + dy
+	end)
+	bench("Simplex.sample3DWithDerivative", 1000, function(i)
+		local value, dx, dy, dz = simplexDerivative3D(simplex, i * 0.137, i * 0.291, i * 0.173)
+		return value + dx + dy + dz
+	end)
+
+	bench("Voronoi.sample2D", 1000, function(i)
+		return voronoiSample2D(voronoi, i * 0.137, i * 0.291)
+	end)
+	bench("Voronoi.sample3D", 1000, function(i)
+		return voronoiSample3D(voronoi, i * 0.137, i * 0.291, i * 0.173)
+	end)
+	bench("Voronoi.cell2D", 1000, function(i)
+		local f1, f2 = voronoiCell2D(voronoi, i * 0.137, i * 0.291)
+		return f1 + f2
+	end)
+
+	bench("Island.sample2D", 1000, function(i)
+		return islandSample2D(island, (i % 128 - 64) * 0.02, (floor(i / 128) - 4) * 0.08)
+	end)
+
+	bench("Noise.fbm2D (4 octaves, simplex)", 1000, function(i)
+		return fbm2D(simplex, i * 0.037, i * 0.059, 4)
+	end)
+
+	bench("Curve.evaluate (8 points)", 1000, function(i)
+		return evaluate(curve, (i % 100) * 0.01)
+	end)
+
+	bench("Sampling.uniform (256 points)", 1000, function(i)
+		return #uniform(100, 100, 256, i)
+	end)
+	bench("Sampling.poissonDisc (100x100, r=5)", 1000, function(i)
+		return #poissonDisc(100, 100, 5, i)
+	end)
+	bench("Sampling.blueNoiseGrid (100x100, cellSize=3)", 1000, function(i)
+		return #blueNoiseGrid(100, 100, 3, i)
+	end)
+
+	local pixelCallback = Atlas.Visualizer.Presets.noise(simplex, { scale = 0.05 })
+	local canvas = buffer.create(128 * 128 * 4)
+	bench("Visualizer render math (128x128)", 100, function(i)
+		local offset = 0
+		for y = 0, 127 do
+			for x = 0, 127 do
+				local r, g, b = pixelCallback(x + i, y)
+				writeu32(
+					canvas,
+					offset,
+					floor(clamp(r, 0, 1) * 255 + 0.5)
+						+ floor(clamp(g, 0, 1) * 255 + 0.5) * 0x100
+						+ floor(clamp(b, 0, 1) * 255 + 0.5) * 0x10000
+						+ 0xFF000000
+				)
+				offset += 4
+			end
+		end
+		return buffer.readu8(canvas, 0)
+	end)
+end
+
+Benchmarks.run()
+
+local function builtinGrid(w, h, d, startX, step)
+	local values = table.create(w * h * d)
+	local index = 0
+	for slice = 0, d - 1 do
+		local z = 0.2 + slice * step
+		for row = 0, h - 1 do
+			local y = -3.5 - row * step
+			for column = 0, w - 1 do
+				index += 1
+				local x = startX + column * step
+				values[index] = if d == 1 then math.noise(x, y) else math.noise(x, y, z)
+			end
+		end
+	end
+	return values
+end
+local p = Atlas.Noise.Perlin.new(42)
+local s = Atlas.Noise.Simplex.new(42)
+bench("math.noise grid2D (128x128)", 20, function(i)
+	local v = builtinGrid(128, 128, 1, -0.7 + i * 0.03, 0.137)
+	return v[1] + v[#v]
+end)
+for _, entry in { { "Perlin", p }, { "Simplex", s } } do
+	local sampler = entry[2]
+	bench(entry[1] .. ".sampleGrid2D (128x128)", 20, function(i)
+		local v = sampler:sampleGrid2D(128, 128, -0.7 + i * 0.03, -3.5, 0.137, -0.137)
+		return v[1] + v[#v]
+	end)
+end
+bench("math.noise grid3D (32x32x32)", 10, function(i)
+	local v = builtinGrid(32, 32, 32, -0.7 + i * 0.03, 0.137)
+	return v[1] + v[#v]
+end)
+for _, entry in { { "Perlin", p }, { "Simplex", s } } do
+	local sampler = entry[2]
+	bench(entry[1] .. ".sampleGrid3D (32x32x32)", 10, function(i)
+		local v = sampler:sampleGrid3D(32, 32, 32, -0.7 + i * 0.03, -3.5, 0.2, 0.137, -0.137, 0.137)
+		return v[1] + v[#v]
+	end)
+end

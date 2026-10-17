@@ -1,0 +1,10 @@
+PARITY: 503019 exact output comparisons passed
+PAIRED|Perlin unchanged sample2D|0.032893|0.032822|0.22%
+PAIRED|Perlin unchanged sample3D|0.042228|0.042305|-0.18%
+PAIRED|Simplex unchanged sample2D|0.046852|0.046253|1.28%
+PAIRED|Simplex unchanged sample3D|0.062131|0.062275|-0.23%
+GRID PARITY: 342366 exact comparisons passed
+PAIRED|Perlin grid 128 step 0.137|467.599998|214.193334|54.19%
+PAIRED|Perlin grid 128 step 1.3|486.703333|228.560002|53.04%
+PAIRED|Perlin grid 256 step 0.137|1736.820000|704.880001|59.42%
+PAIRED|Perlin grid 256 step 1.3|1732.220000|748.239993|56.80%

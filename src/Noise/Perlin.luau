@@ -54,7 +54,7 @@ end
 local Perlin = {}
 Perlin.__index = Perlin
 
-export type Perlin = typeof(setmetatable({} :: { seed: number, _perm: buffer }, Perlin))
+export type Perlin = typeof(setmetatable({} :: { seed: number, _perm: buffer, _grad2: buffer, _grad3: buffer }, Perlin))
 
 --[=[
 	@prop seed number
@@ -73,9 +73,12 @@ export type Perlin = typeof(setmetatable({} :: { seed: number, _perm: buffer }, 
 ]=]
 function Perlin.new(seed: number?): Perlin
 	local resolved = seed or random(1, 2147483646)
+	local perm = Permutation.build(resolved)
 	return setmetatable({
 		seed = resolved,
-		_perm = Permutation.build(resolved),
+		_perm = perm,
+		_grad2 = Permutation.gradients(perm, GRAD2, 16, 8),
+		_grad3 = Permutation.gradients(perm, GRAD3, 24, 12),
 	}, Perlin)
 end
 
@@ -90,6 +93,7 @@ end
 ]=]
 function Perlin.sample2D(self: Perlin, x: number, y: number): number
 	local perm = self._perm
+	local gradients = self._grad2
 
 	local fx = floor(x)
 	local fy = floor(y)
@@ -98,18 +102,20 @@ function Perlin.sample2D(self: Perlin, x: number, y: number): number
 	local xf1 = xf - 1
 	local yf1 = yf - 1
 
-	local a = readu8(perm, band(fx, 255)) + band(fy, 255)
-	local b = readu8(perm, band(fx, 255) + 1) + band(fy, 255)
+	local X = band(fx, 255)
+	local Y = band(fy, 255)
+	local a = readu8(perm, X) + Y
+	local b = readu8(perm, X + 1) + Y
 
-	local i00 = band(readu8(perm, a), 7) * 16
-	local i01 = band(readu8(perm, a + 1), 7) * 16
-	local i10 = band(readu8(perm, b), 7) * 16
-	local i11 = band(readu8(perm, b + 1), 7) * 16
+	local i00 = a * 16
+	local i01 = (a + 1) * 16
+	local i10 = b * 16
+	local i11 = (b + 1) * 16
 
-	local n00 = readf64(GRAD2, i00) * xf + readf64(GRAD2, i00 + 8) * yf
-	local n10 = readf64(GRAD2, i10) * xf1 + readf64(GRAD2, i10 + 8) * yf
-	local n01 = readf64(GRAD2, i01) * xf + readf64(GRAD2, i01 + 8) * yf1
-	local n11 = readf64(GRAD2, i11) * xf1 + readf64(GRAD2, i11 + 8) * yf1
+	local n00 = readf64(gradients, i00) * xf + readf64(gradients, i00 + 8) * yf
+	local n10 = readf64(gradients, i10) * xf1 + readf64(gradients, i10 + 8) * yf
+	local n01 = readf64(gradients, i01) * xf + readf64(gradients, i01 + 8) * yf1
+	local n11 = readf64(gradients, i11) * xf1 + readf64(gradients, i11 + 8) * yf1
 
 	local u = xf * xf * xf * (xf * (xf * 6 - 15) + 10)
 	local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
@@ -133,6 +139,7 @@ end
 ]=]
 function Perlin.sample2DWithDerivative(self: Perlin, x: number, y: number): (number, number, number)
 	local perm = self._perm
+	local gradients = self._grad2
 
 	local fx = floor(x)
 	local fy = floor(y)
@@ -144,15 +151,15 @@ function Perlin.sample2DWithDerivative(self: Perlin, x: number, y: number): (num
 	local a = readu8(perm, band(fx, 255)) + band(fy, 255)
 	local b = readu8(perm, band(fx, 255) + 1) + band(fy, 255)
 
-	local i00 = band(readu8(perm, a), 7) * 16
-	local i01 = band(readu8(perm, a + 1), 7) * 16
-	local i10 = band(readu8(perm, b), 7) * 16
-	local i11 = band(readu8(perm, b + 1), 7) * 16
+	local i00 = a * 16
+	local i01 = (a + 1) * 16
+	local i10 = b * 16
+	local i11 = (b + 1) * 16
 
-	local g00x, g00y = readf64(GRAD2, i00), readf64(GRAD2, i00 + 8)
-	local g10x, g10y = readf64(GRAD2, i10), readf64(GRAD2, i10 + 8)
-	local g01x, g01y = readf64(GRAD2, i01), readf64(GRAD2, i01 + 8)
-	local g11x, g11y = readf64(GRAD2, i11), readf64(GRAD2, i11 + 8)
+	local g00x, g00y = readf64(gradients, i00), readf64(gradients, i00 + 8)
+	local g10x, g10y = readf64(gradients, i10), readf64(gradients, i10 + 8)
+	local g01x, g01y = readf64(gradients, i01), readf64(gradients, i01 + 8)
+	local g11x, g11y = readf64(gradients, i11), readf64(gradients, i11 + 8)
 
 	local n00 = g00x * xf + g00y * yf
 	local n10 = g10x * xf1 + g10y * yf
@@ -190,6 +197,7 @@ end
 ]=]
 function Perlin.sample3D(self: Perlin, x: number, y: number, z: number): number
 	local perm = self._perm
+	local gradients = self._grad3
 
 	local fx = floor(x)
 	local fy = floor(y)
@@ -212,23 +220,31 @@ function Perlin.sample3D(self: Perlin, x: number, y: number, z: number): number
 	local ba = readu8(perm, b) + Z
 	local bb = readu8(perm, b + 1) + Z
 
-	local i000 = readu8(perm, aa) % 12 * 24
-	local i100 = readu8(perm, ba) % 12 * 24
-	local i010 = readu8(perm, ab) % 12 * 24
-	local i110 = readu8(perm, bb) % 12 * 24
-	local i001 = readu8(perm, aa + 1) % 12 * 24
-	local i101 = readu8(perm, ba + 1) % 12 * 24
-	local i011 = readu8(perm, ab + 1) % 12 * 24
-	local i111 = readu8(perm, bb + 1) % 12 * 24
-
-	local n000 = readf64(GRAD3, i000) * xf + readf64(GRAD3, i000 + 8) * yf + readf64(GRAD3, i000 + 16) * zf
-	local n100 = readf64(GRAD3, i100) * xf1 + readf64(GRAD3, i100 + 8) * yf + readf64(GRAD3, i100 + 16) * zf
-	local n010 = readf64(GRAD3, i010) * xf + readf64(GRAD3, i010 + 8) * yf1 + readf64(GRAD3, i010 + 16) * zf
-	local n110 = readf64(GRAD3, i110) * xf1 + readf64(GRAD3, i110 + 8) * yf1 + readf64(GRAD3, i110 + 16) * zf
-	local n001 = readf64(GRAD3, i001) * xf + readf64(GRAD3, i001 + 8) * yf + readf64(GRAD3, i001 + 16) * zf1
-	local n101 = readf64(GRAD3, i101) * xf1 + readf64(GRAD3, i101 + 8) * yf + readf64(GRAD3, i101 + 16) * zf1
-	local n011 = readf64(GRAD3, i011) * xf + readf64(GRAD3, i011 + 8) * yf1 + readf64(GRAD3, i011 + 16) * zf1
-	local n111 = readf64(GRAD3, i111) * xf1 + readf64(GRAD3, i111 + 8) * yf1 + readf64(GRAD3, i111 + 16) * zf1
+	-- Consume each corner immediately to keep native register pressure low.
+	local i000 = aa * 24
+	local n000 = readf64(gradients, i000) * xf + readf64(gradients, i000 + 8) * yf + readf64(gradients, i000 + 16) * zf
+	local i100 = ba * 24
+	local n100 = readf64(gradients, i100) * xf1 + readf64(gradients, i100 + 8) * yf + readf64(gradients, i100 + 16) * zf
+	local i010 = ab * 24
+	local n010 = readf64(gradients, i010) * xf + readf64(gradients, i010 + 8) * yf1 + readf64(gradients, i010 + 16) * zf
+	local i110 = bb * 24
+	local n110 = readf64(gradients, i110) * xf1
+		+ readf64(gradients, i110 + 8) * yf1
+		+ readf64(gradients, i110 + 16) * zf
+	local i001 = (aa + 1) * 24
+	local n001 = readf64(gradients, i001) * xf + readf64(gradients, i001 + 8) * yf + readf64(gradients, i001 + 16) * zf1
+	local i101 = (ba + 1) * 24
+	local n101 = readf64(gradients, i101) * xf1
+		+ readf64(gradients, i101 + 8) * yf
+		+ readf64(gradients, i101 + 16) * zf1
+	local i011 = (ab + 1) * 24
+	local n011 = readf64(gradients, i011) * xf
+		+ readf64(gradients, i011 + 8) * yf1
+		+ readf64(gradients, i011 + 16) * zf1
+	local i111 = (bb + 1) * 24
+	local n111 = readf64(gradients, i111) * xf1
+		+ readf64(gradients, i111 + 8) * yf1
+		+ readf64(gradients, i111 + 16) * zf1
 
 	local u = xf * xf * xf * (xf * (xf * 6 - 15) + 10)
 	local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
@@ -258,6 +274,7 @@ end
 ]=]
 function Perlin.sample3DWithDerivative(self: Perlin, x: number, y: number, z: number): (number, number, number, number)
 	local perm = self._perm
+	local gradients = self._grad3
 
 	local fx = floor(x)
 	local fy = floor(y)
@@ -280,23 +297,23 @@ function Perlin.sample3DWithDerivative(self: Perlin, x: number, y: number, z: nu
 	local ba = readu8(perm, b) + Z
 	local bb = readu8(perm, b + 1) + Z
 
-	local i000 = readu8(perm, aa) % 12 * 24
-	local i100 = readu8(perm, ba) % 12 * 24
-	local i010 = readu8(perm, ab) % 12 * 24
-	local i110 = readu8(perm, bb) % 12 * 24
-	local i001 = readu8(perm, aa + 1) % 12 * 24
-	local i101 = readu8(perm, ba + 1) % 12 * 24
-	local i011 = readu8(perm, ab + 1) % 12 * 24
-	local i111 = readu8(perm, bb + 1) % 12 * 24
+	local i000 = aa * 24
+	local i100 = ba * 24
+	local i010 = ab * 24
+	local i110 = bb * 24
+	local i001 = (aa + 1) * 24
+	local i101 = (ba + 1) * 24
+	local i011 = (ab + 1) * 24
+	local i111 = (bb + 1) * 24
 
-	local g000x, g000y, g000z = readf64(GRAD3, i000), readf64(GRAD3, i000 + 8), readf64(GRAD3, i000 + 16)
-	local g100x, g100y, g100z = readf64(GRAD3, i100), readf64(GRAD3, i100 + 8), readf64(GRAD3, i100 + 16)
-	local g010x, g010y, g010z = readf64(GRAD3, i010), readf64(GRAD3, i010 + 8), readf64(GRAD3, i010 + 16)
-	local g110x, g110y, g110z = readf64(GRAD3, i110), readf64(GRAD3, i110 + 8), readf64(GRAD3, i110 + 16)
-	local g001x, g001y, g001z = readf64(GRAD3, i001), readf64(GRAD3, i001 + 8), readf64(GRAD3, i001 + 16)
-	local g101x, g101y, g101z = readf64(GRAD3, i101), readf64(GRAD3, i101 + 8), readf64(GRAD3, i101 + 16)
-	local g011x, g011y, g011z = readf64(GRAD3, i011), readf64(GRAD3, i011 + 8), readf64(GRAD3, i011 + 16)
-	local g111x, g111y, g111z = readf64(GRAD3, i111), readf64(GRAD3, i111 + 8), readf64(GRAD3, i111 + 16)
+	local g000x, g000y, g000z = readf64(gradients, i000), readf64(gradients, i000 + 8), readf64(gradients, i000 + 16)
+	local g100x, g100y, g100z = readf64(gradients, i100), readf64(gradients, i100 + 8), readf64(gradients, i100 + 16)
+	local g010x, g010y, g010z = readf64(gradients, i010), readf64(gradients, i010 + 8), readf64(gradients, i010 + 16)
+	local g110x, g110y, g110z = readf64(gradients, i110), readf64(gradients, i110 + 8), readf64(gradients, i110 + 16)
+	local g001x, g001y, g001z = readf64(gradients, i001), readf64(gradients, i001 + 8), readf64(gradients, i001 + 16)
+	local g101x, g101y, g101z = readf64(gradients, i101), readf64(gradients, i101 + 8), readf64(gradients, i101 + 16)
+	local g011x, g011y, g011z = readf64(gradients, i011), readf64(gradients, i011 + 8), readf64(gradients, i011 + 16)
+	local g111x, g111y, g111z = readf64(gradients, i111), readf64(gradients, i111 + 8), readf64(gradients, i111 + 16)
 
 	local n000 = g000x * xf + g000y * yf + g000z * zf
 	local n100 = g100x * xf1 + g100y * yf + g100z * zf
@@ -357,6 +374,295 @@ function Perlin.sample3DWithDerivative(self: Perlin, x: number, y: number, z: nu
 	local dy = gy + dv * (b2 + u * b4 + w * b6 + uw * b7)
 	local dz = gz + dw * (b3 + u * b5 + v * b6 + uv * b7)
 	return value * NORM3, dx * NORM3, dy * NORM3, dz * NORM3
+end
+
+-- Sample a row-major rectangular grid with exact scalar-sampling coordinates.
+local function sampleGrid2DUncached(
+	self: Perlin,
+	width: number,
+	height: number,
+	startX: number,
+	startY: number,
+	stepX: number,
+	stepY: number
+): { number }
+	assert(width >= 0 and width % 1 == 0, "width must be a non-negative integer")
+	assert(height >= 0 and height % 1 == 0, "height must be a non-negative integer")
+	local values: { number } = table.create(width * height)
+	if width == 0 or height == 0 then
+		return values
+	end
+	local perm = self._perm
+	local gradients = self._grad2
+	local columns = buffer.create(width * 24)
+	for column = 0, width - 1 do
+		local x = startX + column * stepX
+		local fx = floor(x)
+		local xf = x - fx
+		local X = band(fx, 255)
+		local offset = column * 24
+		writef64(columns, offset, xf)
+		writef64(columns, offset + 8, xf * xf * xf * (xf * (xf * 6 - 15) + 10))
+		buffer.writeu8(columns, offset + 16, readu8(perm, X))
+		buffer.writeu8(columns, offset + 17, readu8(perm, X + 1))
+	end
+	local index = 0
+	for row = 0, height - 1 do
+		local y = startY + row * stepY
+		local fy = floor(y)
+		local yf = y - fy
+		local yf1 = yf - 1
+		local Y = band(fy, 255)
+		local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
+		for column = 0, width - 1 do
+			local offset = column * 24
+			local xf = readf64(columns, offset)
+			local xf1 = xf - 1
+			local u = readf64(columns, offset + 8)
+			local a = readu8(columns, offset + 16) + Y
+			local b = readu8(columns, offset + 17) + Y
+			local i00 = a * 16
+			local i01 = (a + 1) * 16
+			local i10 = b * 16
+			local i11 = (b + 1) * 16
+			local n00 = readf64(gradients, i00) * xf + readf64(gradients, i00 + 8) * yf
+			local n10 = readf64(gradients, i10) * xf1 + readf64(gradients, i10 + 8) * yf
+			local n01 = readf64(gradients, i01) * xf + readf64(gradients, i01 + 8) * yf1
+			local n11 = readf64(gradients, i11) * xf1 + readf64(gradients, i11 + 8) * yf1
+			local nx0 = n00 + u * (n10 - n00)
+			local nx1 = n01 + u * (n11 - n01)
+			index += 1
+			values[index] = (nx0 + v * (nx1 - nx0)) * NORM2
+		end
+	end
+	return values
+end
+
+--[=[
+ Samples a rectangular grid into a new row-major array. Entry
+ `row * width + column + 1` is exactly `sample2D(startX + column * stepX,
+ startY + row * stepY)` for zero-based rows and columns. Negative and zero
+ steps are supported. Width and height must be non-negative integers.
+
+ Reuses column coordinates and row fades; dense grids also reuse gradients
+ within a lattice cell. Scratch storage is 24 bytes per column. This is a
+ bulk throughput API; individual sample2D calls retain their existing behavior.
+
+ @method sampleGrid2D
+ @within Perlin
+ @param width number -- Number of columns.
+ @param height number -- Number of rows.
+ @param startX number
+ @param startY number
+ @param stepX number
+ @param stepY number
+ @return {number} -- Row-major samples.
+]=]
+function Perlin.sampleGrid2D(
+	self: Perlin,
+	width: number,
+	height: number,
+	startX: number,
+	startY: number,
+	stepX: number,
+	stepY: number
+): { number }
+	if width < 32 or math.abs(stepX) >= 0.25 then
+		return sampleGrid2DUncached(self, width, height, startX, startY, stepX, stepY)
+	end
+	assert(width >= 0 and width % 1 == 0, "width must be a non-negative integer")
+	assert(height >= 0 and height % 1 == 0, "height must be a non-negative integer")
+	local values: { number } = table.create(width * height)
+	if width == 0 or height == 0 then
+		return values
+	end
+	local perm = self._perm
+	local gradients = self._grad2
+	local columns = buffer.create(width * 24)
+	for column = 0, width - 1 do
+		local x = startX + column * stepX
+		local fx = floor(x)
+		local xf = x - fx
+		local X = band(fx, 255)
+		local offset = column * 24
+		writef64(columns, offset, xf)
+		writef64(columns, offset + 8, xf * xf * xf * (xf * (xf * 6 - 15) + 10))
+		buffer.writeu8(columns, offset + 16, readu8(perm, X))
+		buffer.writeu8(columns, offset + 17, readu8(perm, X + 1))
+	end
+	local index = 0
+	for row = 0, height - 1 do
+		local y = startY + row * stepY
+		local fy = floor(y)
+		local yf = y - fy
+		local yf1 = yf - 1
+		local Y = band(fy, 255)
+		local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
+		local previousA = -1
+		local g00x, g10x, g01x, g11x = 0, 0, 0, 0
+		local ny00, ny10, ny01, ny11 = 0, 0, 0, 0
+		for column = 0, width - 1 do
+			local offset = column * 24
+			local xf = readf64(columns, offset)
+			local xf1 = xf - 1
+			local u = readf64(columns, offset + 8)
+			local a = readu8(columns, offset + 16) + Y
+			local b = readu8(columns, offset + 17) + Y
+			if a ~= previousA then
+				previousA = a
+				local i00 = a * 16
+				local i01 = (a + 1) * 16
+				local i10 = b * 16
+				local i11 = (b + 1) * 16
+				g00x = readf64(gradients, i00)
+				g10x = readf64(gradients, i10)
+				g01x = readf64(gradients, i01)
+				g11x = readf64(gradients, i11)
+				ny00 = readf64(gradients, i00 + 8) * yf
+				ny10 = readf64(gradients, i10 + 8) * yf
+				ny01 = readf64(gradients, i01 + 8) * yf1
+				ny11 = readf64(gradients, i11 + 8) * yf1
+			end
+			local n00 = g00x * xf + ny00
+			local n10 = g10x * xf1 + ny10
+			local n01 = g01x * xf + ny01
+			local n11 = g11x * xf1 + ny11
+			local nx0 = n00 + u * (n10 - n00)
+			local nx1 = n01 + u * (n11 - n01)
+			index += 1
+			values[index] = (nx0 + v * (nx1 - nx0)) * NORM2
+		end
+	end
+	return values
+end
+
+--[=[
+ Samples a rectangular grid into a new flat volume (X fastest, then Y, then Z).
+ Coordinates use start + zero-based index * step on each axis, exactly as
+ repeated sample3D calls. Negative and zero steps are supported. Dimensions
+ must be non-negative integers; any zero dimension returns an empty array.
+ Array index: `(slice * height + row) * width + column + 1`.
+
+ @method sampleGrid3D
+ @within Perlin
+ @param width number -- X samples.
+ @param height number -- Y samples.
+ @param depth number -- Z samples.
+ @param startX number
+ @param startY number
+ @param startZ number
+ @param stepX number
+ @param stepY number
+ @param stepZ number
+ @return {number} -- Samples in grid order.
+]=]
+function Perlin.sampleGrid3D(
+	self: Perlin,
+	width: number,
+	height: number,
+	depth: number,
+	startX: number,
+	startY: number,
+	startZ: number,
+	stepX: number,
+	stepY: number,
+	stepZ: number
+): { number }
+	assert(width >= 0 and width % 1 == 0, "width must be a non-negative integer")
+	assert(height >= 0 and height % 1 == 0, "height must be a non-negative integer")
+	assert(depth >= 0 and depth % 1 == 0, "depth must be a non-negative integer")
+	local values: { number } = table.create(width * height * depth)
+	if width * height * depth == 0 then
+		return values
+	end
+	local perm = self._perm
+	local gradients = self._grad3
+	local columns = buffer.create(width * 24)
+	for column = 0, width - 1 do
+		local x = startX + column * stepX
+		local fx = floor(x)
+		local xf = x - fx
+		local X = band(fx, 255)
+		local offset = column * 24
+		writef64(columns, offset, xf)
+		writef64(columns, offset + 8, xf * xf * xf * (xf * (xf * 6 - 15) + 10))
+		buffer.writeu8(columns, offset + 16, readu8(perm, X))
+		buffer.writeu8(columns, offset + 17, readu8(perm, X + 1))
+	end
+	local index = 0
+	for slice = 0, depth - 1 do
+		local z = startZ + slice * stepZ
+		local fz = floor(z)
+		local zf = z - fz
+		local zf1 = zf - 1
+		local Z = band(fz, 255)
+		local w = zf * zf * zf * (zf * (zf * 6 - 15) + 10)
+		for row = 0, height - 1 do
+			local y = startY + row * stepY
+			local fy = floor(y)
+			local yf = y - fy
+			local yf1 = yf - 1
+			local Y = band(fy, 255)
+			local v = yf * yf * yf * (yf * (yf * 6 - 15) + 10)
+			for column = 0, width - 1 do
+				index += 1
+				local offset = column * 24
+				local xf = readf64(columns, offset)
+				local u = readf64(columns, offset + 8)
+				local xf1 = xf - 1
+
+				local a = readu8(columns, offset + 16) + Y
+				local b = readu8(columns, offset + 17) + Y
+				local aa = readu8(perm, a) + Z
+				local ab = readu8(perm, a + 1) + Z
+				local ba = readu8(perm, b) + Z
+				local bb = readu8(perm, b + 1) + Z
+
+				-- Consume each corner immediately to keep native register pressure low.
+				local i000 = aa * 24
+				local n000 = readf64(gradients, i000) * xf
+					+ readf64(gradients, i000 + 8) * yf
+					+ readf64(gradients, i000 + 16) * zf
+				local i100 = ba * 24
+				local n100 = readf64(gradients, i100) * xf1
+					+ readf64(gradients, i100 + 8) * yf
+					+ readf64(gradients, i100 + 16) * zf
+				local i010 = ab * 24
+				local n010 = readf64(gradients, i010) * xf
+					+ readf64(gradients, i010 + 8) * yf1
+					+ readf64(gradients, i010 + 16) * zf
+				local i110 = bb * 24
+				local n110 = readf64(gradients, i110) * xf1
+					+ readf64(gradients, i110 + 8) * yf1
+					+ readf64(gradients, i110 + 16) * zf
+				local i001 = (aa + 1) * 24
+				local n001 = readf64(gradients, i001) * xf
+					+ readf64(gradients, i001 + 8) * yf
+					+ readf64(gradients, i001 + 16) * zf1
+				local i101 = (ba + 1) * 24
+				local n101 = readf64(gradients, i101) * xf1
+					+ readf64(gradients, i101 + 8) * yf
+					+ readf64(gradients, i101 + 16) * zf1
+				local i011 = (ab + 1) * 24
+				local n011 = readf64(gradients, i011) * xf
+					+ readf64(gradients, i011 + 8) * yf1
+					+ readf64(gradients, i011 + 16) * zf1
+				local i111 = (bb + 1) * 24
+				local n111 = readf64(gradients, i111) * xf1
+					+ readf64(gradients, i111 + 8) * yf1
+					+ readf64(gradients, i111 + 16) * zf1
+
+				local nx00 = n000 + u * (n100 - n000)
+				local nx10 = n010 + u * (n110 - n010)
+				local nx01 = n001 + u * (n101 - n001)
+				local nx11 = n011 + u * (n111 - n011)
+				local nxy0 = nx00 + v * (nx10 - nx00)
+				local nxy1 = nx01 + v * (nx11 - nx01)
+				values[index] = (nxy0 + w * (nxy1 - nxy0)) * NORM3
+			end
+		end
+	end
+	return values
 end
 
 return Perlin
